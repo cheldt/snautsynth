@@ -1,1 +1,3 @@
-TODO
+- simple synthesizer based on web audio api 
+- GUI rendered to HTML5 canvas
+- tested in chrome 32.0.1700.77
