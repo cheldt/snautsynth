@@ -1,0 +1,6 @@
+[submodule "js/lib/dejavu"]
+	path = js/lib/dejavu
+	url = https://github.com/IndigoUnited/dejavu.git
+[submodule "js/lib/mout"]
+	path = js/lib/mout
+	url = https://github.com/mout/mout.git
