@@ -1,8 +1,8 @@
-define(['dejavu', 'app/controls/Control',  'app/utils/String'], function(dejavu, Control, StringUtils){
+define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(dejavu, UiControl, StringUtils){
     var Knob = dejavu.Class.declare({
         $name: 'Knob',
 
-        $extends: Control,
+        $extends: UiControl,
 
         _minPointerDeg: null,
         _maxPointerDeg: null,
@@ -243,6 +243,7 @@ define(['dejavu', 'app/controls/Control',  'app/utils/String'], function(dejavu,
                             this._value = this._doubleClickSnapValue;
                             this._pointerRadian = this.$self.calcRadFromValue(this._doubleClickSnapValue, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
                             this._tmpPointerRad = this._pointerRadian;
+                            this._canvasState.fire("valuechanged", this, { value: this._value, id:  this._id});
                         }
                     }
                 }
@@ -261,7 +262,6 @@ define(['dejavu', 'app/controls/Control',  'app/utils/String'], function(dejavu,
         contains: function(mx, my) {
             // All we have to do is make sure the Mouse X,Y fall in the area between
             // the knobs x,y
-            var scale = this._canvasState.getScale();
             var knobX = this.getKnobX();
             var knobY = this.getKnobY();
             return this.$self.pointInCircle(mx, my, knobX, knobY, this._radius);

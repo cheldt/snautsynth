@@ -1,8 +1,8 @@
-define(['dejavu', 'app/controls/Control',  'app/utils/String'], function(dejavu, Control, StringUtils){
+define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(dejavu, UiControl, StringUtils){
     var RadioGroup = dejavu.Class.declare({
         $name: 'RadioGroup',
 
-        $extends: Control,
+        $extends: UiControl,
 
         _radioButtons: null,
         _radius: null,
@@ -41,7 +41,7 @@ define(['dejavu', 'app/controls/Control',  'app/utils/String'], function(dejavu,
 
 
             this._radioButtons.push(radioButton);
-            this._maxButtonY += this._radius * 2.1
+            this._maxButtonY += this._radius * 2.1;
         },
 
         draw: function() {

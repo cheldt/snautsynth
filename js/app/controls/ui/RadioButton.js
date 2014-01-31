@@ -1,20 +1,18 @@
-define(['dejavu',  'app/utils/String'], function(dejavu, StringUtils){
+define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(dejavu, UiControl, StringUtils){
     var RadioButton = dejavu.Class.declare({
         $name: 'RadioButton',
+
+        $extends: UiControl,
 
         _label: null,
         _value: null,
         _color: null,
         _selectedColor: null,
         _selected: null,
-        _x: null,
-        _y: null,
         _radius: null,
         _labelWidth: null,
         _fontFormatStr: null,
         _fontSize: null,
-        _canvasState: null,
-
 
         getLabel: function() {
             return this._label;
@@ -24,26 +22,11 @@ define(['dejavu',  'app/utils/String'], function(dejavu, StringUtils){
             return this._value;
         },
 
-
         getSelected: function() {
             return this._selected;
         },
         setSelected: function(selected) {
             this._selected = selected;
-        },
-
-        getX: function() {
-            return this._x;
-        },
-        setX: function(x) {
-            this._x = x;
-        },
-
-        getY: function() {
-            return this._y;
-        },
-        setY: function(y) {
-            this._y = y;
         },
 
         setRadius: function(radius) {
@@ -63,6 +46,8 @@ define(['dejavu',  'app/utils/String'], function(dejavu, StringUtils){
         },
 
         initialize: function(canvasState, label, value, color, selectedColor) {
+            this.$super(0, 0, 0, value, canvasState, label);
+
             this._label = label;
             this._value = value;
             this._color = color;
