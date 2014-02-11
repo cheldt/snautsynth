@@ -23,8 +23,6 @@ define(['dejavu'], function(dejavu) {
             this._x = x;
             this._y = y;
         }
-
-
     });
     return MousePosition;
 });

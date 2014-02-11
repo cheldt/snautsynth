@@ -1,14 +1,14 @@
-define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(dejavu, UiControl, StringUtils){
+define(['dejavu', 'app/controls/ui/UIControl',  'app/utils/String'], function(dejavu, UIControl, StringUtils){
     var RadioButton = dejavu.Class.declare({
         $name: 'RadioButton',
 
-        $extends: UiControl,
+        $extends: UIControl,
 
         _label: null,
         _value: null,
         _color: null,
-        _selectedColor: null,
-        _selected: null,
+        _checkedColor: null,
+        _checked: null,
         _radius: null,
         _labelWidth: null,
         _fontFormatStr: null,
@@ -22,11 +22,11 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
             return this._value;
         },
 
-        getSelected: function() {
-            return this._selected;
+        getChecked: function() {
+            return this._checked;
         },
-        setSelected: function(selected) {
-            this._selected = selected;
+        setChecked: function(checked) {
+            this._checked = checked;
         },
 
         setRadius: function(radius) {
@@ -45,13 +45,13 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
                 return false;
         },
 
-        initialize: function(canvasState, label, value, color, selectedColor) {
+        initialize: function(canvasState, label, value, color, checkedColor) {
             this.$super(0, 0, 0, value, canvasState, label);
 
             this._label = label;
             this._value = value;
             this._color = color;
-            this._selectedColor = selectedColor;
+            this._checkedColor = checkedColor;
             this._canvasState = canvasState;
 
             this._fontSize = 18;
@@ -74,10 +74,10 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
             ctx.fill();
 
             // draw selected marking
-            if(this._selected) {
+            if(this._checked) {
                 ctx.beginPath();
                 ctx.arc(knobX, knobY, this._radius * 0.5, 0, 2 * Math.PI, false);
-                ctx.fillStyle = this._selectedColor;
+                ctx.fillStyle = this._checkedColor;
                 ctx.fill();
             }
 

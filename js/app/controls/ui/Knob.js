@@ -1,8 +1,8 @@
-define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(dejavu, UiControl, StringUtils){
+define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/utils/Drawing'], function(dejavu, RangeControl, StringUtils, DrawingUtils){
     var Knob = dejavu.Class.declare({
         $name: 'Knob',
 
-        $extends: UiControl,
+        $extends: RangeControl,
 
         _minPointerDeg: null,
         _maxPointerDeg: null,
@@ -10,10 +10,10 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
         _minPointerRad: null,
         _maxPointerRad: null,
 
-        _valueDspMult: null,
+        //_valueDspMult: null,
 
-        _minValue: null,
-        _maxValue: null,
+        //_minValue: null,
+        //_maxValue: null,
 
         _radius: null,
         _pointerRadian: null,
@@ -21,17 +21,24 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
         _pointerColor: null,
         _borderColor: null,
 
-        _snapStep: null,
-        _snapDistance: null,
+        //_snapStep: null,
+        //_snapDistance: null,
 
-        _doubleClickSnapValue: null,
+        //_doubleClickSnapValue: null,
         _tmpPointerRad: null,
 
         _knobX: null,
         _knobY: null,
 
+        $constants: {
+            LABEL_OFFSET: 20,
+            KNOBBORDER_WIDTH: 7
+
+
+        },
+
         initialize: function (id, x, y, value, canvasState, label, valueDspMult,  minValue, maxValue, radius, color, snapStep, snapDistance, doubleClickSnapValue) {
-            this.$super(id, x, y, value, canvasState, label);
+            this.$super(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, snapStep, snapDistance, doubleClickSnapValue);
 
             this._minPointerDeg = 135;
             this._maxPointerDeg = 405;
@@ -39,19 +46,19 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
             this._minPointerRad = this.$self.calcDegToRad(this._minPointerDeg);
             this._maxPointerRad = this.$self.calcDegToRad(this._maxPointerDeg);
 
-            this._valueDspMult = valueDspMult;
+            //this._valueDspMult = valueDspMult;
 
-            this._minValue = minValue;
-            this._maxValue = maxValue;
+            //this._minValue = minValue;
+            //this._maxValue = maxValue;
 
             this._radius = radius;
             this._pointerRadian = this.$self.calcRadFromValue(value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
             this._color = '#AAAAAA';
 
-            this._snapStep = snapStep;
-            this._snapDistance = snapDistance;
+            //this._snapStep = snapStep;
+            //this._snapDistance = snapDistance;
 
-            this._doubleClickSnapValue = doubleClickSnapValue;
+            //this._doubleClickSnapValue = doubleClickSnapValue;
             this._tmpPointerRad = this._pointerRadian;
 
             this._knobX= 0;
@@ -108,11 +115,11 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
         },
 
         getKnobY: function() {
-           return (this._y + this._radius + 20);
+           return (this._y + this._radius + (this.$self.KNOBBORDER_WIDTH / 2) + ((this._label !== null) ? this.$static.LABEL_OFFSET : 0));
         },
 
         draw: function() {
-            var knobFrameLineWidth = 7 * ( this._radius * 0.02 );
+            var knobFrameLineWidth = this.$self.KNOBBORDER_WIDTH * ( this._radius * 0.02 );
             var knobSelectionLineWidth = 2 * ( this._radius * 0.02 );
             var fontSize = 18 * ( this._radius * 0.02 );
             var fontFormatStr = StringUtils.multiReplace("normal %FONTSIZE%px droid sans",{ "%FONTSIZE%" : fontSize });
@@ -124,12 +131,14 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
             var ctx = this._canvasState.getCanvasContext();
 
             // draw label
-            ctx.beginPath();
-            ctx.font = fontFormatStr;
-            ctx.fillStyle = "#000";
-            var metrics = ctx.measureText(this._label);
-            var txtWidth = metrics.width;
-            ctx.fillText(this._label,knobX - (txtWidth / 2), this._y + fontSize * 0.7); //
+            if(this._label !== null) {
+                ctx.beginPath();
+                ctx.font = fontFormatStr;
+                ctx.fillStyle = "#000";
+                var metrics = ctx.measureText(this._label);
+                var txtWidth = metrics.width;
+                ctx.fillText(this._label,knobX - (txtWidth / 2), this._y + fontSize * 0.7); //
+            }
 
             // draw button area (filled circle)
             ctx.beginPath();
@@ -158,7 +167,7 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
             var rectW = (knobRadius * 1.5);
             var rectX = (knobX - (rectW / 2));
             var rectH = (knobRadius * 0.4);
-            this.roundRect(ctx,rectX, rectY, rectW, rectH, 7, knobFrameLineWidth * 1.5, true, true);
+            DrawingUtils.roundRect(ctx , rectX, rectY, rectW, rectH, 7, knobFrameLineWidth * 1.5, true, true);
 
             // draw value text
             ctx.beginPath();
@@ -182,53 +191,11 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
                 var rectX = (knobX - (rectW / 2));
                 var rectH = (knobRadius * 0.51);
                 var rectY = (knobY + this._radius * 0.7);
-                this.roundRect(ctx,rectX, rectY, rectW, rectH, 10, knobSelectionLineWidth, false, true);
+                DrawingUtils.roundRect(ctx, rectX, rectY, rectW, rectH, 10, knobSelectionLineWidth, false, true);
             }
         },
 
-        /**
-         * Draws a rounded rectangle using the current state of the canvas.
-         * If you omit the last three params, it will draw a rectangle
-         * outline with a 5 pixel border radius
-         * @param {CanvasRenderingContext2D} ctx
-         * @param {Number} x The top left x coordinate
-         * @param {Number} y The top left y coordinate
-         * @param {Number} width The width of the rectangle
-         * @param {Number} height The height of the rectangle
-         * @param {Number} radius The corner radius. Defaults to 5;
-         * @param {Number} radius The corner radius. Defaults to 7;
-         * @param {Boolean} fill Whether to fill the rectangle. Defaults to false.
-         * @param {Boolean} stroke Whether to stroke the rectangle. Defaults to true.
-         */
-         roundRect: function(ctx, x, y, width, height, radius, lineWidth, fill, stroke) {
-            if (typeof stroke == "undefined" ) {
-                stroke = true;
-            }
-            if (typeof radius === "undefined") {
-                radius = 5;
-            }
-            if (typeof lineWidth === "undefined") {
-                lineWidth = 7;
-            }
-            ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-            ctx.lineTo(x + radius, y + height);
-            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
-            ctx.closePath();
-            ctx.lineWidth = lineWidth;
-            if (stroke) {
-                ctx.stroke();
-            }
-            if (fill) {
-                ctx.fill();
-            }
-        },
+
 
         checkSelect: function(mousePos) {
             if( this.contains(mousePos.getX(),mousePos.getY()) ) {

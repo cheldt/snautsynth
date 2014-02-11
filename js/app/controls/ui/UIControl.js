@@ -1,6 +1,6 @@
 define(['dejavu', 'app/controls/Control'], function(dejavu, Control){
-    var UiControl = dejavu.Class.declare({
-        $name: 'UiControl',
+    var UIControl = dejavu.Class.declare({
+        $name: 'UIControl',
 
         $extends: Control,
 
@@ -45,7 +45,6 @@ define(['dejavu', 'app/controls/Control'], function(dejavu, Control){
             this._label = label;
         },
 
-
         initialize: function(id, x, y, value, canvasState, label) {
             this.$super(id, x, y, canvasState);
             this._value = value;
@@ -56,5 +55,5 @@ define(['dejavu', 'app/controls/Control'], function(dejavu, Control){
             canvasState.addListener("mouseout", function() { myControl.setSelected(false); });
         }
     });
-    return UiControl;
+    return UIControl;
 });

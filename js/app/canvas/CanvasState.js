@@ -1,4 +1,4 @@
-define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition'], function(dejavu, CustomEvent, MousePosition){
+define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'], function(dejavu, CustomEvent, MousePosition, Kinetic){
 
 
     var CanvasState = dejavu.Class.declare({
@@ -14,6 +14,8 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition'], function(d
         _canvasContext: null,
         _controls: null,
         _drawInterval: null,
+
+        _stage: null,
 
         _width: null,
         _height: null,
@@ -43,14 +45,12 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition'], function(d
             this._lastMouseY = lastMouseY;
         },
 
-
         getLastMouseDownEventTmstamp: function() {
             return this._lastMouseDownEventTmstamp;
         },
         setLastMouseDownEventTmstamp: function(lastMouseDownEventTmstamp) {
             this._lastMouseDownEventTmstamp = lastMouseDownEventTmstamp;
         },
-
 
         getCanvas: function() {
             return this._canvas;
@@ -74,14 +74,22 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition'], function(d
         initialize: function(canvas, width, height) {
             this.$super();
 
+            /*
+            this._stage = new Kinetic.Stage({
+                container: 'container',
+                width: width,
+                height: height
+            });
+            */
+
             this._canvas = canvas;
             this._width = width;
             this._height = height;
 
-            this._canvasContext = canvas.getContext("2d");
 
             this._canvas.width = width;
             this._canvas.height = height;
+            this._canvasContext = this._canvas.getContext("2d");
 
             this._controls = [];
             this._drawInterval = 30;
@@ -216,7 +224,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition'], function(d
                 my = (e.pageY - pos.y) / this._scale;
             }
 
-            // We return a simple javascript object (a hash) with x and y defined
+            // We return a simple javascript object with x and y defined
             return new MousePosition(mx, my);
         },
 

@@ -4,19 +4,67 @@ require.config({
     baseUrl: 'js/lib',
     paths: {
         app:    '../app',
-        mout:   'mout/src'
+        mout:   'mout/src',
+        //libs
+        kinetic: 'kinetic-v5.0.1.min'
+
     },
     packages: [
         {
             name: 'dejavu',
             location: 'dejavu/dist/amd/strict'
         }
-    ]
+    ],
+
+    shim: {
+        'kinetic' : {
+            exports: 'Kinetic'
+        }
+    }
+
 });
 
+/*
+requirejs(['kinetic'],function(Kinetic) {
+    var containerDiv = document.createElement('div');
+    containerDiv.setAttribute('id','container');
+    document.body.appendChild(containerDiv);
+
+
+    var stage = new Kinetic.Stage({
+        container: 'container',
+        width: 800,
+        height: 600
+    });
+
+
+    var layer = new Kinetic.Layer();
+
+    var rect = new Kinetic.Rect({
+        x: 239,
+        y: 75,
+        width: 100,
+        height: 50,
+        fill: 'green',
+        stroke: 'black',
+        strokeWidth: 1
+    });
+
+    // add the shape to the layer
+    layer.add(rect);
+
+    // add the layer to the stage
+    stage.add(layer);
+
+    var scale = stage.getScale().x
+    stage.setScale({x: 2, y: 2});
+    stage.draw();
+});
+*/
+
 // Start the main app logic.
-requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/RadioGroup', 'app/controls/ui/RadioButton', 'app/audio/Synthesizer'],
-    function (CanvasState, Knob, RadioGroup, RadioButton, Synthesizer) {
+requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/RadioGroup', 'app/controls/ui/RadioButton', 'app/controls/ui/Fader', 'app/audio/Synthesizer'],
+    function (CanvasState, Knob, RadioGroup, RadioButton, Fader, Synthesizer) {
 
         var MASTERGAIN = 1;
         var OSC1_WAVE = 2;
@@ -32,13 +80,13 @@ requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/Ra
         var ADSR_S = 12;
         var ADSR_R = 13;
 
+        var TEST_FADER = 14;
+
         var canvas = document.createElement('canvas');
         canvas.setAttribute('id','cvs');
 
         document.body.appendChild(canvas); // adds the canvas to the body element
-        var canvasState = new CanvasState(canvas, 800, 400);
-
-        //(id, x, y, value, canvasState, label, valueDspMult,  minValue, maxValue, radius, color, snapStep, snapDistance, doubleClickSnapValue) {
+        var canvasState = new CanvasState(canvas, 800, 600);
 
         var radioGroup = new RadioGroup(OSC1_WAVE, 0, 0, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform', 10);
         radioGroup.addButton(new RadioButton(canvasState, "Sine", Synthesizer.WAVEFORMS_SINE, '#000', '#FFF'));
@@ -47,7 +95,7 @@ requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/Ra
         radioGroup.addButton(new RadioButton(canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
         canvasState.addControl(radioGroup);
 
-        canvasState.addControl(new Knob(OSC1_TUNE, 130, 0, 0, canvasState, 'OSC1 Tune', 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
+        canvasState.addControl(new Knob(OSC1_TUNE, 130, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
         canvasState.addControl(new Knob(OSC1_OCT, 260, 0, 0, canvasState, 'OSC1 Octave', 1, -4, 4, 50,'#AABBCC', 1, 0.5, 0));
         canvasState.addControl(new Knob(OSC1_GAIN, 390, 0, 1, canvasState, 'OSC1 Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null));
 
@@ -68,6 +116,12 @@ requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/Ra
         canvasState.addControl(new Knob(ADSR_D, 590, 150, 2, canvasState, 'D', 1, 0, 6, 30, '#AABBCC', 0, 0, null));
         canvasState.addControl(new Knob(ADSR_S, 660, 150, 0.5, canvasState, 'S', 100, 0, 1, 30, '#AABBCC', 0, 0, null));
         canvasState.addControl(new Knob(ADSR_R, 730, 150, 1, canvasState, 'R', 1, 0, 6, 30, '#AABBCC', 0, 0, null));
+
+
+
+        //(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, length, color, snapStep, snapDistance, doubleClickSnapValue, orientation)
+
+        canvasState.addControl(new Fader(TEST_FADER, 0, 350, 3, canvasState, 'Testfader', 1, 0, 10, 200, '#AABBCC', null, null, null, Fader.ORIENTATION_HORIZONTAL));
 
 
         var audioCtx = new webkitAudioContext();
@@ -175,6 +229,7 @@ requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/Ra
 
     }
 );
+
 /*
  this.low = audioCtx.createBiquadFilter();
  this.low.type = "lowshelf";
@@ -195,10 +250,11 @@ requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/Ra
  this.high.gain.value = 0.0;
  this.high.connect( this.mid );
  */
-
+/*
 requirejs.onError = function (err) {
     console.log(err.requireType);
     console.log('modules: ' + err.requireModules);
     console.dir(err);
     //throw err;
 };
+*/

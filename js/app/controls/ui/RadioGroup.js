@@ -1,8 +1,8 @@
-define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(dejavu, UiControl, StringUtils){
+define(['dejavu', 'app/controls/ui/UIControl',  'app/utils/String'], function(dejavu, UIControl, StringUtils){
     var RadioGroup = dejavu.Class.declare({
         $name: 'RadioGroup',
 
-        $extends: UiControl,
+        $extends: UIControl,
 
         _radioButtons: null,
         _radius: null,
@@ -33,7 +33,7 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
 
         addButton: function(radioButton) {
             if(radioButton.getValue() == this._value)
-                radioButton.setSelected(true);
+                radioButton.setChecked(true);
 
             radioButton.setX(this._x);
             radioButton.setY(this._maxButtonY);
@@ -77,13 +77,14 @@ define(['dejavu', 'app/controls/ui/UiControl',  'app/utils/String'], function(de
                     var radioBtn = this._radioButtons[arrayIndex];
                     if(radioBtn.contains(mouseX,mouseY)) {
                         this._value = radioBtn.getValue();
-                        radioBtn.setSelected(true);
+                        radioBtn.setChecked(true);
                         this._canvasState.fire("valuechanged", this, { value: this._value, id:  this._id});
                     } else {
-                        radioBtn.setSelected(false);
+                        radioBtn.setChecked(false);
                     }
                 }
             }
+
         }
     });
     return RadioGroup;
