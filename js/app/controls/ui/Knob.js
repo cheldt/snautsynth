@@ -1,4 +1,4 @@
-define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/utils/Drawing'], function(dejavu, RangeControl, StringUtils, DrawingUtils){
+define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/utils/Drawing', 'kinetic'], function(dejavu, RangeControl, StringUtils, DrawingUtils, Kinetic){
     var Knob = dejavu.Class.declare({
         $name: 'Knob',
 
@@ -30,16 +30,80 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
         _knobX: null,
         _knobY: null,
 
+        _knobCircle: null,
+
+        _pointer: null,
+
         $constants: {
             LABEL_OFFSET: 20,
             KNOBBORDER_WIDTH: 7
-
-
         },
 
         initialize: function (id, x, y, value, canvasState, label, valueDspMult,  minValue, maxValue, radius, color, snapStep, snapDistance, doubleClickSnapValue) {
             this.$super(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, snapStep, snapDistance, doubleClickSnapValue);
 
+            this._minPointerDeg = 135;
+            this._maxPointerDeg = 405;
+
+            this._minPointerRad = this.$self.calcDegToRad(this._minPointerDeg);
+            this._maxPointerRad = this.$self.calcDegToRad(this._maxPointerDeg);
+
+            this._radius = radius;
+
+
+            this._pointerRadian = this.$self.calcRadFromValue(value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
+
+            // create components of control
+
+            this._knobX = radius + x;
+            this._knobY = radius + y;
+
+            // create knob circle
+            this._knobCircle = new Kinetic.Circle({
+                x: this._knobX,
+                y: this._knobY,
+                radius: radius,
+                fill: color
+             });
+
+            this._kineticGroup.add(this._knobCircle);
+
+            // create knob border
+            var arc = new Kinetic.Arc({
+                x: this._knobX,
+                y: this._knobY,
+                innerRadius: radius - 10,
+                outerRadius: radius,
+                angle: 20,
+                stroke: '#000'
+            });
+
+            this._kineticGroup.add(arc);
+
+            // create pointer and set initial position
+            var initialPointerPos = this.calcPointerPos();
+
+            this._pointer = new Kinetic.Line({
+                points: [ this._knobX, this._knobY, initialPointerPos.x, initialPointerPos.y  ],
+                stroke: '#000',
+                lineJoin: 'round',
+                strokeWidth: 7
+            });
+
+            this._kineticGroup.add(this._pointer);
+
+            var myKnob = this;
+
+            // add eventlistener => lock mouse
+            this._knobCircle.on('mousedown', function(evt) {
+                myKnob.getCanvasState().lockPointer();
+            });
+
+            // create knob value-display
+
+            // create knob
+
+            /*
             this._minPointerDeg = 135;
             this._maxPointerDeg = 405;
 
@@ -69,6 +133,8 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
             canvasState.addListener("mousemove", function(mousePos) { myKnob.update(mousePos); })
             canvasState.addListener("mousedown", function(mousePos) { myKnob.checkSelect(mousePos); });
             canvasState.addListener("mouseup", function() { myKnob.setSelected(false); myKnob.getCanvasState().unlockPointer(); });
+
+            */
         },
 
 
@@ -118,7 +184,14 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
            return (this._y + this._radius + (this.$self.KNOBBORDER_WIDTH / 2) + ((this._label !== null) ? this.$static.LABEL_OFFSET : 0));
         },
 
+        calcPointerPos: function() {
+            var pointerLength = (this._radius / 1.2);
+            return {x:  Math.cos(this._pointerRadian) * pointerLength + this._knobX, y: Math.sin(this._pointerRadian) * pointerLength + this._knobY};
+        },
+
         draw: function() {
+            return;
+
             var knobFrameLineWidth = this.$self.KNOBBORDER_WIDTH * ( this._radius * 0.02 );
             var knobSelectionLineWidth = 2 * ( this._radius * 0.02 );
             var fontSize = 18 * ( this._radius * 0.02 );

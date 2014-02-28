@@ -82,12 +82,15 @@ requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/Ra
 
         var TEST_FADER = 14;
 
-        var canvas = document.createElement('canvas');
-        canvas.setAttribute('id','cvs');
+        //var canvas = document.createElement('canvas');
+        //canvas.setAttribute('id','cvs');
 
-        document.body.appendChild(canvas); // adds the canvas to the body element
-        var canvasState = new CanvasState(canvas, 800, 600);
+        //document.body.appendChild(canvas); // adds the canvas to the body element
+        var canvasState = new CanvasState(800, 600);
+        canvasState.addControl(new Knob(OSC1_TUNE, 0, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
 
+
+        /*
         var radioGroup = new RadioGroup(OSC1_WAVE, 0, 0, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform', 10);
         radioGroup.addButton(new RadioButton(canvasState, "Sine", Synthesizer.WAVEFORMS_SINE, '#000', '#FFF'));
         radioGroup.addButton(new RadioButton(canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
@@ -226,7 +229,7 @@ requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/Ra
             }
         });
 
-
+        */
     }
 );
 

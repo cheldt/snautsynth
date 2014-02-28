@@ -51,8 +51,8 @@ define(['dejavu', 'app/controls/Control'], function(dejavu, Control){
             this._selected = false;
             this._label = label;
 
-            var myControl = this;
-            canvasState.addListener("mouseout", function() { myControl.setSelected(false); });
+            //var myControl = this;
+            //canvasState.addListener("mouseout", function() { myControl.setSelected(false); });
         }
     });
     return UIControl;

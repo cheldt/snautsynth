@@ -17,10 +17,10 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
         _stage: null,
 
+        _baseLayer: null,
+
         _width: null,
         _height: null,
-
-        _scale: null,
 
         _pointerLocked: null,
 
@@ -71,17 +71,48 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             return this._pointerLocked;
         },
 
-        initialize: function(canvas, width, height) {
-            this.$super();
+
+        addNodeToBLayer: function(kineticNode) {
+            this._baseLayer.add(kineticNode);
+        },
+
+        initialize: function(width, height) {
+
+
+            // create canvas element
+            //var canvas = document.createElement('canvas');
+            //canvas.setAttribute('id','cvs');
+
+            // append canvas into dom-tree
+            //document.body.appendChild(canvas);
+
+            this._stage = new Kinetic.Stage({
+                container: 'syn',
+                width: width,
+                height: height,
+                scale: {x: 1, y: 1}
+            });
+
+            // create base layer, which holds controls (shapes in layer) and other layers
+            this._baseLayer = new Kinetic.Layer();
+
+            // add layer to stage
+            this._stage.add(this._baseLayer);
+
+            var myState = this;
+            setInterval(function() { myState.draw(); }, myState.interval);
+
+            window.onresize = function () {
+                myState.resize();
+            }
+
+            this._baseLayer.on('mouseup',function(evt) {
+                if( myState.getPointerLocked() ) {
+                    myState.unlockPointer();
+                }
+            });
 
             /*
-            this._stage = new Kinetic.Stage({
-                container: 'container',
-                width: width,
-                height: height
-            });
-            */
-
             this._canvas = canvas;
             this._width = width;
             this._height = height;
@@ -125,10 +156,10 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             document.addEventListener('mozpointerlockchange', function() { myState.lockChangeCallback() }, false);
             document.addEventListener('webkitpointerlockchange', function() { myState.lockChangeCallback() }, false);
 
-            window.onresize = function () {
-                myState.resize();
-            },
+
             setInterval(function() { myState.draw(); }, myState.interval);
+
+            */
         },
 
         lockChangeCallback: function() {
@@ -143,37 +174,27 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
         resize: function () {
             // browser viewport size
-            var w = window.innerWidth;
-            var h = window.innerHeight;
+            var windowWidth = window.innerWidth;
+            var windowHeight = window.innerHeight;
 
-            /*
-            var dpr = window.devicePixelRatio || 1;
-            var bsr = this._canvasContext.webkitBackingStorePixelRatio ||
-                this._canvasContext.mozBackingStorePixelRatio ||
-                this._canvasContext.msBackingStorePixelRatio ||
-                this._canvasContext.oBackingStorePixelRatio ||
-                this._canvasContext.backingStorePixelRatio || 1;
+            var stageWidth = this._stage.getWidth();
+            var stageHeight = this._stage.getHeight();
 
-            var pixelRatio = dpr / bsr;
-            */
+            // check of stage fits in viewport => scale when viewport is to small
+            if( windowWidth >= stageWidth && windowHeight >= stageHeight ) {
+                this._stage.setScale({ x: 1, y: 1 });
+            } else {
+                // keep aspect ratio
+                var scale = Math.min(windowWidth / this._stage.getWidth(), windowHeight / this._stage.getHeight());
+                this._stage.setScale({ x: scale, y: scale });
+                this._stage.draw();
+            }
 
-            // keep aspect ratio
-            var scale = Math.min(w / this._width, h / this._height);
-            this._scale = scale;
 
-            // adjust canvas size
-            this._canvas.width = this._width * scale;
-            this._canvas.height = this._height * scale;
-            this._canvas.style.width = this._canvas.width + "px";
-            this._canvas.style.height = this._canvas.height + "px";
-            this._canvasContext.scale(scale,scale);
-            //context.translate(canvas.width / 2, canvas.height / 2);
-
-            this.draw();
         },
 
         addControl: function(control) {
-            this._controls.push(control);
+            //this._controls.push(control);
         },
 
         clear: function() {
@@ -181,6 +202,9 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
         },
 
         draw: function() {
+            this._stage.clear();
+            this._stage.draw();
+            /*
             //clear canvas
             this.clear();
 
@@ -190,6 +214,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
                 this._controls[ctrIndex].draw();
             }
+            */
         },
 
         findPosition: function() {
@@ -220,8 +245,8 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
                     0;
             } else {
                 var pos = this.findPosition();
-                mx = (e.pageX - pos.x) / this._scale;
-                my = (e.pageY - pos.y) / this._scale;
+                mx = (e.pageX - pos.x) / this._stage.getScale();
+                my = (e.pageY - pos.y) / this._stage.getScale();
             }
 
             // We return a simple javascript object with x and y defined
@@ -229,13 +254,16 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
         },
 
         lockPointer: function() {
+            this._pointerLocked = true;
+            //console.dir(this._baseLayer.getCanvas()._canvas);
+            var canvas = this._baseLayer.getCanvas()._canvas;
 
-            this._canvas.requestPointerLock = this._canvas.requestPointerLock ||
-                this._canvas.mozRequestPointerLock ||
-                this._canvas.webkitRequestPointerLock;
+            canvas.requestPointerLock = canvas.requestPointerLock ||
+                canvas.mozRequestPointerLock ||
+                canvas.webkitRequestPointerLock;
 
             // Ask the browser to lock the pointer)
-            this._canvas.requestPointerLock();
+            canvas.requestPointerLock();
         },
 
         unlockPointer: function() {
