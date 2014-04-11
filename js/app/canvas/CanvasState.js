@@ -70,7 +70,9 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
         getPointerLocked: function() {
             return this._pointerLocked;
         },
-
+        setPointerLocked: function(pointerLocked) {
+            this._pointerLocked = pointerLocked;
+        },
 
         addNodeToBLayer: function(kineticNode) {
             this._baseLayer.add(kineticNode);
@@ -106,11 +108,23 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
                 myState.resize();
             }
 
-            this._baseLayer.on('mouseup',function(evt) {
-                if( myState.getPointerLocked() ) {
-                    myState.unlockPointer();
-                }
+            
+            
+            
+            this._baseLayer.on('mouseout', function(evt) {
+                myState.unlockPointer();    
             });
+            
+            
+            this._canvas = this._baseLayer.getCanvas()._canvas;
+            
+            this._canvas.addEventListener('mouseup', function(e) {
+               myState.unlockPointer();
+            }, true);
+            
+            document.addEventListener('pointerlockchange', function() { myState.lockChangeCallback() }, false);
+            document.addEventListener('mozpointerlockchange', function() { myState.lockChangeCallback() }, false);
+            document.addEventListener('webkitpointerlockchange', function() { myState.lockChangeCallback() }, false);
 
             /*
             this._canvas = canvas;
@@ -152,9 +166,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
                 myState.fire("mouseout",myState, {});
             }, true),
 
-            document.addEventListener('pointerlockchange', function() { myState.lockChangeCallback() }, false);
-            document.addEventListener('mozpointerlockchange', function() { myState.lockChangeCallback() }, false);
-            document.addEventListener('webkitpointerlockchange', function() { myState.lockChangeCallback() }, false);
+            
 
 
             setInterval(function() { myState.draw(); }, myState.interval);
@@ -254,24 +266,24 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
         },
 
         lockPointer: function() {
-            this._pointerLocked = true;
-            //console.dir(this._baseLayer.getCanvas()._canvas);
             var canvas = this._baseLayer.getCanvas()._canvas;
 
             canvas.requestPointerLock = canvas.requestPointerLock ||
                 canvas.mozRequestPointerLock ||
                 canvas.webkitRequestPointerLock;
 
-            // Ask the browser to lock the pointer)
+            // Ask the browser to lock the pointer
             canvas.requestPointerLock();
         },
 
         unlockPointer: function() {
-            document.exitPointerLock = document.exitPointerLock ||
-                document.mozExitPointerLock ||
-                document.webkitExitPointerLock;
-
-            document.exitPointerLock();
+            if (this._pointerLocked) {
+                document.exitPointerLock = document.exitPointerLock ||
+                    document.mozExitPointerLock ||
+                    document.webkitExitPointerLock;
+    
+                document.exitPointerLock();
+            }
         },
 
         getValueByControlId: function(id) {
