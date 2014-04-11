@@ -47,12 +47,9 @@ define(['dejavu', 'app/controls/Control'], function(dejavu, Control){
 
         initialize: function(id, x, y, value, canvasState, label) {
             this.$super(id, x, y, canvasState);
-            this._value = value;
+            this._value    = value;
             this._selected = false;
-            this._label = label;
-
-            //var myControl = this;
-            //canvasState.addListener("mouseout", function() { myControl.setSelected(false); });
+            this._label    = label;
         }
     });
     return UIControl;

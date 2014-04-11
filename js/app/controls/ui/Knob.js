@@ -35,47 +35,59 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
         _pointer: null,
 
         $constants: {
-            LABEL_OFFSET: 20,
-            KNOBBORDER_WIDTH: 7
+            LABEL_OFFSET:              20,
+            BORDER_WIDTH:              5,
+
+            POINTER_MAX_DEG:           405,
+            POINTER_MIN_DEG:           135,
+            POINTER_WIDTH:             7,
+
+            VAL_DISPLAY_CORNER_RADIUS: 3,
+            VAL_DISPLAY_BORDER_WIDTH:  5,
+            VAL_DISPLAY_FONT_SIZE:     18,
+            VAL_DISPLAY_HEIGHT:        23,
+            VAL_DISPLAY_WIDTH:         64,
+            VAL_DISPLAY_Y:             27
         },
 
         initialize: function (id, x, y, value, canvasState, label, valueDspMult,  minValue, maxValue, radius, color, snapStep, snapDistance, doubleClickSnapValue) {
             this.$super(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, snapStep, snapDistance, doubleClickSnapValue);
 
-            this._minPointerDeg = 135;
-            this._maxPointerDeg = 405;
+            var pointerDeg      = this.$static.POINTER_MAX_DEG - this.$static.POINTER_MIN_DEG;
 
-            this._minPointerRad = this.$self.calcDegToRad(this._minPointerDeg);
-            this._maxPointerRad = this.$self.calcDegToRad(this._maxPointerDeg);
+            this._minPointerRad = this.$self.calcDegToRad(this.$static.POINTER_MAX_DEG);
+            this._maxPointerRad = this.$self.calcDegToRad(this.$static.POINTER_MIN_DEG);
 
             this._radius = radius;
 
-
+            // init pointer radion from value
             this._pointerRadian = this.$self.calcRadFromValue(value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
 
             // create components of control
-
             this._knobX = radius + x;
             this._knobY = radius + y;
 
             // create knob circle
             this._knobCircle = new Kinetic.Circle({
-                x: this._knobX,
-                y: this._knobY,
+                x:      this._knobX,
+                y:      this._knobY,
                 radius: radius,
-                fill: color
+                fill:   color
              });
 
             this._kineticGroup.add(this._knobCircle);
 
             // create knob border
             var arc = new Kinetic.Arc({
-                x: this._knobX,
-                y: this._knobY,
-                innerRadius: radius - 10,
+                x:           this._knobX,
+                y:           this._knobY,
+                innerRadius: radius - this.$static.BORDER_WIDTH,
                 outerRadius: radius,
-                angle: 20,
-                stroke: '#000'
+                angle:       pointerDeg,
+                rotation:    this.$static.POINTER_MIN_DEG,
+
+                fill:        '#000',
+                stroke:      '#000'
             });
 
             this._kineticGroup.add(arc);
@@ -84,13 +96,42 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
             var initialPointerPos = this.calcPointerPos();
 
             this._pointer = new Kinetic.Line({
-                points: [ this._knobX, this._knobY, initialPointerPos.x, initialPointerPos.y  ],
-                stroke: '#000',
-                lineJoin: 'round',
-                strokeWidth: 7
+                points:     [this._knobX, this._knobY, initialPointerPos.x, initialPointerPos.y],
+                stroke:     '#000',
+                lineJoin:   'round',
+                strokeWidth: this.$static.POINTER_WIDTH
             });
 
             this._kineticGroup.add(this._pointer);
+
+            // create knob value-display
+            var valueBorder = new Kinetic.Rect({
+               x:            this._knobX - this.$static.VAL_DISPLAY_WIDTH / 2,
+               y:            this._knobY + this.$static.VAL_DISPLAY_Y,
+
+               cornerRadius: this.$static.VAL_DISPLAY_CORNER_RADIUS,
+               height:       this.$static.VAL_DISPLAY_HEIGHT,
+               width:        this.$static.VAL_DISPLAY_WIDTH,
+               strokeWidth:  this.$static.VAL_DISPLAY_BORDER_WIDTH,
+
+               fill:          color,
+               stroke:       '#000'
+            });
+
+            this._kineticGroup.add(valueBorder);
+
+            var valueDisplay = new Kinetic.Text({
+               fill:     '#000',
+               fontSize: this.$static.VAL_DISPLAY_FONT_SIZE,
+               text:     this._value
+            });
+            $textWidth = valueDisplay.getTextWidth();
+            $textHeight = valueDisplay.getTextHeight();
+
+            valueDisplay.setX(this._knobX - $textWidth / 2)
+            valueDisplay.setY(valueBorder.getY() + (this.$static.VAL_DISPLAY_HEIGHT / 2) - ($textHeight / 2))
+
+            this._kineticGroup.add(valueDisplay);
 
             var myKnob = this;
 
@@ -99,10 +140,11 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
                 myKnob.getCanvasState().lockPointer();
             });
 
-            // create knob value-display
+            this._knobCircle.on('mousemove', function(evt) {
+                myKnob.update();
+            });
 
             // create knob
-
             /*
             this._minPointerDeg = 135;
             this._maxPointerDeg = 405;
