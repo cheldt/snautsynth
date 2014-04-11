@@ -100,21 +100,21 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
             // add layer to stage
             this._stage.add(this._baseLayer);
+            
+            this._drawInterval = 30;
 
             var myState = this;
-            setInterval(function() { myState.draw(); }, myState.interval);
+            
+            setInterval(function() { myState.draw(); }, 30);
 
             window.onresize = function () {
                 myState.resize();
             }
-
-            
-            
+            //myState.draw();
             
             this._baseLayer.on('mouseout', function(evt) {
                 myState.unlockPointer();    
             });
-            
             
             this._canvas = this._baseLayer.getCanvas()._canvas;
             
