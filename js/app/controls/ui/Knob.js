@@ -4,9 +4,6 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
 
         $extends: RangeControl,
 
-        _minPointerDeg: null,
-        _maxPointerDeg: null,
-
         _minPointerRad: null,
         _maxPointerRad: null,
 
@@ -35,53 +32,65 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
         _pointer: null,
 
         $constants: {
-            LABEL_OFFSET: 20,
-            KNOBBORDER_WIDTH: 7
+            LABEL_OFFSET:              20,
+            BORDER_WIDTH:              5,
+
+            POINTER_MAX_DEG:           405,
+            POINTER_MIN_DEG:           135,
+            POINTER_WIDTH:             7,
+
+            VAL_DISPLAY_CORNER_RADIUS: 3,
+            VAL_DISPLAY_BORDER_WIDTH:  5,
+            VAL_DISPLAY_FONT_SIZE:     18,
+            VAL_DISPLAY_HEIGHT:        23,
+            VAL_DISPLAY_WIDTH:         64,
+            VAL_DISPLAY_Y:             27
         },
 
         initialize: function (id, x, y, value, canvasState, label, valueDspMult,  minValue, maxValue, radius, color, snapStep, snapDistance, doubleClickSnapValue) {
             this.$super(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, snapStep, snapDistance, doubleClickSnapValue);
             
-            this._minValue = minValue;
-            this._maxValue = maxValue;
+            this._minValue      = minValue;
+            this._maxValue      = maxValue;
 
-            // set mix/max of pointer movement
-            this._minPointerDeg = 135;
-            this._maxPointerDeg = 405;
+            var pointerDeg      = this.$static.POINTER_MAX_DEG - this.$static.POINTER_MIN_DEG;
 
-            this._minPointerRad = this.$self.calcDegToRad(this._minPointerDeg);
-            this._maxPointerRad = this.$self.calcDegToRad(this._maxPointerDeg);
+
+            this._minPointerRad = this.$self.calcDegToRad(this.$static.POINTER_MIN_DEG);
+            this._maxPointerRad = this.$self.calcDegToRad(this.$static.POINTER_MAX_DEG);
 
             this._radius = radius;
 
-
+            // init pointer radian from value
             this._pointerRadian = this.$self.calcRadFromValue(value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
             this._tmpPointerRad = this._pointerRadian;
 
             // create components of control
-
             this._knobX = radius + x;
             this._knobY = radius + y;
 
             // create knob circle
             this._knobCircle = new Kinetic.Circle({
-                x: this._knobX,
-                y: this._knobY,
+                x:      this._knobX,
+                y:      this._knobY,
                 radius: radius,
-                fill: color
+                fill:   color
              });
 
             this._kineticGroup.add(this._knobCircle);
 
             // create knob border
             var arc = new Kinetic.Arc({
-                x: this._knobX,
-                y: this._knobY,
-                innerRadius: radius - 10,
+                x:           this._knobX,
+                y:           this._knobY,
+                innerRadius: radius - this.$static.BORDER_WIDTH,
                 outerRadius: radius,
-                angle: this._maxPointerDeg - this._minPointerDeg,
-                stroke: '#000',
-                rotationDeg: this._minPointerDeg
+
+                angle:       pointerDeg,
+                rotation:    this.$static.POINTER_MIN_DEG,
+
+                fill:        '#000',
+                stroke:      '#000'
             });
 
             this._kineticGroup.add(arc);
@@ -90,15 +99,43 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
             var initialPointerPos = this.calcPointerPos();
 
             this._pointer = new Kinetic.Line({
-                points: [ this._knobX, this._knobY, initialPointerPos.x, initialPointerPos.y  ],
-                stroke: '#000',
-                lineJoin: 'round',
-                strokeWidth: 8
+                points:     [this._knobX, this._knobY, initialPointerPos.x, initialPointerPos.y],
+                stroke:     '#000',
+                lineJoin:   'round',
+                strokeWidth: this.$static.POINTER_WIDTH
             });
 
             this._kineticGroup.add(this._pointer);
 
-            
+            // create knob value-display
+            var valueBorder = new Kinetic.Rect({
+               x:            this._knobX - this.$static.VAL_DISPLAY_WIDTH / 2,
+               y:            this._knobY + this.$static.VAL_DISPLAY_Y,
+
+               cornerRadius: this.$static.VAL_DISPLAY_CORNER_RADIUS,
+               height:       this.$static.VAL_DISPLAY_HEIGHT,
+               width:        this.$static.VAL_DISPLAY_WIDTH,
+               strokeWidth:  this.$static.VAL_DISPLAY_BORDER_WIDTH,
+
+               fill:          color,
+               stroke:       '#000'
+            });
+
+            this._kineticGroup.add(valueBorder);
+
+            var valueDisplay = new Kinetic.Text({
+               fill:     '#000',
+               fontSize: this.$static.VAL_DISPLAY_FONT_SIZE,
+               text:     this._value
+            });
+            $textWidth = valueDisplay.getTextWidth();
+            $textHeight = valueDisplay.getTextHeight();
+
+            valueDisplay.setX(this._knobX - $textWidth / 2)
+            valueDisplay.setY(valueBorder.getY() + (this.$static.VAL_DISPLAY_HEIGHT / 2) - ($textHeight / 2))
+
+            this._kineticGroup.add(valueDisplay);
+
             var myKnob = this;
 
             // add eventlistener for mousedown => lock mouse
@@ -119,11 +156,7 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
                 myKnob.setSelected(false);
             });
             
-            
 
-            // create knob value-display
-
-            
             /*
             
 
@@ -197,94 +230,13 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
         },
 
         getKnobY: function() {
-           return (this._y + this._radius + (this.$self.KNOBBORDER_WIDTH / 2) + ((this._label !== null) ? this.$static.LABEL_OFFSET : 0));
+           return (this._y + this._radius + (this.$self.BORDER_WIDTH / 2) + ((this._label !== null) ? this.$static.LABEL_OFFSET : 0));
         },
 
         calcPointerPos: function() {
             var pointerLength = (this._radius / 1.23);
             return {x:  Math.cos(this._pointerRadian) * pointerLength + this._knobX, y: Math.sin(this._pointerRadian) * pointerLength + this._knobY};
         },
-
-        draw: function() {
-            return;
-
-            var knobFrameLineWidth = this.$self.KNOBBORDER_WIDTH * ( this._radius * 0.02 );
-            var knobSelectionLineWidth = 2 * ( this._radius * 0.02 );
-            var fontSize = 18 * ( this._radius * 0.02 );
-            var fontFormatStr = StringUtils.multiReplace("normal %FONTSIZE%px droid sans",{ "%FONTSIZE%" : fontSize });
-
-            var knobRadius = this._radius;
-            var knobX = this.getKnobX();
-            var knobY = this.getKnobY();
-
-            var ctx = this._canvasState.getCanvasContext();
-
-            // draw label
-            if(this._label !== null) {
-                ctx.beginPath();
-                ctx.font = fontFormatStr;
-                ctx.fillStyle = "#000";
-                var metrics = ctx.measureText(this._label);
-                var txtWidth = metrics.width;
-                ctx.fillText(this._label,knobX - (txtWidth / 2), this._y + fontSize * 0.7); //
-            }
-
-            // draw button area (filled circle)
-            ctx.beginPath();
-            ctx.arc(knobX, knobY, knobRadius, 0, 2 * Math.PI, false);
-            ctx.fillStyle = this._color;
-            ctx.fill();
-
-            // draw button edges
-            ctx.beginPath();
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = knobFrameLineWidth;
-            ctx.arc(knobX, knobY, knobRadius, this._minPointerRad,  this._maxPointerRad, false);
-            ctx.stroke();
-
-            // draw pointer line
-            ctx.beginPath();
-            ctx.moveTo(knobX,knobY);
-            var pointerLength = (knobRadius / 1.2);
-            var xPointer = Math.cos(this._pointerRadian) * pointerLength + knobX;
-            var yPointer = Math.sin(this._pointerRadian) * pointerLength + knobY;
-            ctx.lineTo(xPointer,yPointer);
-            ctx.lineWidth = knobFrameLineWidth;
-            ctx.stroke();
-
-            var rectY = (knobY + this._radius * 0.75);
-            var rectW = (knobRadius * 1.5);
-            var rectX = (knobX - (rectW / 2));
-            var rectH = (knobRadius * 0.4);
-            DrawingUtils.roundRect(ctx , rectX, rectY, rectW, rectH, 7, knobFrameLineWidth * 1.5, true, true);
-
-            // draw value text
-            ctx.beginPath();
-            ctx.font = fontFormatStr;
-            ctx.fillStyle = "#000";
-
-            var str = (this._value * this._valueDspMult).toFixed(0);
-            var txtWidth = ctx.measureText(str).width;
-            ctx.fillText(str, knobX - (txtWidth / 2), knobY + this._radius * 1.1);
-
-            if(this._selected) {
-                // draw selection
-                // right now this is just a stroke along the edge of the selected Shape
-                ctx.beginPath();
-                ctx.strokeStyle = '#FFF';
-                ctx.lineWidth = knobSelectionLineWidth;
-                ctx.arc(knobX, knobY, knobRadius, this._minPointerRad,  this._maxPointerRad , false);
-                ctx.stroke();
-
-                var rectW = (knobRadius * 1.6);
-                var rectX = (knobX - (rectW / 2));
-                var rectH = (knobRadius * 0.51);
-                var rectY = (knobY + this._radius * 0.7);
-                DrawingUtils.roundRect(ctx, rectX, rectY, rectW, rectH, 10, knobSelectionLineWidth, false, true);
-            }
-        },
-
-
 
         checkSelect: function(mousePos) {
             if( this.contains(mousePos.getX(),mousePos.getY()) ) {
@@ -327,39 +279,44 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
             if(this._selected) {
                 this._clickCounter = 0;
 
-                var maxMouseDelta = 200;
-                var mouseY = mousePos.getY();
+                var maxMouseDelta  = 200;
+                var mouseY         = mousePos.getY();
                 
                 //1 - 200
                 //x   - 45
-                var speedup = Math.abs((10 * mouseY) / maxMouseDelta);
+                var speedup        = Math.abs((10 * mouseY) / maxMouseDelta);
 
                 var value;
-                var forward = false;
-                var mouseMoves = true;
+                var forward        = false;
+                var mouseMoves     = true;
 
-                var lastValue = this._canvasState.getLastValue();
-                var speed = 0.05
+                var lastValue      = this._canvasState.getLastValue();
+                var speed          = 0.05
 
-                if(this._snapStep == 0)
+                if(this._snapStep == 0) {
                    speed = speed * speedup;
+                }
 
                 if( mouseY < 0 ) {
 
                     //check if knob was turned to far clockwise
-                    if ( ( this._tmpPointerRad + speed) <= this._maxPointerRad )
+                    if ( ( this._tmpPointerRad + speed) <= this._maxPointerRad ) {
                         this._tmpPointerRad += speed;
-                    else
+                    }
+                    else {
                         this._tmpPointerRad = this._maxPointerRad;
+                    }
 
                     forward = true;
                 } else if ( mouseY > 0 ) {
 
                     //check if knob was turned to far counter clockwise
-                    if ( ( this._tmpPointerRad - speed) >= this._minPointerRad )
+                    if ( ( this._tmpPointerRad - speed) >= this._minPointerRad ) {
                         this._tmpPointerRad -= speed;
-                    else
+                    }
+                    else {
                         this._tmpPointerRad = this._minPointerRad;
+                    }
                 } else {
                     mouseMoves = false;
                 }
@@ -370,28 +327,32 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
                     if(this._snapStep != 0) {
                         var snap = false;
                         if( forward ) {
-                            if ( value - lastValue >= this._snapStep - this._snapDistance )
+                            if ( value - lastValue >= this._snapStep - this._snapDistance ) {
                                 snap = true;
+                            }
                         } else {
-                            if ( Math.abs(value - lastValue) >=  this._snapStep - this._snapDistance )
+                            if ( Math.abs(value - lastValue) >=  this._snapStep - this._snapDistance ) {
                                 snap = true;
+                            }
                         }
 
                         if(snap) {
-                            //speedup = Math.round(Math.round(speedup) / this._snapStep) * this._snapStep;
-
                             var step = this._snapStep; // + speedup;
                             if ( forward ) {
-                                if(this._value + step <= this._maxValue)
+                                if(this._value + step <= this._maxValue) {
                                     this._value = this._value + step;
-                                else
+                                }
+                                else {
                                     this._value = this._maxValue;
+                                }
                             }
                             else {
-                                if(this._value - step >= this._minValue)
+                                if(this._value - step >= this._minValue) {
                                     this._value = this._value - step;
-                                else
+                                }
+                                else {
                                     this._value = this._minValue;
+                                }
                             }
                             this._canvasState.setLastValue(this._value);
                             this._pointerRadian = this.$self.calcRadFromValue(this._value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
@@ -412,5 +373,6 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
         }
 
     });
+    
     return Knob;
 });
