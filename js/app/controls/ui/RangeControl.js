@@ -13,6 +13,11 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
         _snapDistance: null,
 
         _doubleClickSnapValue: null,
+	
+	getDoubleClickSnapValue: function() {
+	    return this._doubleClickSnapValue;
+        },
+	
 
         initialize: function (id, x, y, value, canvasState, label, valueDspMult,  minValue, maxValue, snapStep, snapDistance, doubleClickSnapValue) {
             this.$super(id, x, y, value, canvasState, label);
