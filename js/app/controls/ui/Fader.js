@@ -99,9 +99,10 @@ define(['dejavu', 'app/controls/ui/RangeControl'], function(dejavu, RangeControl
             ctx.stroke();
 
             //draw fader handler
+        },
 
-
-
+        formatValue: function() {
+            return 0;
         },
 
         update: function(mousePos) {

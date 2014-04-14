@@ -2,8 +2,9 @@ define(['dejavu','kinetic'], function(dejavu,Kinetic){
     var Control = dejavu.Class.declare({
         $name: 'Control',
 
-        _id: null,
         _canvasState: null,
+
+        _id: null,
 
         _kineticGroup: null,
 
@@ -12,6 +13,14 @@ define(['dejavu','kinetic'], function(dejavu,Kinetic){
         },
         setId: function(id) {
             this._id = id;
+        },
+
+        getCanvasState: function() {
+            return this._canvasState;
+        },
+
+        getKineticGroup: function() {
+            return this._kineticGroup;
         },
 
         getX: function() {
@@ -28,22 +37,15 @@ define(['dejavu','kinetic'], function(dejavu,Kinetic){
             this._kineticGroup.setY(y);
         },
 
-        getCanvasState: function() {
-            return this._canvasState;
-        },
-
         initialize: function(id, x, y, canvasState) {
-            this._id = id;
-            this._canvasState = canvasState;
+            this._id           = id;
+            this._canvasState  = canvasState;
 
             // create layer for control
             this._kineticGroup = new Kinetic.Group();
 
             this._kineticGroup.setX(x);
             this._kineticGroup.setY(y);
-
-            // add group to baseLayer of canvasState
-            canvasState.addNodeToBLayer(this._kineticGroup);
         }
 
     });

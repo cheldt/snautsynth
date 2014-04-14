@@ -63,40 +63,52 @@ requirejs(['kinetic'],function(Kinetic) {
 */
 
 // Start the main app logic.
-requirejs(['app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/RadioGroup', 'app/controls/ui/RadioButton', 'app/controls/ui/Fader', 'app/audio/Synthesizer'],
-    function (CanvasState, Knob, RadioGroup, RadioButton, Fader, Synthesizer) {
+requirejs(['app/event/Event', 'app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/RadioGroup', 'app/controls/ui/RadioButton', 'app/controls/ui/Fader', 'app/audio/Synthesizer'],
+    function (Event, CanvasState, Knob, RadioGroup, RadioButton, Fader, Synthesizer) {
 
         var MASTERGAIN = 1;
-        var OSC1_WAVE = 2;
-        var OSC1_TUNE = 3;
-        var OSC1_GAIN = 4;
-        var OSC1_OCT = 5;
-        var OSC2_WAVE = 6;
-        var OSC2_TUNE = 7;
-        var OSC2_GAIN = 8;
-        var OSC2_OCT = 9;
-        var ADSR_A = 10;
-        var ADSR_D = 11;
-        var ADSR_S = 12;
-        var ADSR_R = 13;
+        var OSC1_WAVE  = 2;
+        var OSC1_TUNE  = 3;
+        var OSC1_GAIN  = 4;
+        var OSC1_OCT   = 5;
+        var OSC2_WAVE  = 6;
+        var OSC2_TUNE  = 7;
+        var OSC2_GAIN  = 8;
+        var OSC2_OCT   = 9;
+        var ADSR_A     = 10;
+        var ADSR_D     = 11;
+        var ADSR_S     = 12;
+        var ADSR_R     = 13;
 
         var TEST_FADER = 14;
 
-        //var canvas = document.createElement('canvas');
-        //canvas.setAttribute('id','cvs');
 
-        //document.body.appendChild(canvas); // adds the canvas to the body element
-        var canvasState = new CanvasState(800, 600);
-        canvasState.addControl(new Knob(OSC1_TUNE, 0, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
 
+
+        var canvasState = new CanvasState(600, 200);
+        //canvasState.addControl(new Knob(OSC1_TUNE, 0, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
+
+        var radioGroup = new RadioGroup(OSC1_WAVE, 40, 40, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform', 10);
+        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORMS_SINE, '#000', '#FFF'));
+        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
+        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
+        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
+        canvasState.addControl(radioGroup);
+
+        canvasState.getBaseLayer().on("mousemove dblclick mouseclick", function(evt) {
+            var eventObject = this.getAttr('event');
+            if(typeof eventObject !== 'undefined') {
+                if (eventObject.getType() == Event.TYPE_VALUE_CHANGED) {
+                    switch (eventObject.getControlId()) {
+                        case OSC1_TUNE:
+                            break;
+                    }
+                }
+            }
+        });
 
         /*
-        var radioGroup = new RadioGroup(OSC1_WAVE, 0, 0, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform', 10);
-        radioGroup.addButton(new RadioButton(canvasState, "Sine", Synthesizer.WAVEFORMS_SINE, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
-        canvasState.addControl(radioGroup);
+
 
         canvasState.addControl(new Knob(OSC1_TUNE, 130, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
         canvasState.addControl(new Knob(OSC1_OCT, 260, 0, 0, canvasState, 'OSC1 Octave', 1, -4, 4, 50,'#AABBCC', 1, 0.5, 0));

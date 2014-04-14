@@ -4,31 +4,50 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
     var CanvasState = dejavu.Class.declare({
         $name: 'CanvasState',
 
-        $extends: CustomEvent,
-
-        _lastValue: null,
-        _lastMouseX: null,
-        _lastMouseY: null,
-        _lastMouseDownEventTmstamp: null,
-        _canvas: null,
-        _canvasContext: null,
-        _controls: null,
-        _drawInterval: null,
-
-        _stage: null,
+        //$extends: CustomEvent,
 
         _baseLayer: null,
 
-        _width: null,
+        _canvas: null,
+
+        _canvasContext: null,
+
+        _controls: null,
+
         _height: null,
+
+        _drawInterval: null,
+
+        _lastMouseX: null,
+
+        _lastMouseY: null,
+
+        _lastValue: null,
 
         _pointerLocked: null,
 
-        getLastValue: function() {
-            return this._lastValue;
+        _stage: null,
+
+        _width: null,
+
+        getBaseLayer: function() {
+            return this._baseLayer;
         },
-        setLastValue: function(lastValue) {
-            this._lastValue = lastValue;
+        setBaseLayer: function(baseLayer) {
+            this._baseLayer = baseLayer;
+            return this;
+        },
+
+        getCanvas: function() {
+            return this._canvas;
+        },
+        setCanvas: function(canvas) {
+            this._canvas = canvas;
+            return this;
+        },
+
+        getCanvasContext: function() {
+            return this._canvasContext;
         },
 
         getLastMouseX: function() {
@@ -38,6 +57,13 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             this._lastMouseX = lastMouseX;
         },
 
+        getLastValue: function() {
+            return this._lastValue;
+        },
+        setLastValue: function(lastValue) {
+            this._lastValue = lastValue;
+        },
+
         getLastMouseY: function() {
             return this._lastMouseY;
         },
@@ -45,37 +71,11 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             this._lastMouseY = lastMouseY;
         },
 
-        getLastMouseDownEventTmstamp: function() {
-            return this._lastMouseDownEventTmstamp;
-        },
-        setLastMouseDownEventTmstamp: function(lastMouseDownEventTmstamp) {
-            this._lastMouseDownEventTmstamp = lastMouseDownEventTmstamp;
-        },
-
-        getCanvas: function() {
-            return this._canvas;
-        },
-        setCanvas: function(canvas) {
-            this._canvas = canvas;
-        },
-
-        getScale: function() {
-            return this._scale;
-        },
-
-        getCanvasContext: function() {
-            return this._canvasContext;
-        },
-
         getPointerLocked: function() {
             return this._pointerLocked;
         },
         setPointerLocked: function(pointerLocked) {
             this._pointerLocked = pointerLocked;
-        },
-
-        addNodeToBLayer: function(kineticNode) {
-            this._baseLayer.add(kineticNode);
         },
 
         initialize: function(width, height) {
@@ -110,8 +110,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             window.onresize = function () {
                 myState.resize();
             }
-            //myState.draw();
-            
+
             this._baseLayer.on('mouseout', function(evt) {
                 myState.unlockPointer();    
             });
@@ -174,6 +173,78 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             */
         },
 
+        addControl: function(control) {
+            // add group to baseLayer of canvasState
+            this.addNodeToBLayer(control.getKineticGroup());
+        },
+
+        addNodeToBLayer: function(kineticNode) {
+            this._baseLayer.add(kineticNode);
+        },
+
+        clear: function() {
+            this._canvasContext.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        },
+
+        draw: function() {
+            this._stage.clear();
+            this._stage.draw();
+        },
+
+        findPosition: function() {
+            var obj = this._canvas;
+            var curleft = 0, curtop = 0;
+            if (obj.offsetParent) {
+                do {
+                    curleft += obj.offsetLeft;
+                    curtop += obj.offsetTop;
+                    obj = obj.offsetParent;
+                } while (obj);
+                return { x: curleft, y: curtop };
+            }
+            return undefined;
+        },
+
+        getValueByControlId: function(id) {
+            var ctrCount = this._controls.length;
+            for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
+                var ctrl = this._controls[ctrIndex];
+                if(ctrl.getId() == id)
+                    return ctrl.getValue();
+            }
+            return null;
+        },
+
+        /**
+         * Returns mouse-delta or position depending on pointer-lock.
+         * Position is calculated scaling
+         * @param e
+         * @returns {app.utils.MousePosition}
+         */
+        getMousePosition: function(e) {
+            var mx, my;
+            if(this._pointerLocked) {
+                mx = e.movementX
+                  || e.mozMovementX
+                  || e.webkitMovementX
+                  || 0;
+
+                my = e.movementY
+                  || e.mozMovementY
+                  || e.webkitMovementY
+                  || 0;
+            } else {
+                var pos = this.findPosition();
+                mx = (e.pageX - pos.x) / this._stage.getScale();
+                my = (e.pageY - pos.y) / this._stage.getScale();
+            }
+
+            return new MousePosition(mx, my);
+        },
+
+        /**
+         * Called after mouse-pointer lock is achieved
+         */
         lockChangeCallback: function() {
             if (document.pointerLockElement === this._canvas ||
                 document.mozPointerLockElement === this._canvas ||
@@ -184,6 +255,23 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             }
         },
 
+        /**
+         * Try to lock mouse-pointer
+         */
+        lockPointer: function() {
+            var canvas = this._baseLayer.getCanvas()._canvas;
+
+            canvas.requestPointerLock = canvas.requestPointerLock ||
+                canvas.mozRequestPointerLock ||
+                canvas.webkitRequestPointerLock;
+
+            // Ask the browser to lock the pointer
+            canvas.requestPointerLock();
+        },
+
+        /**
+         * Resize stage on viewport
+         */
         resize: function () {
             // browser viewport size
             var windowWidth = window.innerWidth;
@@ -201,80 +289,15 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
                 this._stage.setScale({ x: scale, y: scale });
                 this._stage.draw();
             }
-
-
         },
 
-        addControl: function(control) {
-            //this._controls.push(control);
-        },
 
-        clear: function() {
-            this._canvasContext.clearRect(0, 0, this._canvas.width, this._canvas.height);
-        },
 
-        draw: function() {
-            this._stage.clear();
-            this._stage.draw();
-            /*
-            //clear canvas
-            this.clear();
 
-            // ** Add stuff you want drawn in the background all the time here **
-            // draw all controls
-            var ctrCount = this._controls.length;
-            for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
-                this._controls[ctrIndex].draw();
-            }
-            */
-        },
 
-        findPosition: function() {
-            var obj = this._canvas;
-            var curleft = 0, curtop = 0;
-            if (obj.offsetParent) {
-                do {
-                    curleft += obj.offsetLeft;
-                    curtop += obj.offsetTop;
-                    obj = obj.offsetParent;
-                } while (obj);
-                return { x: curleft, y: curtop };
-            }
-            return undefined;
-        },
 
-        getMousePosition: function(e) {
-            var mx, my;
-            if(this._pointerLocked) {
-                mx = e.movementX ||
-                    e.mozMovementX          ||
-                    e.webkitMovementX       ||
-                    0;
 
-                my = e.movementY ||
-                    e.mozMovementY      ||
-                    e.webkitMovementY   ||
-                    0;
-            } else {
-                var pos = this.findPosition();
-                mx = (e.pageX - pos.x) / this._stage.getScale();
-                my = (e.pageY - pos.y) / this._stage.getScale();
-            }
 
-            // We return a simple javascript object with x and y defined
-            return new MousePosition(mx, my);
-        },
-
-        lockPointer: function() {
-            var canvas = this._baseLayer.getCanvas()._canvas;
-
-            canvas.requestPointerLock = canvas.requestPointerLock ||
-                canvas.mozRequestPointerLock ||
-                canvas.webkitRequestPointerLock;
-
-            // Ask the browser to lock the pointer
-            canvas.requestPointerLock();
-        },
 
         unlockPointer: function() {
             if (this._pointerLocked) {
@@ -286,15 +309,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             }
         },
 
-        getValueByControlId: function(id) {
-            var ctrCount = this._controls.length;
-            for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
-                var ctrl = this._controls[ctrIndex];
-                if(ctrl.getId() == id)
-                    return ctrl.getValue();
-            }
-            return null;
-        }
+
 
     });
     return CanvasState;

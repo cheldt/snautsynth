@@ -1,4 +1,4 @@
-define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/utils/Drawing', 'kinetic'], function(dejavu, RangeControl, StringUtils, DrawingUtils, Kinetic){
+define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/event/Event',  'kinetic', 'mout/number/enforcePrecision'], function(dejavu, RangeControl, StringUtils, Event, Kinetic, enforcePrecision){
     var Knob = dejavu.Class.declare({
         $name: 'Knob',
 
@@ -159,7 +159,7 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
 
             this._valueDisplayText = new Kinetic.Text({
                fill:     '#000',
-               fontSize: Knob.VAL_DISPLAY_FONT_SIZE,
+               fontSize: Knob.VAL_DISPLAY_FONT_SIZE
             });
 
             this.updateValueDisplayText(this._value);
@@ -176,8 +176,11 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
             });
 
             this._kineticGroup.on('mousemove', function(evt) {
-                var mousePos = myKnob.getCanvasState().getMousePosition(evt);
+                var mousePos  = myKnob.getCanvasState().getMousePosition(evt);
+                var baseLayer = myKnob.getCanvasState().getBaseLayer();
+
                 myKnob.update(mousePos);
+                baseLayer.setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
             });
 
             this._kineticGroup.on('mouseup mouseleave', function(evt) {
@@ -195,8 +198,9 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
                 var newPointerPos = myKnob.calcPointerPos();
                 myKnob.updatePointerPosition(newPointerPos);
                 myKnob.setTmpPointerRad(myKnob.getPointerRadian());
-                myKnob.updateValueDisplayText(myKnob.getValue().toFixed(0))
-                //myKnob._canvasState.fire("valuechanged", this, { value: this._value, id:  this._id});
+                myKnob.updateValueDisplayText(this.formatValue());
+
+                myKnob.getCanvasState().getBaseLayer().setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
             });
         },
 
@@ -245,17 +249,19 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
             };
         },
 
+        formatValue: function() {
+            return enforcePrecision(this._value, 0)
+        },
+
         getKnobX: function() {
-            return (this._x + this._radius);
+            return (this.getX() + this._radius);
         },
 
         getKnobY: function() {
-           return (this._y + this._radius + (Knob.BORDER_WIDTH / 2) + ((this._label !== null) ? Knob.LABEL_OFFSET : 0));
+           return (this.getY() + this._radius + (Knob.BORDER_WIDTH / 2) + ((this._label !== null) ? Knob.LABEL_OFFSET : 0));
         },
 
         update: function(mousePos) {
-            
-            console.log(this._tmpPointerRad);
             if(this._selected) {
                 this._clickCounter = 0;
 
@@ -335,10 +341,10 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
                                 }
                             }
                             this._canvasState.setLastValue(this._value);
-                            this._pointerRadian = this.$self.calcRadFromValue(this._value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
+                            this._pointerRadian = Knob.calcRadFromValue(this._value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
                             var newPointerPos = this.calcPointerPos();
                             this.updatePointerPosition(newPointerPos);
-                            this.updateValueDisplayText(33);
+                            this.updateValueDisplayText(this.formatValue());
                             //this._canvasState.fire("valuechanged", this, { value: this._value, id:  this._id});
                         }
                     } else {
@@ -346,7 +352,8 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
                         this._value = value;
                         var newPointerPos = this.calcPointerPos();
                         this.updatePointerPosition(newPointerPos);
-                        this.updateValueDisplayText(this._value.toFixed(0));
+                        this.updateValueDisplayText(this.formatValue());
+
                         //this._canvasState.fire("valuechanged", this, { value: this._value, id:  this._id});
                     }
 
@@ -365,8 +372,7 @@ define(['dejavu', 'app/controls/ui/RangeControl',  'app/utils/String', 'app/util
         
         updatePointerPosition: function(newPointerPos) {
             this._pointer.setPoints([this._knobX, this._knobY, newPointerPos.x, newPointerPos.y])
-        },
-
+        }
     });
     
     return Knob;

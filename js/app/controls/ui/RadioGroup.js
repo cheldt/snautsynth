@@ -1,92 +1,69 @@
-define(['dejavu', 'app/controls/ui/UIControl',  'app/utils/String'], function(dejavu, UIControl, StringUtils){
+define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/ui/RadioButton'], function(dejavu, Event, UIControl, RadioButton){
     var RadioGroup = dejavu.Class.declare({
         $name: 'RadioGroup',
 
         $extends: UIControl,
 
         _radioButtons: null,
-        _radius: null,
-        _fontSize: null,
-        _maxButtonY: null,
-        _maxButtonX: null,
-        _startButtonY: null,
-        _startLabelY: null,
-        _fontFormatStr: null,
+
+        _lastRadioY: null,
+
+        getRadioButtons: function() {
+            return this._radioButtons;
+        },
 
         initialize: function (id, x, y, value, canvasState, label, radius) {
             this.$super(id, x, y, value, canvasState, label);
 
+            this._lastRadioY = y;
+
             this._radioButtons = [];
-            this._radius = radius;
-            this._fontSize = 18;
 
-            this._startButtonY = this._y + 30;
-            this._startLabelY = this._y + this._fontSize * 0.7;
+            var myRadioGroup = this;
 
-            this._maxButtonY = this._startButtonY;
+            this._kineticGroup.on('click', function(evt) {
+                var eventObject =  myRadioGroup.getCanvasState().getBaseLayer().getAttr('event');
+                if(typeof eventObject !== 'undefined') {
+                    if (eventObject.getType() == Event.TYPE_CHECKED_CHANGED) {
+                        var radioButtonList = myRadioGroup.getRadioButtons();
+                        var ctrCount        = radioButtonList.length;
 
-            this._fontFormatStr = StringUtils.multiReplace("normal normal %FONTSIZE%px droid sans",{ "%FONTSIZE%" : this._fontSize });
+                        for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
+                            var radioButton = radioButtonList[ctrIndex];
+                            radioButton.changeCheckedState(false);
+                        }
 
-            var myBtn = this;
-            canvasState.addListener("mousedown", function(mousePos) { myBtn.update(mousePos.getX(),mousePos.getY()); });
+                        for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
+                            var radioButton = radioButtonList[ctrIndex];
+
+                            if( radioButton.getValue() == eventObject.getValue() ) {
+                                radioButton.changeCheckedState(true);
+                                myRadioGroup.setValue(radioButton.getValue());
+                                myRadioGroup.getCanvasState().getBaseLayer().setAttr('event', new Event(
+                                    myRadioGroup.getId(),
+                                    myRadioGroup.getValue(),
+                                    Event.TYPE_VALUE_CHANGED)
+                                );
+                            }
+                        }
+                    }
+                }
+            });
         },
 
         addButton: function(radioButton) {
-            if(radioButton.getValue() == this._value)
-                radioButton.setChecked(true);
-
-            radioButton.setX(this._x);
-            radioButton.setY(this._maxButtonY);
-            radioButton.setRadius(this._radius);
-
+            radioButton.setY(this._lastRadioY)
+            radioButton.setX(this.getX())
 
             this._radioButtons.push(radioButton);
-            this._maxButtonY += this._radius * 2.1;
-        },
-
-        draw: function() {
-            var btnRadius = this._radius;
-            var ctx = this._canvasState.getCanvasContext();
-
-            ctx.beginPath();
-            ctx.font = this._fontFormatStr;
-            ctx.fillStyle = "#000";
-            ctx.fillText(this._label, this._x, this._startLabelY);
-
-            var buttonCount = this._radioButtons.length;
-            for(var arrayIndex = 0; arrayIndex < buttonCount; ++ arrayIndex) {
-                var radioButton = this._radioButtons[arrayIndex];
-                radioButton.draw(ctx, btnRadius, this._fontFormatStr);
-            }
-        },
-
-        contains: function(mouseX, mouseY) {
-            var buttonCount = this._radioButtons.length;
-            for(var arrayIndex = 0; arrayIndex < buttonCount; ++ arrayIndex) {
-                if(this._radioButtons[arrayIndex].contains(mouseX, mouseY) === true)
-                    return true;
-            }
-            return false;
-        },
-
-        update: function(mouseX, mouseY) {
-
-            if(this.contains(mouseX,mouseY)) {
-                var buttonCount = this._radioButtons.length;
-                for(var arrayIndex = 0; arrayIndex < buttonCount; ++ arrayIndex) {
-                    var radioBtn = this._radioButtons[arrayIndex];
-                    if(radioBtn.contains(mouseX,mouseY)) {
-                        this._value = radioBtn.getValue();
-                        radioBtn.setChecked(true);
-                        this._canvasState.fire("valuechanged", this, { value: this._value, id:  this._id});
-                    } else {
-                        radioBtn.setChecked(false);
-                    }
-                }
+            this._kineticGroup.add(radioButton.getKineticGroup());
+            if (radioButton.getValue() == this._value) {
+                radioButton.changeCheckedState(true);
             }
 
+            this._lastRadioY += RadioButton.BUTTON_RADIUS * 3;
         }
     });
+
     return RadioGroup;
 });
-//@ sourceURL=RadíoGroup.js

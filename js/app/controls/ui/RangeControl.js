@@ -1,5 +1,5 @@
 define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
-    var RangeControl = dejavu.Class.declare({
+    var RangeControl = dejavu.AbstractClass.declare({
         $name: 'RangeControl',
 
         $extends: UIControl,
@@ -13,11 +13,14 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
         _snapDistance: null,
 
         _doubleClickSnapValue: null,
-	
-	getDoubleClickSnapValue: function() {
-	    return this._doubleClickSnapValue;
+
+        getDoubleClickSnapValue: function() {
+           return this._doubleClickSnapValue;
         },
-	
+
+        $abstracts: {
+            formatValue: function() {}
+        },
 
         initialize: function (id, x, y, value, canvasState, label, valueDspMult,  minValue, maxValue, snapStep, snapDistance, doubleClickSnapValue) {
             this.$super(id, x, y, value, canvasState, label);
