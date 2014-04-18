@@ -1,4 +1,4 @@
-define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl'], function(dejavu, Event, UIControl){
+define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl','mout/lang/defaults'], function(dejavu, Event, UIControl, defaults){
     var RadioButton = dejavu.Class.declare({
         $name: 'RadioButton',
 
@@ -34,6 +34,10 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl'], function(deja
         getValue: function() {
             return this._value;
         },
+	
+	getRadius: function() {
+	    return this._radius;
+	},
 
         $constants: {
             BUTTON_RADIUS:           10,
@@ -42,9 +46,12 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl'], function(deja
             BORDER_WIDTH:            3
         },
 
-        initialize: function(id, x, y, canvasState, label, value, color, checkedColor) {
+        initialize: function(id, x, y, canvasState, label, value, color, checkedColor, radius) {
             this.$super(id, x, y, value, canvasState, label);
-
+	    
+	    this._radius = defaults(radius, RadioButton.BUTTON_RADIUS);
+	    
+	    
             this._canvasState  = canvasState;
             this._checkedColor = checkedColor;
             this._color        = color;
@@ -54,10 +61,10 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl'], function(deja
 
             // create button
             this._buttonCircle = new Kinetic.Circle({
-                x:      this.getX(),
-                y:      this.getY(),
+                x:      this.getX() + this._radius + RadioButton.BORDER_WIDTH,
+                y:      this.getY() + this._radius + RadioButton.BORDER_WIDTH,
 
-                radius: RadioButton.BUTTON_RADIUS,
+                radius: this._radius,
                 fill:   color
             });
 
@@ -65,13 +72,13 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl'], function(deja
 
             // create button border
             var arc = new Kinetic.Arc({
-                x:           this._knobX,
-                y:           this._knobY,
+                x:           this._buttonCircle.getX(),
+                y:           this._buttonCircle.getY(),
 
                 angle:       360,
                 fill:        color,
-                innerRadius: RadioButton.BUTTON_RADIUS - RadioButton.BORDER_WIDTH,
-                outerRadius: RadioButton.BUTTON_RADIUS,
+                innerRadius: this._radius - RadioButton.BORDER_WIDTH,
+                outerRadius: this._radius,
                 stroke:      color
             });
 
@@ -86,8 +93,8 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl'], function(deja
 
             $textHeight = label.getTextHeight();
 
-            label.setX(this.getX() + RadioButton.BUTTON_RADIUS + RadioButton.LABEL_BUTTON_SPACE);
-            label.setY(this.getY() - $textHeight / 2);
+            label.setX(this._buttonCircle.getX() + this._radius + RadioButton.LABEL_BUTTON_SPACE);
+            label.setY(this._buttonCircle.getY() - $textHeight / 2);
 
             this._kineticGroup.add(label);
 

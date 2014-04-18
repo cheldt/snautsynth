@@ -24,47 +24,12 @@ require.config({
 
 });
 
-/*
-requirejs(['kinetic'],function(Kinetic) {
-    var containerDiv = document.createElement('div');
-    containerDiv.setAttribute('id','container');
-    document.body.appendChild(containerDiv);
-
-
-    var stage = new Kinetic.Stage({
-        container: 'container',
-        width: 800,
-        height: 600
-    });
-
-
-    var layer = new Kinetic.Layer();
-
-    var rect = new Kinetic.Rect({
-        x: 239,
-        y: 75,
-        width: 100,
-        height: 50,
-        fill: 'green',
-        stroke: 'black',
-        strokeWidth: 1
-    });
-
-    // add the shape to the layer
-    layer.add(rect);
-
-    // add the layer to the stage
-    stage.add(layer);
-
-    var scale = stage.getScale().x
-    stage.setScale({x: 2, y: 2});
-    stage.draw();
-});
-*/
-
 // Start the main app logic.
-requirejs(['app/event/Event', 'app/canvas/CanvasState', 'app/controls/ui/Knob', 'app/controls/ui/RadioGroup', 'app/controls/ui/RadioButton', 'app/controls/ui/Fader', 'app/audio/Synthesizer'],
-    function (Event, CanvasState, Knob, RadioGroup, RadioButton, Fader, Synthesizer) {
+requirejs(['app/event/Event', 'app/canvas/CanvasState',
+           'app/controls/ui/Knob', 'app/controls/ui/RadioGroup',
+           'app/controls/ui/RadioButton', 'app/controls/ui/Fader',
+           'app/audio/Synthesizer', 'app/utils/formatter/NumberFormatter'],
+    function (Event, CanvasState, Knob, RadioGroup, RadioButton, Fader, Synthesizer, NumberFormatter) {
 
         var MASTERGAIN = 1;
         var OSC1_WAVE  = 2;
@@ -83,17 +48,19 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState', 'app/controls/ui/Knob', 
         var TEST_FADER = 14;
 
 
-
-
         var canvasState = new CanvasState(600, 200);
         //canvasState.addControl(new Knob(OSC1_TUNE, 0, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
 
-        var radioGroup = new RadioGroup(OSC1_WAVE, 40, 40, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform', 10);
+        var radioGroup = new RadioGroup(OSC1_WAVE, 0, 0, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform');
         radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORMS_SINE, '#000', '#FFF'));
         radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
         radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
         radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
         canvasState.addControl(radioGroup);
+        
+        canvasState.addControl(new Knob(OSC1_TUNE, 60, 0, 0, canvasState, 'OSC1 Tune', 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(OSC1_OCT, 120, 0, 0, canvasState, 'OSC1 Octave', 1, -4, 4, 50,'#AABBCC', 1, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(OSC1_GAIN, 180, 0, 1, canvasState, 'OSC1 Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
 
         canvasState.getBaseLayer().on("mousemove dblclick mouseclick", function(evt) {
             var eventObject = this.getAttr('event');
@@ -110,9 +77,7 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState', 'app/controls/ui/Knob', 
         /*
 
 
-        canvasState.addControl(new Knob(OSC1_TUNE, 130, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
-        canvasState.addControl(new Knob(OSC1_OCT, 260, 0, 0, canvasState, 'OSC1 Octave', 1, -4, 4, 50,'#AABBCC', 1, 0.5, 0));
-        canvasState.addControl(new Knob(OSC1_GAIN, 390, 0, 1, canvasState, 'OSC1 Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null));
+        
 
         var radioGroup = new RadioGroup(OSC2_WAVE, 0, 150, Synthesizer.WAVEFORMS_SINE, canvasState, 'OCS2 Waveform', 10);
         radioGroup.addButton(new RadioButton(canvasState, "Sine", Synthesizer.WAVEFORMS_SINE, '#000', '#FFF'));

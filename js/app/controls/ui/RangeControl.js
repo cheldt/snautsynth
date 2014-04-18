@@ -1,28 +1,38 @@
 define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
-    var RangeControl = dejavu.AbstractClass.declare({
+    var RangeControl = dejavu.Class.declare({
         $name: 'RangeControl',
 
         $extends: UIControl,
-
+	
+	_doubleClickSnapValue: null,
+	
+	_formatter: null,
+	
+	_maxValue: null,
+	
+	_minValue: null,
+	
+	_snapDistance: null,
+	
+	_snapStep: null,
+        
         _valueDspMult: null,
-
-        _minValue: null,
-        _maxValue: null,
-
-        _snapStep: null,
-        _snapDistance: null,
-
-        _doubleClickSnapValue: null,
 
         getDoubleClickSnapValue: function() {
            return this._doubleClickSnapValue;
         },
+	
+	getFormatter: function() {
+	    return this._formatter;
+	},
 
-        $abstracts: {
-            formatValue: function() {}
-        },
-
-        initialize: function (id, x, y, value, canvasState, label, valueDspMult,  minValue, maxValue, snapStep, snapDistance, doubleClickSnapValue) {
+        initialize: function (id, x, y,
+			      value, canvasState,
+			      label, valueDspMult,
+			      minValue, maxValue,
+			      snapStep, snapDistance,
+			      doubleClickSnapValue,
+			      formatter) {
             this.$super(id, x, y, value, canvasState, label);
 
             this._valueDspMult         = valueDspMult;
@@ -34,6 +44,8 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
             this._snapDistance         = snapDistance;
 
             this._doubleClickSnapValue = doubleClickSnapValue;
+	    
+	    this._formatter            = formatter;
         }
 
     });
