@@ -105,7 +105,13 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
             var myState = this;
             
-            setInterval(function() { myState.draw(); }, 30);
+            
+            (function animloop(){
+                window.requestAnimationFrame(animloop);
+                myState.draw();
+            })();
+            
+            //setInterval(function() { myState.draw(); }, 30);
 
             window.onresize = function () {
                 myState.resize();
