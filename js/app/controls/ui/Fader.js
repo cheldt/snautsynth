@@ -4,31 +4,56 @@ define(['dejavu', 'app/controls/ui/RangeControl'], function(dejavu, RangeControl
 
         $extends: RangeControl,
 
-        _orientation: null,
-        _length: null,
+        _borderColor: null,
+
         _color: null,
 
+        _faderBorder: null,
+
         _faderPosX: null,
+
         _faderPosY: null,
+
+        _orientation: null,
+
+        _length: null,
 
         $constants: {
             ORIENTATION_HORIZONTAL : 0,
-            ORIENTATION_VERTICAL: 1,
-            LABEL_OFFSET: 20,
-            FADER_KNOB_HEIGHT: 20,
-            FADER_KNOB_WIDTH: 10,
-            FADER_TRACK_WIDTH: 5
+            ORIENTATION_VERTICAL:    1,
+            LABEL_OFFSET:            20,
+            FADER_KNOB_HEIGHT:       20,
+            FADER_KNOB_WIDTH:        10,
+            FADER_TRACK_WIDTH:       5,
+            BORDER_RADIUS:           3
         },
 
-        initialize: function (id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, length, color, snapStep, snapDistance, doubleClickSnapValue, orientation) {
-            this.$super(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, snapStep, snapDistance, doubleClickSnapValue);
+        initialize: function (
+            id, x, y, value, canvasState,
+            label, valueDspMult, minValue, maxValue,
+            length, color, snapStep, snapDistance,
+            doubleClickSnapValue,
+            orientation ) {
+            this.$super(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, snapStep,
+                snapDistance, doubleClickSnapValue);
 
-            this._length = length;
-            this._color = color;
+            this._length      = length;
+            this._color       = color;
             this._orientation = orientation;
 
             this._faderPosX = 0;
             this._faderPosY = 0;
+
+            //create border
+            this._faderBorder = new Kinectic.Rect({
+               x: this._x,
+               y: this._y
+
+
+
+            });
+
+            //this._kineticGroup.add()
 
             // register eventlisteners
             var myKnob = this;

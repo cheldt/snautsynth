@@ -21,7 +21,7 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
         getDoubleClickSnapValue: function() {
            return this._doubleClickSnapValue;
         },
-	
+
 	getFormatter: function() {
 	    return this._formatter;
 	},
