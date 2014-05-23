@@ -3,18 +3,18 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
         $name: 'RangeControl',
 
         $extends: UIControl,
-	
-	_doubleClickSnapValue: null,
-	
-	_formatter: null,
-	
-	_maxValue: null,
-	
-	_minValue: null,
-	
-	_snapDistance: null,
-	
-	_snapStep: null,
+
+        _doubleClickSnapValue: null,
+
+        _formatter: null,
+
+        _maxValue: null,
+
+        _minValue: null,
+
+        _snapDistance: null,
+
+        _snapStep: null,
         
         _valueDspMult: null,
 
@@ -22,17 +22,17 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
            return this._doubleClickSnapValue;
         },
 
-	getFormatter: function() {
-	    return this._formatter;
-	},
+        getFormatter: function() {
+            return this._formatter;
+        },
 
         initialize: function (id, x, y,
-			      value, canvasState,
-			      label, valueDspMult,
-			      minValue, maxValue,
-			      snapStep, snapDistance,
-			      doubleClickSnapValue,
-			      formatter) {
+            value, canvasState,
+            label, valueDspMult,
+            minValue, maxValue,
+            snapStep, snapDistance,
+            doubleClickSnapValue,
+            formatter) {
             this.$super(id, x, y, value, canvasState, label);
 
             this._valueDspMult         = valueDspMult;
@@ -44,8 +44,8 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
             this._snapDistance         = snapDistance;
 
             this._doubleClickSnapValue = doubleClickSnapValue;
-	    
-	    this._formatter            = formatter;
+
+            this._formatter            = formatter;
         }
 
     });

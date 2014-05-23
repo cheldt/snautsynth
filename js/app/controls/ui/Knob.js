@@ -17,11 +17,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
 
         _maxPointerRad: null,
 
-        _maxValue: null,
-
         _minPointerRad: null,
-
-        _minValue: null,
 
         _pointerColor: null,
 

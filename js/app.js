@@ -48,7 +48,7 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         var TEST_FADER = 14;
 
 
-        var canvasState = new CanvasState(600, 200);
+        var canvasState = new CanvasState(600, 600);
         //canvasState.addControl(new Knob(OSC1_TUNE, 0, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
 
         var radioGroup = new RadioGroup(OSC1_WAVE, 0, 0, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform');
@@ -61,6 +61,9 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(new Knob(OSC1_TUNE, 60, 0, 0, canvasState, 'OSC1 Tune', 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0, new NumberFormatter('#0')));
         canvasState.addControl(new Knob(OSC1_OCT, 120, 0, 0, canvasState, 'OSC1 Octave', 1, -4, 4, 50,'#AABBCC', 1, 0.5, 0, new NumberFormatter('#0')));
         canvasState.addControl(new Knob(OSC1_GAIN, 180, 0, 1, canvasState, 'OSC1 Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
+
+
+        canvasState.addControl(new Fader(TEST_FADER, 160, 140, 50, canvasState, 'Testfader', 1, 0, 100, 200, '#AABBCC', 0, 0, 0, new NumberFormatter('#0.0'), Fader.ORIENTATION_VERTICAL));
 
         canvasState.getBaseLayer().on("mousemove dblclick mouseclick", function(evt) {
             var eventObject = this.getAttr('event');
