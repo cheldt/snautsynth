@@ -353,7 +353,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                             this.updateValueDisplayText();
                         }
                     } else {
-                        this._pointerRadian = Knob.calcRadFromValue(value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
+                        this._pointerRadian = this._tmpPointerRad;
                         this._value = value;
                         var newPointerPos = this.calcPointerPos();
                         this.updatePointerPosition(newPointerPos);

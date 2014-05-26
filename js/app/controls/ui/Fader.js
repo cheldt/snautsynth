@@ -13,7 +13,9 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
         _faderKnob: null,
 
-        _faderPos: null,
+        _position: null,
+
+        _tmpPosition: null,
 
         _orientation: null,
 
@@ -45,9 +47,6 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             this._color       = color;
             this._orientation = orientation;
 
-            this._faderPosX   = 0;
-            this._faderPosY   = 0;
-
             height            = this._length;
             width             = Fader.FADER_TRACK_HEIGHT;
 
@@ -69,8 +68,9 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
             this._kineticGroup.add(this._faderBorder);
 
-
             this._trackLength = this._length * 0.9;
+
+            this._tmpPosition = this.calcPositionFromValue(value);
 
             startPointX     = Fader.FADER_TRACK_HEIGHT / 2;
             startPointY     = (this._length - this._trackLength) / 2;
@@ -100,7 +100,6 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
             this._kineticGroup.add(trackLine);
 
-
             height = Fader.FADER_KNOB_HEIGHT;
             width  = Fader.FADER_KNOB_WIDTH;
 
@@ -109,8 +108,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                 width  = Fader.FADER_KNOB_HEIGHT;
             }
 
-            knobPos = this.calcFaderPosition(
-                value,
+            knobPos = this.calcKnobPosition(
+                this._tmpPosition,
                 height,
                 width,
                 startPointX,
@@ -160,20 +159,13 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             });
         },
 
-        calcFaderPosition: function(value, knobHeight, knobWidth, startPointX, startPointY) {
-            //calculate fader-knob movement from value (rule of three)
-            var minValue   = this._minValue;
-            var maxValue   = this._maxValue;
-            var valueRange = this._maxValue - this._minValue;
-
-            var newPos     = (this._trackLength * value) / valueRange;
-
+        calcKnobPosition: function(position, knobHeight, knobWidth, startPointX, startPointY) {
             if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
-                knobX = startPointX + newPos - knobWidth / 2;
+                knobX = startPointX + position - knobWidth / 2;
                 knobY = startPointY - knobHeight / 2;
             } else {
                 knobX = startPointX - knobWidth / 2;
-                knobY = startPointY + newPos - knobHeight / 2;
+                knobY = startPointY + position - knobHeight / 2;
             }
 
             return {
@@ -182,10 +174,36 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             };
         },
 
+        calcPositionFromValue: function(value) {
+            var minValue   = this._minValue;
+            var maxValue   = this._maxValue;
+            var valueRange = this._maxValue - this._minValue;
+
+            return (this._trackLength * value) / valueRange;
+        },
+
+        calcValueFromPosition: function(position) {
+            var minValue   = this._minValue;
+            var maxValue   = this._maxValue;
+            var valueRange = this._maxValue - this._minValue;
+
+            // valueRange => this._trackLength
+            // value => position
+
+            if (0 == position) {
+                return 0;
+            } else {
+                return (valueRange * position) / this._trackLength;
+            }
+        },
+
         update: function(mousePos) {
             if(this._selected) {
                 var mouseDelta    = 0;
                 var maxMouseDelta = 200;
+
+                var maxPosition   = this._trackLength;
+
 
                 if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
                     mouseDelta = mousePos.getX();
@@ -198,22 +216,41 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
                 var mouseMoves = true;
 
-                if(this._snapStep == 0) {
+                if (0 == this._snapStep) {
                     speed = speed * speedup;
                 }
 
 
-
-                if( mouseDelta < 0 ) {
-                    this._value -= speed;
-                } else if ( mouseDelta > 0 ) {
-                    this._value += speed;
+                if (mouseDelta < 0) {
+                    if ( (this._tmpPosition - speed) > 0) {
+                        this._tmpPosition -= speed;
+                    } else {
+                        this._tmpPosition = 0;
+                    }
+                } else if (mouseDelta > 0) {
+                    if ( (this._tmpPosition + speed) < maxPosition) {
+                        this._tmpPosition += speed;
+                    } else {
+                        this._tmpPosition = maxPosition;
+                    }
+                } else {
+                    mouseMoves = false;
                 }
 
+                var knob = this._knob;
+
+                if (mouseMoves) {
+                    if(this._snapStep != 0) {
+
+                    } else {
+                        var knob = this._knob;
+
+                    }
+
+                }
 
             }
         }
-
     });
     return Fader;
 });
