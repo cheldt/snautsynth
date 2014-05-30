@@ -48,7 +48,7 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         var TEST_FADER = 14;
 
 
-        var canvasState = new CanvasState(600, 600);
+        var canvasState = new CanvasState(600, 600, 'syn');
         //canvasState.addControl(new Knob(OSC1_TUNE, 0, 0, 0, canvasState, null, 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
 
         var radioGroup = new RadioGroup(OSC1_WAVE, 0, 0, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform');

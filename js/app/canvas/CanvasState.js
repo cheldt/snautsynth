@@ -12,6 +12,8 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
         _canvasContext: null,
 
+        _container: null,
+
         _controls: null,
 
         _height: null,
@@ -78,7 +80,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             this._pointerLocked = pointerLocked;
         },
 
-        initialize: function(width, height) {
+        initialize: function(width, height, containerId) {
 
 
             // create canvas element
@@ -89,11 +91,13 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             //document.body.appendChild(canvas);
 
             this._stage = new Kinetic.Stage({
-                container: 'syn',
+                container: containerId,
                 width: width,
                 height: height,
                 scale: {x: 1, y: 1}
             });
+
+            this._container = document.getElementById(containerId);
 
             // create base layer, which holds controls (shapes in layer) and other layers
             this._baseLayer = new Kinetic.Layer();
@@ -122,14 +126,15 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             });
             
             this._canvas = this._baseLayer.getCanvas()._canvas;
-            
-            this._canvas.addEventListener('mouseup', function(e) {
-               myState.unlockPointer();
-            }, true);
-            
+
+            //this._container.addEventListener('mouseup', function(e) {
+               //myState.unlockPointer();
+            //}, false);
+
             document.addEventListener('pointerlockchange', function() { myState.lockChangeCallback() }, false);
             document.addEventListener('mozpointerlockchange', function() { myState.lockChangeCallback() }, false);
             document.addEventListener('webkitpointerlockchange', function() { myState.lockChangeCallback() }, false);
+
 
             /*
             this._canvas = canvas;
@@ -252,9 +257,9 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
          * Called after mouse-pointer lock is achieved
          */
         lockChangeCallback: function() {
-            if (document.pointerLockElement === this._canvas ||
-                document.mozPointerLockElement === this._canvas ||
-                document.webkitPointerLockElement === this._canvas) {
+            if (document.pointerLockElement === this._container ||
+                document.mozPointerLockElement === this._container ||
+                document.webkitPointerLockElement === this._container) {
                 this._pointerLocked = true;
             } else {
                 this._pointerLocked = false
@@ -265,14 +270,11 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
          * Try to lock mouse-pointer
          */
         lockPointer: function() {
-            var canvas = this._baseLayer.getCanvas()._canvas;
-
-            canvas.requestPointerLock = canvas.requestPointerLock ||
-                canvas.mozRequestPointerLock ||
-                canvas.webkitRequestPointerLock;
-
+            this._container.requestPointerLock = this._container.requestPointerLock ||
+                this._container.mozRequestPointerLock ||
+                this._container.webkitRequestPointerLock;
             // Ask the browser to lock the pointer
-            canvas.requestPointerLock();
+            this._container.requestPointerLock();
         },
 
         /**
@@ -297,25 +299,15 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             }
         },
 
-
-
-
-
-
-
-
-
         unlockPointer: function() {
             if (this._pointerLocked) {
-                document.exitPointerLock = document.exitPointerLock ||
+                document.exitPointerLock =  document.exitPointerLock ||
                     document.mozExitPointerLock ||
                     document.webkitExitPointerLock;
-    
+
                 document.exitPointerLock();
             }
-        },
-
-
+        }
 
     });
     return CanvasState;

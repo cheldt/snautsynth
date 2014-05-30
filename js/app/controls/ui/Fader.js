@@ -13,15 +13,19 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
         _faderKnob: null,
 
-        _position: null,
+        _length: null,
 
-        _tmpPosition: null,
+        _position: null,
 
         _orientation: null,
 
-        _length: null,
+        _tmpPosition: null,
 
         _trackLength: null,
+
+        _startTrackX: null,
+
+        _startTrackY: null,
 
         $constants: {
             ORIENTATION_HORIZONTAL :  0,
@@ -72,25 +76,25 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
             this._tmpPosition = this.calcPositionFromValue(value);
 
-            startPointX     = Fader.FADER_TRACK_HEIGHT / 2;
-            startPointY     = (this._length - this._trackLength) / 2;
+            this._startTrackX = Fader.FADER_TRACK_HEIGHT / 2;
+            this._startTrackY = (this._length - this._trackLength) / 2;
 
             if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
-                startPointX = (this._length - this._trackLength) / 2;
-                startPointY = Fader.FADER_TRACK_HEIGHT / 2;
+                this._startTrackX = (this._length - this._trackLength) / 2;
+                this._startTrackY = Fader.FADER_TRACK_HEIGHT / 2;
             }
 
-            endPointX       = startPointX;
-            endPointY       = startPointY + this._trackLength;
+            endPointX       = this._startTrackX;
+            endPointY       = this._startTrackY + this._trackLength;
 
             if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
-                endPointX = startPointX + this._trackLength;
-                endPointY = startPointY;
+                endPointX = this._startTrackX + this._trackLength;
+                endPointY = this._startTrackY;
             }
 
             // create track-line
             trackLine = new Kinetic.Line({
-                points:      [startPointX, startPointY, endPointX, endPointY],
+                points:      [this._startTrackX, this._startTrackY, endPointX, endPointY],
                 strokeWidth: Fader.FADER_TRACK_BORDER_WIDTH,
                 lineCap:     'round',
                 lineJoin:    'round',
@@ -108,18 +112,9 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                 width  = Fader.FADER_KNOB_HEIGHT;
             }
 
-            knobPos = this.calcKnobPosition(
-                this._tmpPosition,
-                height,
-                width,
-                startPointX,
-                startPointY
-            );
-
             //create handle
             this._faderKnob = new Kinetic.Rect({
-                x:            knobPos.x,
-                y:            knobPos.y,
+
                 cornerRadius: Fader.BORDER_RADIUS,
                 height:       height,
                 width:        width,
@@ -129,6 +124,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                 stroke:       '#000'
             });
 
+            this.updateKnobPosition(this._tmpPosition);
+
             this._kineticGroup.add(this._faderKnob);
 
 
@@ -136,12 +133,14 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
             // add eventlistener for mousedown => lock mouse
             this._faderKnob.on('mousedown', function(evt) {
+                console.log('down');
+
                 myFader.getCanvasState().lockPointer();
                 myFader.getCanvasState().setLastValue(myFader.getValue());
                 myFader.setSelected(true);
             });
 
-            this._faderKnob.on('mousemove', function(evt) {
+            this._kineticGroup.on('mousemove', function(evt) {
                 var mousePos  = myFader.getCanvasState().getMousePosition(evt);
                 var baseLayer = myFader.getCanvasState().getBaseLayer();
 
@@ -149,8 +148,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                 baseLayer.setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
             });
 
-            this._faderKnob.on('mouseup mouseleave', function(evt) {
-                myFader.getCanvasState().unlockPointer();
+            this._kineticGroup.on('mouseup', function(evt) {
+                console.log('up');
                 myFader.setSelected(false);
             });
 
@@ -159,13 +158,25 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             });
         },
 
-        calcKnobPosition: function(position, knobHeight, knobWidth, startPointX, startPointY) {
+        updateKnobPosition: function(position) {
+            var knob  = this._faderKnob;
+            var coord = this.calcKnobPosition(position) ;
+
+            knob.setX(coord.x);
+            knob.setY(coord.y);
+        },
+
+        calcKnobPosition: function(position) {
+            var knob       = this._faderKnob;
+            var knobHeight = knob.getHeight();
+            var knobWidth  = knob.getWidth();
+
             if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
-                knobX = startPointX + position - knobWidth / 2;
-                knobY = startPointY - knobHeight / 2;
+                knobX = this._startTrackX + position - knobWidth / 2;
+                knobY = this._startTrackY - knobHeight / 2;
             } else {
-                knobX = startPointX - knobWidth / 2;
-                knobY = startPointY + position - knobHeight / 2;
+                knobX = this._startTrackX - knobWidth / 2;
+                knobY = this._startTrackY + position - knobHeight / 2;
             }
 
             return {
@@ -204,6 +215,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
                 var maxPosition   = this._trackLength;
 
+                var value;
+
 
                 if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
                     mouseDelta = mousePos.getX();
@@ -212,14 +225,13 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                 }
 
                 var speedup    = Math.abs((10 * mouseDelta) / maxMouseDelta);
-                var speed      = 0.05
+                var speed      = 2.05
 
                 var mouseMoves = true;
 
                 if (0 == this._snapStep) {
                     speed = speed * speedup;
                 }
-
 
                 if (mouseDelta < 0) {
                     if ( (this._tmpPosition - speed) > 0) {
@@ -239,11 +251,16 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
                 var knob = this._knob;
 
+
+                value = this.calcValueFromPosition(this._tmpPosition);
+
                 if (mouseMoves) {
                     if(this._snapStep != 0) {
 
                     } else {
                         var knob = this._knob;
+                        this._value = value;
+                        this.updateKnobPosition(this._tmpPosition)
 
                     }
 
