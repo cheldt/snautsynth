@@ -51,6 +51,10 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
         getCanvasContext: function() {
             return this._canvasContext;
         },
+        
+        getContainer: function() {
+            return this._container;
+        },
 
         getLastMouseX: function() {
             return this._lastMouseX;
@@ -78,6 +82,10 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
         },
         setPointerLocked: function(pointerLocked) {
             this._pointerLocked = pointerLocked;
+        },
+        
+        getStage: function() {
+            return this._stage;
         },
 
         initialize: function(width, height, containerId) {
@@ -121,10 +129,6 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
                 myState.resize();
             }
 
-            this._baseLayer.on('mouseout', function(evt) {
-                myState.unlockPointer();    
-            });
-            
             this._canvas = this._baseLayer.getCanvas()._canvas;
 
             //this._container.addEventListener('mouseup', function(e) {

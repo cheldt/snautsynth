@@ -49,6 +49,10 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
             return this._minValue;
         },
         
+        getKnobCircle: function() {
+            return this._knobCircle;
+        },
+        
         getPointerRadian: function() {
             return this._pointerRadian;
         },
@@ -116,7 +120,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                 x:      this._knobX,
                 y:      this._knobY,
                 radius: radius,
-                fill:   color
+                fill:   color,
+                id: id
              });
 
             this._kineticGroup.add(this._knobCircle);
@@ -177,6 +182,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
             this._kineticGroup.add(this._valueDisplayText);
 
             var myKnob = this;
+            
+            var container = this.getCanvasState().getContainer();
 
             // add eventlistener for mousedown => lock mouse
             this._kineticGroup.on('mousedown', function(evt) {
@@ -185,32 +192,48 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                 myKnob.setSelected(true);
             });
 
-            this._kineticGroup.on('mousemove', function(evt) {
-                var mousePos  = myKnob.getCanvasState().getMousePosition(evt);
-                var baseLayer = myKnob.getCanvasState().getBaseLayer();
+            container.addEventListener('mousemove', function(evt) {
+                if (myKnob.getSelected()) {
+                    var mousePos  = myKnob.getCanvasState().getMousePosition(evt);
+                    var baseLayer = myKnob.getCanvasState().getBaseLayer();
 
-                myKnob.update(mousePos);
-                baseLayer.setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
+                    myKnob.update(mousePos);
+                    baseLayer.setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
+                }
             });
 
-            this._kineticGroup.on('mouseup mouseleave', function(evt) {
-                myKnob.getCanvasState().unlockPointer();
-                myKnob.setSelected(false);
+            container.addEventListener('mouseup', function(evt) {
+                if (myKnob.getSelected()) {
+                    myKnob.getCanvasState().unlockPointer();
+                    myKnob.setSelected(false);
+                }
             });
             
-            this._kineticGroup.on('dblclick', function(evt) {
-                myKnob.setValue(myKnob.getDoubleClickSnapValue());
-                myKnob.setPointerRadian(
-                    Knob.calcRadFromValue(
-                        myKnob.getDoubleClickSnapValue(), myKnob.getMinPointerRad(), myKnob.getMaxPointerRad(), myKnob.getMinValue(), myKnob.getMaxValue()
-                    )
-                );
-                var newPointerPos = myKnob.calcPointerPos();
-                myKnob.updatePointerPosition(newPointerPos);
-                myKnob.setTmpPointerRad(myKnob.getPointerRadian());
-                myKnob.updateValueDisplayText();
+            
+            
+            container.addEventListener('dblclick', function(evt) {
+                var stage      = myKnob.getCanvasState().getStage();
+                var pointerPos = stage.getPointerPosition();
+                var shape      = stage.getIntersection(pointerPos);
 
-                myKnob.getCanvasState().getBaseLayer().setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
+                if (!shape) {
+                    return;
+                }
+
+                if (myKnob.getId() == shape.getId()) {
+                    myKnob.setValue(myKnob.getDoubleClickSnapValue());
+                    myKnob.setPointerRadian(
+                        Knob.calcRadFromValue(
+                            myKnob.getDoubleClickSnapValue(), myKnob.getMinPointerRad(), myKnob.getMaxPointerRad(), myKnob.getMinValue(), myKnob.getMaxValue()
+                        )
+                    );
+                    var newPointerPos = myKnob.calcPointerPos();
+                    myKnob.updatePointerPosition(newPointerPos);
+                    myKnob.setTmpPointerRad(myKnob.getPointerRadian());
+                    myKnob.updateValueDisplayText();
+    
+                    myKnob.getCanvasState().getBaseLayer().setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));    
+                }
             });
         },
 

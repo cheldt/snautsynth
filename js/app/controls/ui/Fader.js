@@ -130,30 +130,35 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
 
             var myFader = this;
+            
+            var container = this.getCanvasState().getContainer();
 
             // add eventlistener for mousedown => lock mouse
             this._faderKnob.on('mousedown', function(evt) {
-                console.log('down');
-
                 myFader.getCanvasState().lockPointer();
                 myFader.getCanvasState().setLastValue(myFader.getValue());
                 myFader.setSelected(true);
             });
 
-            this._kineticGroup.on('mousemove', function(evt) {
-                var mousePos  = myFader.getCanvasState().getMousePosition(evt);
-                var baseLayer = myFader.getCanvasState().getBaseLayer();
-
-                myFader.update(mousePos);
-                baseLayer.setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
+            container.addEventListener('mousemove', function(evt) {
+                if (myFader.getSelected()) {
+                    console.log('faderMove');
+                    var mousePos  = myFader.getCanvasState().getMousePosition(evt);
+                    var baseLayer = myFader.getCanvasState().getBaseLayer();
+    
+                    myFader.update(mousePos);
+                    baseLayer.setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
+                }
             });
 
-            this._kineticGroup.on('mouseup', function(evt) {
-                console.log('up');
-                myFader.setSelected(false);
+            container.addEventListener('mouseup', function(evt) {
+                if (myFader.getSelected()) {
+                    myFader.setSelected(false);
+                    myFader.getCanvasState().unlockPointer();
+                }
             });
 
-            this._kineticGroup.on('dblclick', function(evt) {
+            container.addEventListener('dblclick', function(evt) {
 
             });
         },
