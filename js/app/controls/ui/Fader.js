@@ -67,7 +67,9 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                 strokeWidth:  Fader.FADER_TRACK_BORDER_WIDTH,
 
                 fill:         color,
-                stroke:       '#000'
+                stroke:       '#000',
+
+                id:           id
             });
 
             this._kineticGroup.add(this._faderBorder);
@@ -75,6 +77,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             this._trackLength = this._length * 0.9;
 
             this._tmpPosition = this.calcPositionFromValue(value);
+
+            console.log('temp: ' + this._tmpPosition);
 
             this._startTrackX = Fader.FADER_TRACK_HEIGHT / 2;
             this._startTrackY = (this._length - this._trackLength) / 2;
@@ -142,7 +146,6 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
             container.addEventListener('mousemove', function(evt) {
                 if (myFader.getSelected()) {
-                    console.log('faderMove');
                     var mousePos  = myFader.getCanvasState().getMousePosition(evt);
                     var baseLayer = myFader.getCanvasState().getBaseLayer();
     
@@ -159,7 +162,19 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             });
 
             container.addEventListener('dblclick', function(evt) {
+                    var stage      = myFader.getCanvasState().getStage();
+                    var pointerPos = stage.getPointerPosition();
+                    var shape      = stage.getIntersection(pointerPos);
 
+                    if (!shape) {
+                        return;
+                    }
+
+                    if (myFader.getId() == shape.getId()) {
+                        myFader.setValue(myFader.getDoubleClickSnapValue());
+                        var position = myFader.calcPositionFromValue(myFader.getValue());
+                        myFader.updateKnobPosition(position);
+                    }
             });
         },
 
@@ -177,11 +192,11 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             var knobWidth  = knob.getWidth();
 
             if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
-                knobX = this._startTrackX + position - knobWidth / 2;
+                knobX = this._startTrackX + (position - knobWidth / 2);
                 knobY = this._startTrackY - knobHeight / 2;
             } else {
                 knobX = this._startTrackX - knobWidth / 2;
-                knobY = this._startTrackY + position - knobHeight / 2;
+                knobY = this._startTrackY + (this._trackLength - position - knobHeight / 2);
             }
 
             return {
@@ -191,17 +206,24 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
         },
 
         calcPositionFromValue: function(value) {
-            var minValue   = this._minValue;
-            var maxValue   = this._maxValue;
             var valueRange = this._maxValue - this._minValue;
 
+            // _trackLength => valueRange
+            // position => value
+
             return (this._trackLength * value) / valueRange;
+
+            //return (this._trackLength * newValue) / valueRange;
         },
 
         calcValueFromPosition: function(position) {
             var minValue   = this._minValue;
             var maxValue   = this._maxValue;
             var valueRange = this._maxValue - this._minValue;
+
+
+
+
 
             // valueRange => this._trackLength
             // value => position
@@ -215,6 +237,9 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
         update: function(mousePos) {
             if(this._selected) {
+
+                var forward       = false;
+                var lastValue     = this._canvasState.getLastValue();
                 var mouseDelta    = 0;
                 var maxMouseDelta = 200;
 
@@ -222,11 +247,10 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
                 var value;
 
-
                 if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
                     mouseDelta = mousePos.getX();
                 } else {
-                    mouseDelta = mousePos.getY();
+                    mouseDelta = (-1) * mousePos.getY();
                 }
 
                 var speedup    = Math.abs((10 * mouseDelta) / maxMouseDelta);
@@ -244,6 +268,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                     } else {
                         this._tmpPosition = 0;
                     }
+                    forward = true;
                 } else if (mouseDelta > 0) {
                     if ( (this._tmpPosition + speed) < maxPosition) {
                         this._tmpPosition += speed;
@@ -256,17 +281,45 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
                 var knob = this._knob;
 
-
                 value = this.calcValueFromPosition(this._tmpPosition);
+
+                console.log(value);
 
                 if (mouseMoves) {
                     if(this._snapStep != 0) {
+                        var snap = false;
+                        if (forward && value - lastValue >= this._snapStep - this._snapDistance) {
+                            snap = true;
+                        } else if( Math.abs(value - lastValue) >=  this._snapStep - this._snapDistance ) {
+                            snap = true;
+                        }
 
+                        if (snap) {
+                            var step = this._snapStep;
+                            if ( !forward ) {
+                                if(this._value + step <= this._maxValue) {
+                                    this._value = this._value + step;
+                                }
+                                else {
+                                    this._value = this._maxValue;
+                                }
+                            }
+                            else {
+                                if(this._value - step >= this._minValue) {
+                                    this._value = this._value - step;
+                                }
+                                else {
+                                    this._value = this._minValue;
+                                }
+                            }
+                            this._canvasState.setLastValue(this._value);
+                            this._tmpPosition = this.calcPositionFromValue(this._value);
+                            this.updateKnobPosition(this._tmpPosition);
+                        }
                     } else {
                         var knob = this._knob;
                         this._value = value;
-                        this.updateKnobPosition(this._tmpPosition)
-
+                        this.updateKnobPosition(this._tmpPosition);
                     }
 
                 }

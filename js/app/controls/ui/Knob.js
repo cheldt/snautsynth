@@ -126,11 +126,13 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
 
             this._kineticGroup.add(this._knobCircle);
 
+            var radiusScaleMultiplier = (radius * 0.02);
+
             // create knob border
             var arc = new Kinetic.Arc({
                 x:           this._knobX,
                 y:           this._knobY,
-                innerRadius: radius - Knob.BORDER_WIDTH,
+                innerRadius: radius - (Knob.BORDER_WIDTH * radiusScaleMultiplier),
                 outerRadius: radius,
 
                 angle:       pointerDeg,
@@ -149,7 +151,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                 points:     [this._knobX, this._knobY, initialPointerPos.x, initialPointerPos.y],
                 stroke:     '#000',
                 lineJoin:   'round',
-                strokeWidth: Knob.POINTER_WIDTH
+                strokeWidth: Knob.POINTER_WIDTH * radiusScaleMultiplier
             });
 
             this._kineticGroup.add(this._pointer);
@@ -159,12 +161,12 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
             // create knob value-display
             this._valueDisplayArea = new Kinetic.Rect({
                x:            this._knobX - (Knob.VAL_DISPLAY_WIDTH * displayMultiplier) / 2,
-               y:            this._knobY + Knob.VAL_DISPLAY_Y,
+               y:            this._knobY + (Knob.VAL_DISPLAY_Y * radiusScaleMultiplier),
 
                cornerRadius: Knob.VAL_DISPLAY_CORNER_RADIUS * displayMultiplier,
                height:       Knob.VAL_DISPLAY_HEIGHT * displayMultiplier,
                width:        Knob.VAL_DISPLAY_WIDTH * displayMultiplier,
-               strokeWidth:  Knob.VAL_DISPLAY_BORDER_WIDTH,
+               strokeWidth:  Knob.VAL_DISPLAY_BORDER_WIDTH * radiusScaleMultiplier,
 
                fill:          color,
                stroke:       '#000'
@@ -174,7 +176,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
 
             this._valueDisplayText = new Kinetic.Text({
                fill:     '#000',
-               fontSize: Knob.VAL_DISPLAY_FONT_SIZE
+               fontSize: Knob.VAL_DISPLAY_FONT_SIZE * radiusScaleMultiplier
             });
 
             this.updateValueDisplayText(this._value);
@@ -341,7 +343,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                 if(mouseMoves) {
                     if(this._snapStep != 0) {
                         var snap = false;
-                        if( forward ) {
+                        if ( forward ) {
                             if ( value - lastValue >= this._snapStep - this._snapDistance ) {
                                 snap = true;
                             }
@@ -351,7 +353,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                             }
                         }
 
-                        if(snap) {
+                        if (snap) {
                             var step = this._snapStep;
                             if ( forward ) {
                                 if(this._value + step <= this._maxValue) {

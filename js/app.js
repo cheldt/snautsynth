@@ -63,7 +63,36 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(new Knob(OSC1_GAIN, 180, 0, 1, canvasState, 'OSC1 Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
 
 
-        canvasState.addControl(new Fader(TEST_FADER, 160, 140, 50, canvasState, 'Testfader', 1, 0, 100, 200, '#AABBCC', 0, 0, 0, new NumberFormatter('#0.0'), Fader.ORIENTATION_VERTICAL));
+
+        var radioGroup = new RadioGroup(OSC2_WAVE, 0, 80, Synthesizer.WAVEFORMS_SINE, canvasState, 'OSC1 Waveform');
+        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORMS_SINE, '#000', '#FFF'));
+        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
+        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
+        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
+        canvasState.addControl(radioGroup);
+
+
+        canvasState.addControl(new Knob(OSC2_TUNE, 60, 80, 0, canvasState, 'OSC1 Tune', 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(OSC2_OCT, 120, 80, 0, canvasState, 'OSC1 Octave', 1, -4, 4, 50,'#AABBCC', 1, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(OSC2_GAIN, 180, 80, 1, canvasState, 'OSC1 Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
+
+
+        canvasState.addControl(new Knob(MASTERGAIN, 240, 40, 1, canvasState, 'Master Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
+
+        canvasState.addControl(new Knob(ADSR_A, 0, 150, 1, canvasState, 'A', 1, 0, 6, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(ADSR_D, 40, 150, 2, canvasState, 'D', 1, 0, 6, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(ADSR_S, 80, 150, 0.5,canvasState, 'S', 100, 0, 1, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(ADSR_R, 120, 150, 1, canvasState, 'R', 1, 0, 6, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
+
+
+
+        /*
+        canvasState.addControl(new Knob(OSC1_TUNE, 60, 0, 0, canvasState, 'OSC1 Tune', 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(OSC1_OCT, 120, 0, 0, canvasState, 'OSC1 Octave', 1, -4, 4, 50,'#AABBCC', 1, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(OSC1_GAIN, 180, 0, 1, canvasState, 'OSC1 Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
+        */
+
+        //canvasState.addControl(new Fader(TEST_FADER, 160, 140, 10, canvasState, 'Testfader', 1, 0, 100, 200, '#AABBCC', 10, 1, 10, new NumberFormatter('#0.0'), Fader.ORIENTATION_VERTICAL));
 
         canvasState.getBaseLayer().on("mousemove dblclick mouseclick", function(evt) {
             var eventObject = this.getAttr('event');
@@ -77,34 +106,6 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
             }
         });
 
-        /*
-
-
-        
-
-        var radioGroup = new RadioGroup(OSC2_WAVE, 0, 150, Synthesizer.WAVEFORMS_SINE, canvasState, 'OCS2 Waveform', 10);
-        radioGroup.addButton(new RadioButton(canvasState, "Sine", Synthesizer.WAVEFORMS_SINE, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
-        canvasState.addControl(radioGroup);
-
-        canvasState.addControl(new Knob(OSC2_TUNE, 130, 150, 0, canvasState, 'OSC2 Tune', 1, -12, 12, 50,'#AABBCC', 0, 0.5, 0));
-        canvasState.addControl(new Knob(OSC2_OCT, 260, 150, 0, canvasState, 'OSC2 Octave', 1, -4, 4, 50,'#AABBCC', 1, 0.5, 0));
-        canvasState.addControl(new Knob(OSC2_GAIN, 390, 150, 1, canvasState, 'OSC2 Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null));
-
-        canvasState.addControl(new Knob(MASTERGAIN, 520, 0, 1, canvasState, 'MASTER Gain', 100, 0, 1, 50,'#AABBCC', 0, 0, null));
-
-        canvasState.addControl(new Knob(ADSR_A, 520, 150, 1, canvasState, 'A', 1, 0, 6, 30, '#AABBCC', 0, 0, null));
-        canvasState.addControl(new Knob(ADSR_D, 590, 150, 2, canvasState, 'D', 1, 0, 6, 30, '#AABBCC', 0, 0, null));
-        canvasState.addControl(new Knob(ADSR_S, 660, 150, 0.5, canvasState, 'S', 100, 0, 1, 30, '#AABBCC', 0, 0, null));
-        canvasState.addControl(new Knob(ADSR_R, 730, 150, 1, canvasState, 'R', 1, 0, 6, 30, '#AABBCC', 0, 0, null));
-
-
-
-        //(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, length, color, snapStep, snapDistance, doubleClickSnapValue, orientation)
-
-        canvasState.addControl(new Fader(TEST_FADER, 0, 350, 3, canvasState, 'Testfader', 1, 0, 10, 200, '#AABBCC', null, null, null, Fader.ORIENTATION_HORIZONTAL));
 
 
         var audioCtx = new webkitAudioContext();
@@ -114,6 +115,8 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
         canvasState.addListener("valuechanged", function(eventArgs) {
             var now = audioCtx.currentTime;
+
+            console.log(eventArgs);
 
             switch(eventArgs.id) {
                 case OSC1_WAVE:
@@ -208,8 +211,6 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
                 synth.noteOn(65);
             }
         });
-
-        */
     }
 );
 

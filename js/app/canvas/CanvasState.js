@@ -28,6 +28,8 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
         _pointerLocked: null,
 
+        _scale: null,
+
         _stage: null,
 
         _width: null,
@@ -83,7 +85,11 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
         setPointerLocked: function(pointerLocked) {
             this._pointerLocked = pointerLocked;
         },
-        
+
+        getScale: function() {
+            return this._scale;
+        },
+
         getStage: function() {
             return this._stage;
         },
@@ -294,10 +300,13 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
             // check of stage fits in viewport => scale when viewport is to small
             if( windowWidth >= stageWidth && windowHeight >= stageHeight ) {
+                this._scale = 1;
                 this._stage.setScale({ x: 1, y: 1 });
             } else {
                 // keep aspect ratio
-                var scale = Math.min(windowWidth / this._stage.getWidth(), windowHeight / this._stage.getHeight());
+                var scale   = Math.min(windowWidth / this._stage.getWidth(), windowHeight / this._stage.getHeight());
+                this._scale = scale;
+
                 this._stage.setScale({ x: scale, y: scale });
                 this._stage.draw();
             }
