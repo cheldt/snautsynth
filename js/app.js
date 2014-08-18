@@ -180,9 +180,6 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         });
 
         window.addEventListener("keydown", function(e) {
-
-            console.log(e.keyCode);
-
             if(e.keyCode == 65) { //A C-5
                 synth.noteOn(52);
             }
