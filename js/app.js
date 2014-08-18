@@ -123,7 +123,7 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(radioGroup);
 
         canvasState.addControl(new Label(1, 450, 340, canvasState, '#000', 'Freq'));
-        canvasState.addControl(new Fader(FLT_FREQUENCY, 450, 370, 22000, canvasState, 1, 10, 22000, 150, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
+        canvasState.addControl(new Fader(FLT_FREQUENCY, 450, 370, 22050, canvasState, 1, 60, 22050, 150, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
 
         canvasState.addControl(new Label(1, 530, 340, canvasState, '#000', 'Res'));
         canvasState.addControl(new Fader(FLT_RESONANCE, 530, 370, 0.0001, canvasState, 1, 0.0001, 50, 150, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));

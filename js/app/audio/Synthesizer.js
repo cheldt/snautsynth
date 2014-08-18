@@ -105,7 +105,7 @@ define(['dejavu', 'app/audio/utils/Audio'], function(dejavu, AudioUtils){
             // Create FilterNode
             this._filter = this._audioContext.createBiquadFilter();
             this._filter.type = 'lowpass';
-            this._filter.frequency.value = 22000;
+            this._filter.frequency.value = 22050;
             this._filter.Q.value = 0.0001;
 
             // Connect the Nodes
