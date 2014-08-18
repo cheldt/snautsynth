@@ -34,10 +34,10 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl','mout/lang/defa
         getValue: function() {
             return this._value;
         },
-	
-	getRadius: function() {
-	    return this._radius;
-	},
+
+        getRadius: function() {
+            return this._radius;
+        },
 
         $constants: {
             BUTTON_RADIUS:           10,
@@ -47,11 +47,10 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl','mout/lang/defa
         },
 
         initialize: function(id, x, y, canvasState, label, value, color, checkedColor, radius) {
-            this.$super(id, x, y, value, canvasState, label);
-	    
-	    this._radius = defaults(radius, RadioButton.BUTTON_RADIUS);
-	    
-	    
+            this.$super(id, x, y, value, canvasState);
+
+            this._radius = defaults(radius, RadioButton.BUTTON_RADIUS);
+
             this._canvasState  = canvasState;
             this._checkedColor = checkedColor;
             this._color        = color;
@@ -88,7 +87,7 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl','mout/lang/defa
             var label = new Kinetic.Text({
                fill:     '#000',
                fonzSize: RadioButton.LABEL_DISPLAY_FONT_SIZE,
-               text:     this._label
+               text:     this._labelText
             });
 
             $textHeight = label.getTextHeight();

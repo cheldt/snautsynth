@@ -12,8 +12,8 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/
             return this._radioButtons;
         },
 
-        initialize: function (id, x, y, value, canvasState, label) {
-            this.$super(id, x, y, value, canvasState, label);
+        initialize: function (id, x, y, value, canvasState) {
+            this.$super(id, x, y, value, canvasState);
 
             this._lastRadioY   = y;
 	    

@@ -84,14 +84,14 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
 
         initialize: function (id, x, y,
                               value, canvasState,
-                              label, valueDspMult,
+                              valueDspMult,
                               minValue, maxValue,
                               radius, color,
                               snapStep, snapDistance,
                               doubleClickSnapValue, formatter) {
             this.$super(id, x, y,
                         value, canvasState,
-                        label, valueDspMult,
+                        valueDspMult,
                         minValue, maxValue,
                         snapStep, snapDistance,
                         doubleClickSnapValue, formatter);
@@ -179,7 +179,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                fontSize: Knob.VAL_DISPLAY_FONT_SIZE * radiusScaleMultiplier
             });
 
-            this.updateValueDisplayText(this._value);
+            this.updateValueDisplayText();
 
             this._kineticGroup.add(this._valueDisplayText);
 
@@ -200,7 +200,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                     var baseLayer = myKnob.getCanvasState().getBaseLayer();
 
                     myKnob.update(mousePos);
-                    baseLayer.setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
+                    baseLayer.setAttr('event', new Event(myKnob.getId(), myKnob.getValue(), Event.TYPE_VALUE_CHANGED));
                 }
             });
 
@@ -210,9 +210,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                     myKnob.setSelected(false);
                 }
             });
-            
-            
-            
+
             container.addEventListener('dblclick', function(evt) {
                 var stage      = myKnob.getCanvasState().getStage();
                 var pointerPos = stage.getPointerPosition();
@@ -234,7 +232,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                     myKnob.setTmpPointerRad(myKnob.getPointerRadian());
                     myKnob.updateValueDisplayText();
     
-                    myKnob.getCanvasState().getBaseLayer().setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));    
+                    myKnob.getCanvasState().getBaseLayer().setAttr('event', new Event(myKnob.getId(), myKnob.getValue(), Event.TYPE_VALUE_CHANGED));
                 }
             });
         },

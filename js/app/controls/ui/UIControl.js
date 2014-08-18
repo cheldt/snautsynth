@@ -8,7 +8,6 @@ define(['dejavu', 'app/controls/Control'], function(dejavu, Control){
         _clickCounter: null,
         _clickEventTStamp: null,
         _selected: null,
-        _label: null,
 
         getValue: function() {
             return this._value;
@@ -38,18 +37,10 @@ define(['dejavu', 'app/controls/Control'], function(dejavu, Control){
             this._selected = selected;
         },
 
-        getLabel: function() {
-            return this._label;
-        },
-        setLabel: function(label) {
-            this._label = label;
-        },
-
-        initialize: function(id, x, y, value, canvasState, label) {
+        initialize: function(id, x, y, value, canvasState) {
             this.$super(id, x, y, canvasState);
             this._value    = value;
             this._selected = false;
-            this._label    = label;
         }
     });
     return UIControl;

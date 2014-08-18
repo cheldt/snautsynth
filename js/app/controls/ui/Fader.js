@@ -27,6 +27,10 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
         _startTrackY: null,
 
+        _valueDisplayArea: null,
+
+        _valueDisplayText: null,
+
         $constants: {
             ORIENTATION_HORIZONTAL :  0,
             ORIENTATION_VERTICAL:     1,
@@ -35,16 +39,19 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             FADER_KNOB_WIDTH:         40,
             FADER_TRACK_HEIGHT:       30,
             FADER_TRACK_BORDER_WIDTH: 5,
-            BORDER_RADIUS:            3
+            BORDER_RADIUS:            3,
+            VAL_DISPLAY_AREA_WIDTH:   60,
+            VAL_DISPLAY_AREA_HEIGHT:  30,
+            VAL_DISPLAY_FONT_SIZE:    18
         },
 
         initialize: function (
             id, x, y, value, canvasState,
-            label, valueDspMult, minValue, maxValue,
+            valueDspMult, minValue, maxValue,
             length, color, snapStep, snapDistance,
             doubleClickSnapValue, formatter,
             orientation ) {
-            this.$super(id, x, y, value, canvasState, label, valueDspMult, minValue, maxValue, snapStep,
+            this.$super(id, x, y, value, canvasState, valueDspMult, minValue, maxValue, snapStep,
                 snapDistance, doubleClickSnapValue, formatter );
 
             this._length      = length;
@@ -77,8 +84,6 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             this._trackLength = this._length * 0.9;
 
             this._tmpPosition = this.calcPositionFromValue(value);
-
-            console.log('temp: ' + this._tmpPosition);
 
             this._startTrackX = Fader.FADER_TRACK_HEIGHT / 2;
             this._startTrackY = (this._length - this._trackLength) / 2;
@@ -128,10 +133,42 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                 stroke:       '#000'
             });
 
-            this.updateKnobPosition(this._tmpPosition);
-
             this._kineticGroup.add(this._faderKnob);
 
+            displayAreaX = this._startTrackX - (Fader.VAL_DISPLAY_AREA_WIDTH / 2);
+            displayAreaY = this._trackLength + Fader.VAL_DISPLAY_AREA_HEIGHT;
+
+            if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
+                displayAreaX = (-1) * Fader.VAL_DISPLAY_AREA_WIDTH - (this._startTrackX);
+                displayAreaY = 0;
+            }
+
+
+            //create value display
+            this._valueDisplayArea = new Kinetic.Rect({
+                x:            displayAreaX,
+                y:            displayAreaY,
+                cornerRadius: Fader.BORDER_RADIUS,
+                height:       Fader.VAL_DISPLAY_AREA_HEIGHT,
+                width:        Fader.VAL_DISPLAY_AREA_WIDTH,
+                strokeWidth:  Fader.FADER_TRACK_BORDER_WIDTH,
+                fill:         color,
+                stroke:       '#000'
+            });
+
+            this._kineticGroup.add(this._valueDisplayArea);
+
+
+            this._valueDisplayText = new Kinetic.Text({
+                fill:     '#000',
+                fontSize: Fader.VAL_DISPLAY_FONT_SIZE
+            });
+
+            this._kineticGroup.add(this._valueDisplayText);
+
+            this.updateValueDisplayText();
+
+            this.updateKnobPosition(this._tmpPosition);
 
             var myFader = this;
             
@@ -178,14 +215,6 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             });
         },
 
-        updateKnobPosition: function(position) {
-            var knob  = this._faderKnob;
-            var coord = this.calcKnobPosition(position) ;
-
-            knob.setX(coord.x);
-            knob.setY(coord.y);
-        },
-
         calcKnobPosition: function(position) {
             var knob       = this._faderKnob;
             var knobHeight = knob.getHeight();
@@ -210,20 +239,13 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
             // _trackLength => valueRange
             // position => value
-
             return (this._trackLength * value) / valueRange;
-
-            //return (this._trackLength * newValue) / valueRange;
         },
 
         calcValueFromPosition: function(position) {
             var minValue   = this._minValue;
             var maxValue   = this._maxValue;
             var valueRange = this._maxValue - this._minValue;
-
-
-
-
 
             // valueRange => this._trackLength
             // value => position
@@ -283,8 +305,6 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
                 value = this.calcValueFromPosition(this._tmpPosition);
 
-                console.log(value);
-
                 if (mouseMoves) {
                     if(this._snapStep != 0) {
                         var snap = false;
@@ -315,16 +335,43 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                             this._canvasState.setLastValue(this._value);
                             this._tmpPosition = this.calcPositionFromValue(this._value);
                             this.updateKnobPosition(this._tmpPosition);
+                            this.updateValueDisplayText();
                         }
                     } else {
                         var knob = this._knob;
                         this._value = value;
                         this.updateKnobPosition(this._tmpPosition);
+                        this.updateValueDisplayText();
                     }
 
                 }
 
             }
+        },
+
+        updateKnobPosition: function(position) {
+            var knob  = this._faderKnob;
+            var coord = this.calcKnobPosition(position) ;
+
+            knob.setX(coord.x);
+            knob.setY(coord.y);
+        },
+
+        updateValueDisplayText: function() {
+            var text = this._formatter.format(this._value);
+            this._valueDisplayText.setText(text);
+            $textWidth  = this._valueDisplayText.getTextWidth();
+            $textHeight = this._valueDisplayText.getTextHeight();
+
+            $displayTextX = this._startTrackX - ($textWidth / 2);
+            $displayTextY = this._valueDisplayArea.getY() + (this._valueDisplayArea.getHeight() / 2) - ($textHeight / 2);
+
+            if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
+                $displayTextX = this._valueDisplayArea.getX() + (Fader.VAL_DISPLAY_AREA_WIDTH / 2) - ($textWidth / 2);
+            }
+
+            this._valueDisplayText.setX($displayTextX);
+            this._valueDisplayText.setY($displayTextY)
         }
     });
     return Fader;
