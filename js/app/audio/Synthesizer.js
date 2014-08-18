@@ -18,6 +18,8 @@ define(['dejavu', 'app/audio/utils/Audio'], function(dejavu, AudioUtils){
         _envelopeSustain: null,
         _envelopeRelease: null,
 
+        _filter: null,
+
         _noteIsOn: null,
 
         getOsc1: function() {
@@ -56,14 +58,21 @@ define(['dejavu', 'app/audio/utils/Audio'], function(dejavu, AudioUtils){
             this._envelopeRelease = release;
         },
 
-        $constants: {
-            WAVEFORMS_SINE : 0,
-            WAVEFORM_SQUARE: 1,
-            WAVEFORM_SAWTOOTH: 2,
-            WAVEFORM_TRIANGLE: 3,
-            WAVEFORM_CUSTOM: 4
+        getFilter: function() {
+            return this._filter;
         },
 
+        $constants: {
+            WAVEFORM_SINE :    0,
+            WAVEFORM_SQUARE:   1,
+            WAVEFORM_SAWTOOTH: 2,
+            WAVEFORM_TRIANGLE: 3,
+            WAVEFORM_CUSTOM:   4,
+            FILTER_LOWPASS:    'lowpass',
+            FILTER_BANDPASS:   'bandpass',
+            FILTER_HIGHPASS:   'highpass',
+            FILTER_OFF:        'off'
+        },
 
         initialize: function(audioContext) {
             this._audioContext = audioContext;
@@ -93,6 +102,12 @@ define(['dejavu', 'app/audio/utils/Audio'], function(dejavu, AudioUtils){
             this._masterGain = this._audioContext.createGainNode(); // Create gain node
             this._masterGain.gain.value = 1; // Set gain to full volume
 
+            // Create FilterNode
+            this._filter = this._audioContext.createBiquadFilter();
+            this._filter.type = 'lowpass';
+            this._filter.frequency.value = 22000;
+            this._filter.Q.value = 0.0001;
+
             // Connect the Nodes
             this._osc1.connect(this._osc1Gain); // Connect oscillator to gain
             this._osc2.connect(this._osc2Gain); // Connect oscillator to gain
@@ -100,7 +115,9 @@ define(['dejavu', 'app/audio/utils/Audio'], function(dejavu, AudioUtils){
             this._osc1Gain.connect(this._envelopeGain);
             this._osc2Gain.connect(this._envelopeGain);
 
-            this._envelopeGain.connect(this._masterGain);
+            this._envelopeGain.connect(this._filter);
+
+            this._filter.connect(this._masterGain);
 
             this._masterGain.connect(this._audioContext.destination); // Connect gain to output
 

@@ -187,7 +187,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                     var baseLayer = myFader.getCanvasState().getBaseLayer();
     
                     myFader.update(mousePos);
-                    baseLayer.setAttr('event', new Event(this._id, this._value, Event.TYPE_VALUE_CHANGED));
+                    baseLayer.setAttr('event', new Event(myFader.getId(), myFader.getValue(), Event.TYPE_VALUE_CHANGED));
                 }
             });
 
@@ -251,9 +251,9 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             // value => position
 
             if (0 == position) {
-                return 0;
+                return this._minValue;
             } else {
-                return (valueRange * position) / this._trackLength;
+                return this._minValue + (valueRange * position) / this._trackLength;
             }
         },
 
@@ -358,7 +358,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
         },
 
         updateValueDisplayText: function() {
-            var text = this._formatter.format(this._value);
+            var text = this._formatter.format(this._value * this._valueDspMult);
             this._valueDisplayText.setText(text);
             $textWidth  = this._valueDisplayText.getTextWidth();
             $textHeight = this._valueDisplayText.getTextHeight();
