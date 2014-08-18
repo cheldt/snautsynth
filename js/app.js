@@ -170,113 +170,57 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
         canvasState.getContainer().addEventListener("click", function(evt) { handleEvents() });
 
-
-
-
         var audioCtx = new webkitAudioContext();
         var synth = new Synthesizer(audioCtx);
 
         synth.init();
-
-        /*
-        canvasState.addListener("valuechanged", function(eventArgs) {
-
-
-
-
-            switch(eventArgs.id) {
-                case OSC1_WAVE:
-                    synth.getOsc1().type = eventObject.getValue();
-                    break;
-                case OSC1_TUNE:
-                    synth.getOsc1().detune.setValueAtTime(eventArgs.value * 100,now);
-                    break;
-                case OSC1_OCT:
-                    synth.getOsc1().detune.setValueAtTime(eventArgs.value * 1200,now);
-                    break;
-                case OSC1_GAIN:
-                    synth.getOsc1Gain().gain.setValueAtTime(eventArgs.value,now);
-                    break;
-                case OSC2_WAVE:
-                    synth.getOsc2().type = eventArgs.value;
-                    break;
-                case OSC2_TUNE:
-                    synth.getOsc2().detune.setValueAtTime(eventArgs.value * 100,now);
-                    break;
-                case OSC2_OCT:
-                    synth.getOsc2().detune.setValueAtTime(eventArgs.value * 1200,now);
-                    break;
-                case OSC2_GAIN:
-                    synth.getOsc2Gain().gain.setValueAtTime(eventArgs.value,now);
-                    break;
-                case MASTERGAIN:
-                    synth.getMasterGain().gain.setValueAtTime(eventArgs.value,now);
-                    break;
-                case ADSR_A:
-                    synth.setEnvelopeAttack(eventArgs.value);
-                    break;
-                case ADSR_D:
-                    synth.setEnvelopeDecay(eventArgs.value);
-                    break;
-                case ADSR_S:
-                    synth.setEnvelopeSustain(eventArgs.value);
-                    break;
-                case ADSR_R:
-                    synth.setEnvelopeRelease(eventArgs.value);
-                    break;
-            }
-
-
-        });
-        */
-
 
         window.addEventListener("keyup", function() {
             synth.noteOff();
         });
 
         window.addEventListener("keydown", function(e) {
-            if(e.keyCode == 65) { //A
+
+            console.log(e.keyCode);
+
+            if(e.keyCode == 65) { //A C-5
                 synth.noteOn(52);
             }
-            if(e.keyCode == 87) { //W
+            if(e.keyCode == 87) { //W C#5/Db5
                 synth.noteOn(53);
             }
-            if(e.keyCode == 83) { //S
+            if(e.keyCode == 83) { //S D-5
                 synth.noteOn(54);
             }
-            if(e.keyCode == 69) { //E
+            if(e.keyCode == 69) { //E A#5/Bb5
                 synth.noteOn(55);
             }
-            if(e.keyCode == 68) { //D
+            if(e.keyCode == 68) { //D E-5
                 synth.noteOn(56);
             }
-            if(e.keyCode == 70) { //F
+            if(e.keyCode == 70) { //F F-5
                 synth.noteOn(57);
             }
-            if(e.keyCode == 84) { //T
+            if(e.keyCode == 84) { //T F#5/Gb5
                 synth.noteOn(58);
             }
-            if(e.keyCode == 71) { //G
+            if(e.keyCode == 71) { //G G-5
                 synth.noteOn(59);
             }
-            if(e.keyCode == 90) { //Z
+            if(e.keyCode == 90) { //Z G#5/Ab5
                 synth.noteOn(60);
             }
-            if(e.keyCode == 84) { //H
+            if(e.keyCode == 72) { //H A-5
                 synth.noteOn(61);
             }
-            if(e.keyCode == 72) { //U
+            if(e.keyCode == 85) { //U A#5/Bb5
                 synth.noteOn(62);
             }
-            if(e.keyCode == 85) { //J
+            if(e.keyCode == 74) { //J B-5
                 synth.noteOn(63);
             }
-            if(e.keyCode == 74) { //K
+            if(e.keyCode == 75) { //K C-6
                 synth.noteOn(64);
-            }
-            if(e.keyCode == 75) { //L
-                synth.noteOn(65);
             }
         });
     }
