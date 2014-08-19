@@ -12,7 +12,7 @@ require.config({
     packages: [
         {
             name: 'dejavu',
-            location: 'dejavu/dist/amd/strict'
+            location: 'js-dejavu/dist/amd/strict'
         }
     ],
 
