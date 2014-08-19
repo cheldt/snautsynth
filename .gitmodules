@@ -1,8 +1,8 @@
-[submodule "js/lib/dejavu"]
-	path = js/lib/dejavu
+[submodule "js/vendor/js-dejavu"]
+	path = js/vendor/js-dejavu
 	url = https://github.com/IndigoUnited/dejavu.git
 	ignore = dirty
-[submodule "js/lib/mout"]
-	path = js/lib/mout
+[submodule "js/vendor/mout"]
+	path = js/vendor/mout
 	url = https://github.com/mout/mout.git
 	ignore = dirty
