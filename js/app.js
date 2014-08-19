@@ -250,32 +250,3 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         });
     }
 );
-
-/*
- this.low = audioCtx.createBiquadFilter();
- this.low.type = "lowshelf";
- this.low.frequency.value = 320.0;
- this.low.gain.value = 0.0;
- this.low.connect( this.xfadeGain );
-
- this.mid = audioCtx.createBiquadFilter();
- this.mid.type = "peaking";
- this.mid.frequency.value = 1000.0;
- this.mid.Q.value = 0.5;
- this.mid.gain.value = 0.0;
- this.mid.connect( this.low );
-
- this.high = audioCtx.createBiquadFilter();
- this.high.type = "highshelf";
- this.high.frequency.value = 3200.0;
- this.high.gain.value = 0.0;
- this.high.connect( this.mid );
- */
-/*
-requirejs.onError = function (err) {
-    console.log(err.requireType);
-    console.log('modules: ' + err.requireModules);
-    console.dir(err);
-    //throw err;
-};
-*/

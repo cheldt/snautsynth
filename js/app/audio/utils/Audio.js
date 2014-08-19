@@ -18,7 +18,7 @@ define(['dejavu'], function(dejavu){
              * @returns {Number} The Key of musical scale.
              */
             calcKeyByFreq: function(frequency) {
-                return Math.log(( frequency / 127,09)) * 23 + 27,5;
+                return Math.log(( frequency / 127.09)) * 23 + 27.5;
             },
 
             /**
