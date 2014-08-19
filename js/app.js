@@ -1,7 +1,7 @@
 'use strict';
 
 require.config({
-    baseUrl: 'js/lib',
+    baseUrl: 'js/vendor',
     paths: {
         app:    '../app',
         mout:   'mout/src',
