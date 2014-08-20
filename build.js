@@ -11,7 +11,7 @@
     packages: [
         {
             name: 'dejavu',
-            location: 'vendor/js-dejavu/dist/amd/strict'
+            location: 'vendor/js-dejavu/dist/amd/loose'
         },
     ],
 
