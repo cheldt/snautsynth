@@ -1,6 +1,6 @@
 ({
     paths: {
-        kinetic    : 'vendor/kinetic-v5.0.1.min',
+        kinetic    : 'vendor/kinetic.min',
         mout       : 'vendor/mout/src',
         requireLib : 'vendor/require'
     },

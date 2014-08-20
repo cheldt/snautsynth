@@ -6,7 +6,7 @@ require.config({
         app:    '../app',
         mout:   'mout/src',
         //libs
-        kinetic: 'kinetic-v5.0.1.min'
+        kinetic: 'kinetic.min'
 
     },
     packages: [
