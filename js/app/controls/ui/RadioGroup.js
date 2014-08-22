@@ -16,14 +16,14 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/
             this.$super(id, x, y, value, canvasState);
 
             this._lastRadioY   = y;
-	    
-	    this._maxRadius    = 0;
+
+            this._maxRadius    = 0;
 
             this._radioButtons = [];
 
             var myRadioGroup = this;
-	    
-	    this._isFirstButton = true;
+
+            this._isFirstButton = true;
 
             this._kineticGroup.on('click', function(evt) {
                 var eventObject =  myRadioGroup.getCanvasState().getBaseLayer().getAttr('event');
@@ -64,7 +64,7 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/
                 radioButton.changeCheckedState(true);
             }
 
-            this._lastRadioY += radioButton.getRadius() * 2 + 5;	    
+            this._lastRadioY += radioButton.getRadius() * 2 + 5;
         }
     });
 
