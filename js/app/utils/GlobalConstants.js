@@ -23,6 +23,8 @@ define(['dejavu'], function(dejavu) {
             CTRL_FLT_FREQUENCY: 15,
             CTRL_FLT_RESONANCE: 16,
 
+            CTRL_ENVELOPE:      17,
+
             KEY_CODE_A: 65,
             KEY_CODE_W: 87,
             KEY_CODE_S: 83,

@@ -58,8 +58,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             this._color       = color;
             this._orientation = orientation;
 
-            height            = this._length;
-            width             = Fader.FADER_TRACK_HEIGHT;
+            var height        = this._length;
+            var width         = Fader.FADER_TRACK_HEIGHT;
 
             if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
                 height = Fader.FADER_TRACK_HEIGHT;
@@ -93,8 +93,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                 this._startTrackY = Fader.FADER_TRACK_HEIGHT / 2;
             }
 
-            endPointX       = this._startTrackX;
-            endPointY       = this._startTrackY + this._trackLength;
+            var endPointX    = this._startTrackX;
+            var endPointY    = this._startTrackY + this._trackLength;
 
             if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
                 endPointX = this._startTrackX + this._trackLength;
@@ -135,8 +135,8 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
             this._kineticGroup.add(this._faderKnob);
 
-            displayAreaX = this._startTrackX - (Fader.VAL_DISPLAY_AREA_WIDTH / 2);
-            displayAreaY = this._trackLength + Fader.VAL_DISPLAY_AREA_HEIGHT;
+            var displayAreaX = this._startTrackX - (Fader.VAL_DISPLAY_AREA_WIDTH / 2);
+            var displayAreaY = this._trackLength + Fader.VAL_DISPLAY_AREA_HEIGHT;
 
             if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
                 displayAreaX = (-1) * Fader.VAL_DISPLAY_AREA_WIDTH - (this._startTrackX);

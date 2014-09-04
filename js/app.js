@@ -29,10 +29,11 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
            'app/controls/ui/Knob', 'app/controls/ui/RadioGroup',
            'app/controls/ui/RadioButton', 'app/controls/ui/Fader',
            'app/audio/Synthesizer', 'app/utils/formatter/NumberFormatter',
-           'app/controls/layout/Label', 'app/utils/GlobalConstants'],
-    function (Event, CanvasState, Knob, RadioGroup, RadioButton, Fader, Synthesizer, NumberFormatter, Label, GlobalConstants) {
+           'app/controls/layout/Label', 'app/utils/GlobalConstants',
+           'app/controls/ui/envelope/Graph', 'app/controls/ui/envelope/Point'],
+    function (Event, CanvasState, Knob, RadioGroup, RadioButton, Fader, Synthesizer, NumberFormatter, Label, GlobalConstants, EnvelopeGraph, EnvelopePoint) {
 
-        var canvasState = new CanvasState(600, 600, 'syn');
+        var canvasState = new CanvasState(600, 800, 'syn');
 
         var radioGroup = new RadioGroup(GlobalConstants.CTRL_OSC1_WAVE, 0, 20, Synthesizer.WAVEFORM_SINE, canvasState);
         radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORM_SINE, '#000', '#FFF'));
@@ -104,6 +105,23 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
         canvasState.addControl(new Label(1, 530, 340, canvasState, '#000', 'Res'));
         canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_RESONANCE, 530, 370, 0.0001, canvasState, 1, 0.0001, 50, 150, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
+
+
+        var envelopeControl = new EnvelopeGraph(GlobalConstants.CTRL_ENVELOPE, 0, 500, canvasState, 8);
+
+        var envelopePoint   = new EnvelopePoint(EnvelopeGraph.ATTACK_POINT, canvasState, 1, 2, '#AABBCC');
+        envelopeControl.addPoint(envelopePoint);
+
+        envelopePoint       = new EnvelopePoint(EnvelopeGraph.DECAY_POINT, canvasState, 0.7, 5, '#AABBCC');
+        envelopeControl.addPoint(envelopePoint);
+
+        envelopePoint       = new EnvelopePoint(EnvelopeGraph.SUSTAIN_POINT, canvasState, 0.4, 6, '#AABBCC');
+        envelopeControl.addPoint(envelopePoint);
+
+        envelopePoint       = new EnvelopePoint(EnvelopeGraph.RELEASE_POINT, canvasState, 0.2, 7, '#AABBCC');
+        envelopeControl.addPoint(envelopePoint);
+
+        //canvasState.addControl(envelopeControl);
 
         function handleEvents() {
             var eventObject = canvasState.getBaseLayer().getAttr('event');
