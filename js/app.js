@@ -109,19 +109,19 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
         var envelopeControl = new EnvelopeGraph(GlobalConstants.CTRL_ENVELOPE, 0, 500, canvasState, 8);
 
-        var envelopePoint   = new EnvelopePoint(EnvelopeGraph.ATTACK_POINT, canvasState, 1, 2, '#AABBCC');
+        var envelopePoint   = new EnvelopePoint(EnvelopeGraph.ATTACK_POINT, canvasState, 1, 2, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(EnvelopeGraph.DECAY_POINT, canvasState, 0.7, 5, '#AABBCC');
+        envelopePoint       = new EnvelopePoint(EnvelopeGraph.DECAY_POINT, canvasState, 0.7, 5, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(EnvelopeGraph.SUSTAIN_POINT, canvasState, 0.4, 6, '#AABBCC');
+        envelopePoint       = new EnvelopePoint(EnvelopeGraph.SUSTAIN_POINT, canvasState, 0.4, 6, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(EnvelopeGraph.RELEASE_POINT, canvasState, 0.2, 7, '#AABBCC');
+        envelopePoint       = new EnvelopePoint(EnvelopeGraph.RELEASE_POINT, canvasState, 0.2, 7, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        //canvasState.addControl(envelopeControl);
+        canvasState.addControl(envelopeControl);
 
         function handleEvents() {
             var eventObject = canvasState.getBaseLayer().getAttr('event');

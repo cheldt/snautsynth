@@ -37,9 +37,10 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
             RADIUS: 8
         },
 
-        initialize: function(id, canvasState, gain, time, color) {
+        initialize: function(id, canvasState, gain, time, color, graph) {
             this.$super(id, 0, 0, canvasState);
 
+            this._graph = graph;
             this._gain  = gain;
             this._time  = time;
 
@@ -53,8 +54,40 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
 
             var myPoint = this;
 
+            var graphY = this._graph.getY();
+
+            var graphBorderBottomY = graphY + this._graph.getMaxPixelGain();
+
             this._kineticGroup.setDragBoundFunc(function(pos) {
-                   return pos;
+                    switch(myPoint.getId()) {
+                        case Graph.ATTACK_POINT:
+                            if (0 >= pos.x) {
+                                pos.x = 0;
+                            }
+
+                            if (graphBorderBottomY <= pos.y) {
+                                pos.y = graphBorderBottomY;
+                            }
+
+                            if (graphY >= pos.y) {
+                                pos.y = graphY;
+                            }
+
+                            return pos;
+
+                            break;
+                        case Graph.DECAY_POINT:
+
+                            break;
+                        case Graph.RELEASE_POINT:
+
+                            break;
+                        case Graph.SUSTAIN_POINT:
+
+                            break;
+                        default:
+                            return pos;
+                    }
             });
 
             this._kineticGroup.on('dragmove',function() {

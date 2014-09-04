@@ -11,6 +11,14 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
         _points:          null,
         _pointConnection: null,
 
+        getMaxPixelGain: function() {
+            return this._maxPixelGain;
+        },
+
+        getMaxPixelTime: function() {
+            return this._maxPixelTime;
+        },
+
         $constants: {
             PIXEL_PER_GAIN:       100,
             PIXEL_PER_TIME:       40,
@@ -82,7 +90,6 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
             newPosition     = point.calcPositionByValues();
 
             point.updatePosition(newPosition);
-            point.setGraph(this);
 
             this.connectPoints();
         },
