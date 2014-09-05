@@ -107,18 +107,21 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_RESONANCE, 530, 370, 0.0001, canvasState, 1, 0.0001, 50, 150, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
 
 
-        var envelopeControl = new EnvelopeGraph(GlobalConstants.CTRL_ENVELOPE, 0, 500, canvasState, 8);
+        var envelopeControl = new EnvelopeGraph(GlobalConstants.CTRL_ENVELOPE, 20, 500, canvasState, 8);
 
-        var envelopePoint   = new EnvelopePoint(EnvelopeGraph.ATTACK_POINT, canvasState, 1, 2, '#AABBCC', envelopeControl);
+        var envelopePoint   = new EnvelopePoint(GlobalConstants.CTRL_ATTACK_POINT, canvasState, 1, 2, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(EnvelopeGraph.DECAY_POINT, canvasState, 0.7, 5, '#AABBCC', envelopeControl);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_DECAY_POINT, canvasState, 0.7, 5, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(EnvelopeGraph.SUSTAIN_POINT, canvasState, 0.4, 6, '#AABBCC', envelopeControl);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_SUSTAIN_POINT, canvasState, 0.4, 6, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(EnvelopeGraph.RELEASE_POINT, canvasState, 0.2, 7, '#AABBCC', envelopeControl);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT, canvasState, 0.2, 7, '#AABBCC', envelopeControl);
+        envelopeControl.addPoint(envelopePoint);
+
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT_END, canvasState, 0.2, 8, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
         canvasState.addControl(envelopeControl);
@@ -188,6 +191,12 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
                 if (canvasState.getPointerLocked()) {
                     handleEvents();
                 }
+            }
+        );
+
+        canvasState.getStage().on("dragmove",
+            function(evt) {
+                handleEvents();
             }
         );
 

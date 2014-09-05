@@ -24,11 +24,6 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
             PIXEL_PER_TIME:       40,
             MAX_GAIN:             1,
 
-            ATTACK_POINT:         0,
-            DECAY_POINT:          1,
-            RELEASE_POINT:        2,
-            SUSTAIN_POINT:        3,
-
             X_Y_AXIS_WIDTH:       3,
             POINTCONNECTOR_WIDTH: 1.5
         },
@@ -112,7 +107,21 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
             pointConnectorCoordsList.push(this._maxPixelTime, lastPoint.getY())
 
             this._pointConnection.setPoints(pointConnectorCoordsList);
+        },
+
+        getPointById: function(id) {
+            var point = null;
+
+            for (var pointIndex = 0; pointIndex < this._points.length; pointIndex++) {
+                point = this._points[pointIndex];
+
+                if (point.getId() == id) {
+                    return point;
+                }
+            }
         }
+
+
 
         /*
         calcPointPositionsByValues: function(pointId) {
