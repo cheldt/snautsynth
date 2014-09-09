@@ -121,9 +121,13 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
             this._kineticGroup.on('dragmove',function() {
                 myPoint.getGraph().connectPoints();
 
+                myPoint.setValuesFromPosition();
+
+                var eventReturn = {'gain' : myPoint.getGain(), 'time' : myPoint.getTime()};
+
                 myPoint.getCanvasState().getBaseLayer().setAttr(
                     'event',
-                    new Event(myPoint.getId(), 0, Event.TYPE_VALUE_CHANGED));
+                    new Event(myPoint.getId(), eventReturn, Event.TYPE_VALUE_CHANGED));
             });
 
             this._kineticGroup.add(this._point);
@@ -138,8 +142,8 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
         },
 
         setValuesFromPosition: function() {
-            this._time = this.getX() / Gain.PIXEL_PER_TIME;
-            this._gain = this.getY() / Gain.PIXEL_PER_GAIN;
+            this._time = this.getX() / Graph.PIXEL_PER_TIME;
+            this._gain = Graph.MAX_GAIN - (this.getY() / Graph.PIXEL_PER_GAIN);
         },
 
         updatePosition: function(newPosition) {

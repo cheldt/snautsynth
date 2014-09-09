@@ -74,11 +74,12 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(new Label(1, 370, 180, canvasState, '#000', 'OSC1-Gain'));
 
 
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_MASTERGAIN, 240, 60, 1, canvasState, 100, 0, 1, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
+        canvasState.addControl(new Knob(GlobalConstants.CTRL_MASTERGAIN, 240, 60, 0.5, canvasState, 100, 0, 0.5, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
         canvasState.addControl(new Label(1, 490, 100, canvasState, '#000', 'Mastergain'));
 
 
         canvasState.addControl(new Label(1, 0, 320, canvasState, '#000', 'ADSR-Envelope'));
+        /*
         canvasState.addControl(new Knob(GlobalConstants.CTRL_ADSR_A, 0, 180, 1, canvasState, 1, 0, 6, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
         canvasState.addControl(new Label(1, 30, 345, canvasState, '#000', 'A'));
 
@@ -90,6 +91,7 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
         canvasState.addControl(new Knob(GlobalConstants.CTRL_ADSR_R, 120, 180, 1, canvasState, 1, 0, 6, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
         canvasState.addControl(new Label(1, 270, 345, canvasState, '#000', 'R'));
+        */
 
 
         canvasState.addControl(new Label(1, 350, 320, canvasState, '#000', 'Filter'));
@@ -101,27 +103,27 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(radioGroup);
 
         canvasState.addControl(new Label(1, 450, 340, canvasState, '#000', 'Freq'));
-        canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_FREQUENCY, 450, 370, 22050, canvasState, 1, 60, 22050, 150, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
+        canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_FREQUENCY, 450, 370, 22050, canvasState, 1, 60, 22050, 100, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
 
         canvasState.addControl(new Label(1, 530, 340, canvasState, '#000', 'Res'));
-        canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_RESONANCE, 530, 370, 0.0001, canvasState, 1, 0.0001, 50, 150, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
+        canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_RESONANCE, 530, 370, 0.0001, canvasState, 1, 0.0001, 50, 100, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
 
 
-        var envelopeControl = new EnvelopeGraph(GlobalConstants.CTRL_ENVELOPE, 20, 500, canvasState, 8);
+        var envelopeControl = new EnvelopeGraph(GlobalConstants.CTRL_ENVELOPE, 20, 350, canvasState, 8);
 
-        var envelopePoint   = new EnvelopePoint(GlobalConstants.CTRL_ATTACK_POINT, canvasState, 1, 2, '#AABBCC', envelopeControl);
+        var envelopePoint   = new EnvelopePoint(GlobalConstants.CTRL_ATTACK_POINT, canvasState, 1, 1, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_DECAY_POINT, canvasState, 0.7, 5, '#AABBCC', envelopeControl);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_DECAY_POINT, canvasState, 1, 3, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_SUSTAIN_POINT, canvasState, 0.4, 6, '#AABBCC', envelopeControl);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_SUSTAIN_POINT, canvasState, 0.5, 6, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
         envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT, canvasState, 0.2, 7, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT_END, canvasState, 0.2, 8, '#AABBCC', envelopeControl);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT_END, canvasState, 0, 8, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
         canvasState.addControl(envelopeControl);
@@ -132,45 +134,57 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
             if(typeof eventObject !== 'undefined' ) {
                 if (eventObject.getType() == Event.TYPE_VALUE_CHANGED) {
+                    var eventValue = eventObject.getValue();
+
                     switch (eventObject.getControlId()) {
                         case GlobalConstants.CTRL_OSC1_WAVE:
+                            console.log(eventObject.getValue());
                             synth.getOsc1().type = eventObject.getValue();
+                            console.log(synth.getOsc1());
                             break;
                         case GlobalConstants.CTRL_OSC1_TUNE:
-                            synth.getOsc1().detune.setValueAtTime(eventObject.getValue() * 100,now);
+                            synth.getOsc1().detune.setValueAtTime(eventValue * 100, now);
                             break;
                         case GlobalConstants.CTRL_OSC1_OCT:
-                            synth.getOsc1().detune.setValueAtTime(eventObject.getValue() * 1200,now);
+                            synth.getOsc1().detune.setValueAtTime(eventValue * 1200, now);
                             break;
                         case GlobalConstants.CTRL_OSC1_GAIN:
-                            synth.getOsc1Gain().gain.setValueAtTime(eventObject.getValue(),now);
+                            synth.getOsc1Gain().gain.setValueAtTime(eventValue, now);
                             break;
                         case GlobalConstants.CTRL_OSC2_WAVE:
-                            synth.getOsc2().type = eventObject.getValue();
+                            synth.getOsc2().type = eventValue;
                             break;
                         case GlobalConstants.CTRL_OSC2_TUNE:
-                            synth.getOsc2().detune.setValueAtTime(eventObject.getValue() * 100,now);
+                            synth.getOsc2().detune.setValueAtTime(eventValue * 100,now);
                             break;
                         case GlobalConstants.CTRL_OSC2_OCT:
-                            synth.getOsc2().detune.setValueAtTime(eventObject.getValue() * 1200,now);
+                            synth.getOsc2().detune.setValueAtTime(eventValue * 1200,now);
                             break;
                         case GlobalConstants.CTRL_OSC2_GAIN:
-                            synth.getOsc2Gain().gain.setValueAtTime(eventObject.getValue(),now);
+                            synth.getOsc2Gain().gain.setValueAtTime(eventValue, now);
                             break;
                         case GlobalConstants.CTRL_MASTERGAIN:
-                            synth.getMasterGain().gain.setValueAtTime(eventObject.getValue(),now);
+                            synth.getMasterGain().gain.setValueAtTime(eventValue, now);
                             break;
-                        case GlobalConstants.CTRL_ADSR_A:
-                            synth.setEnvelopeAttackTime(eventObject.getValue());
+                        case GlobalConstants.CTRL_ATTACK_POINT:
+                            synth.setEnvelopeAttackEndGain(eventValue.gain);
+                            synth.setEnvelopeAttackEndTime(eventValue.time);
                             break;
-                        case GlobalConstants.CTRL_ADSR_D:
-                            synth.setEnvelopeDecayTime(eventObject.getValue());
+                        case GlobalConstants.CTRL_DECAY_POINT:
+                            synth.setEnvelopeDecayEndGain(eventValue.gain);
+                            synth.setEnvelopeDecayEndTime(eventValue.time);
                             break;
-                        case GlobalConstants.CTRL_ADSR_S:
-                            synth.setEnvelopeSustainStartGain(eventObject.getValue());
+                        case GlobalConstants.CTRL_SUSTAIN_POINT:
+                            synth.setEnvelopeReleaseEndGain(eventValue.gain);
+                            synth.setEnvelopeSustainEndTime(eventValue.time);
                             break;
-                        case GlobalConstants.CTRL_ADSR_R:
-                            synth.setEnvelopeReleaseTime(eventObject.getValue());
+                        case GlobalConstants.CTRL_RELEASE_POINT:
+                            synth.setEnvelopeReleaseEndGain(eventValue.gain);
+                            synth.setEnvelopeReleaseEndTime(eventValue.time);
+                            break;
+                        case GlobalConstants.CTRL_RELEASE_POINT_END:
+                            synth.setEnvelopeReleaseHoldGain(eventValue.gain);
+                            synth.setEnvelopeReleaseHoldTime(eventValue.time);
                             break;
                         case GlobalConstants.CTRL_FLT_TYPE:
                             synth.getFilter().type = eventObject.getValue();
@@ -202,8 +216,9 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
         canvasState.getContainer().addEventListener("click", function(evt) { handleEvents() });
 
-        var audioCtx = new webkitAudioContext();
-        var synth    = new Synthesizer(audioCtx);
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        var audioCtx        = new window.AudioContext();
+        var synth           = new Synthesizer(audioCtx);
 
         synth.init();
 

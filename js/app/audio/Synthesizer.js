@@ -13,17 +13,20 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
 
         _masterGain: null,
 
-        _envelopeAttackStartGain: null,
-        _envelopeAttackTime: null,
+        _envelopeAttackEndGain: null,
+        _envelopeAttackEndTime: null,
 
-        _envelopeDecayStartGain: null,
-        _envelopeDecayTime: null,
+        _envelopeDecayEndGain: null,
+        _envelopeDecayEndTime: null,
 
-        _envelopeSustainStartGain: null,
-        _envelopeSustainTime: null,
+        _envelopeSustainEndGain: null,
+        _envelopeSustainEndTime: null,
 
-        _envelopeReleaseStartGain: null,
-        _envelopeReleaseTime: null,
+        _envelopeReleaseEndGain: null,
+        _envelopeReleaseEndTime: null,
+
+        _envelopeReleaseHoldGain: null,
+        _envelopeReleaseHoldTime: null,
 
         _filter: null,
 
@@ -51,23 +54,44 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
             return this._masterGain;
         },
 
-        setEnvelopeAttackTime: function(attackTime) {
-            this._envelopeAttackTime = attackTime;
+        setEnvelopeAttackEndGain: function(attackEndGain) {
+            this._envelopeAttackEndGain = attackEndGain;
         },
 
-        setEnvelopeDecayTime: function(decayTime) {
-            this._envelopeDecayTime = decayTime;
+        setEnvelopeAttackEndTime: function(attackEndTime) {
+            this._envelopeAttackEndTime = attackEndTime;
         },
 
-        setEnvelopeSustainStartGain: function(sustainStartGain) {
-            this._envelopeSustainStartGain = sustainStartGain;
-        },
-        setEnvelopeSustainTime: function(sustainTime) {
-            this._envelopeSustainTime = sustainTime;
+        setEnvelopeSustainGain: function(sustainGain) {
+            this._envelopeSustainGain = sustainGain;
         },
 
-        setEnvelopeReleaseTime: function(releaseTime) {
-            this._envelopeReleaseTime = releaseTime;
+        setEnvelopeDecayEndTime: function(decayEndTime) {
+            this._envelopeDecayEndTime = decayEndTime;
+        },
+
+        setEnvelopeSustainEndGain: function(sustainEndGain) {
+            this._envelopeSustainEndGain = sustainEndGain;
+        },
+
+        setEnvelopeSustainEndTime: function(sustainEndTime) {
+            this._envelopeSustainEndTime = sustainEndTime;
+        },
+
+        setEnvelopeReleaseEndGain: function(releaseEndGain) {
+            this._envelopeReleaseEndGain = releaseEndGain;
+        },
+
+        setEnvelopeReleaseEndTime: function(releaseEndTime) {
+            this._envelopeReleaseEndTime = releaseEndTime;
+        },
+
+        setEnvelopeReleaseHoldGain: function(releaseHoldGain) {
+            this._envelopeReleaseHoldGain = releaseHoldGain;
+        },
+
+        setEnvelopeReleaseHoldTime: function(releaseHoldTime) {
+            this._envelopeReleaseHoldTime = releaseHoldTime;
         },
 
         getFilter: function() {
@@ -75,11 +99,11 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
         },
 
         $constants: {
-            WAVEFORM_SINE :      0,
-            WAVEFORM_SQUARE:     1,
-            WAVEFORM_SAWTOOTH:   2,
-            WAVEFORM_TRIANGLE:   3,
-            WAVEFORM_CUSTOM:     4,
+            WAVEFORM_SINE :      'sine',
+            WAVEFORM_SQUARE:     'square',
+            WAVEFORM_SAWTOOTH:   'sawtooth',
+            WAVEFORM_TRIANGLE:   'triangle',
+            WAVEFORM_CUSTOM:     'custom',
             FILTER_LOWPASS:      'lowpass',
             FILTER_BANDPASS:     'bandpass',
             FILTER_HIGHPASS:     'highpass',
@@ -114,23 +138,23 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
             this._osc1                    = this._audioContext.createOscillator(); // Create sound source
             this._osc1.type               = Synthesizer.WAVEFORM_SINE; // Sine wave
             this._osc1.frequency.value    = 0; // Frequency in hertz (passed from input button)
-            this._osc1Gain                = this._audioContext.createGainNode();
+            this._osc1Gain                = this._audioContext.createGain();
             this._osc1Gain.gain.value     = 1;
 
             // Create second oscillator and init values
             this._osc2                    = this._audioContext.createOscillator(); // Create sound source
             this._osc2.type               = Synthesizer.WAVEFORM_SINE; // Sine wave
             this._osc2.frequency.value    = 0; // Frequency in hertz (passed from input button)
-            this._osc2Gain                = this._audioContext.createGainNode();
+            this._osc2Gain                = this._audioContext.createGain();
             this._osc2Gain.gain.value     = 1;
 
             // Create envelope gainnode
-            this._envelopeGain            = this._audioContext.createGainNode();
+            this._envelopeGain            = this._audioContext.createGain();
             this._envelopeGain.gain.value = 0;
 
             // Create GainNode
-            this._masterGain               = this._audioContext.createGainNode(); // Create gain node
-            this._masterGain.gain.value    = 1; // Set gain to full volume
+            this._masterGain               = this._audioContext.createGain(); // Create gain node
+            this._masterGain.gain.value    = 0.5; // Set gain to full volume
 
             // Create FilterNode
             this._filter                   = this._audioContext.createBiquadFilter();
@@ -138,12 +162,16 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
             this._filter.frequency.value   = Synthesizer.FILTER_DEFAULT_FREQ;
             this._filter.Q.value           = Synthesizer.FILTER_DEFAULT_RES;
 
-            this._envelopeAttackTime       = 1;
-            this._envelopeDecayTime        = 2;
-            this._envelopeSustainStartGain = 0.5;
-            this._envelopeReleaseTime      = 1;
+            this._envelopeAttackEndGain   = 1;
+            this._envelopeAttackEndTime   = 1;
 
-            this._noteIsOn                 = false;
+            this._envelopeSustainGain     = 1;
+            this._envelopeDecayEndTime    = 3;
+
+            this._envelopeReleaseEndGain  = 0.2;
+            this._envelopeReleaseEndTime  = 7;
+
+            this._noteIsOn                = false;
 
             // Connect the Nodes
             this._osc1.connect(this._osc1Gain); // Connect oscillator to gain
@@ -184,11 +212,20 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
                 // ADSR - envelope
                 // reset all schedulers
                 this._envelopeGain.gain.cancelScheduledValues(0.0);
-                this._envelopeGain.gain.setValueAtTime(0,now);
-                this._envelopeGain.gain.linearRampToValueAtTime(1, now + this._envelopeAttackTime);
-                this._envelopeGain.gain.exponentialRampToValueAtTime(
-                    this._envelopeSustainStartGain,
-                    now + this._envelopeAttackTime + this._envelopeDecayTime
+                this._envelopeGain.gain.setValueAtTime(0, now);
+                this._envelopeGain.gain.linearRampToValueAtTime(
+                    this._envelopeAttackEndGain,
+                    now + this._envelopeAttackEndTime
+                );
+
+                this._envelopeGain.gain.linearRampToValueAtTime(
+                    this._envelopeSustainGain,
+                    now + this._envelopeDecayEndTime
+                );
+
+                this._envelopeGain.gain.linearRampToValueAtTime(
+                    this._envelopeSustainEndGain,
+                    now + this._envelopeSustainEndTime
                 );
             }
         },
@@ -197,7 +234,10 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
             var now = this._audioContext.currentTime;
             this._envelopeGain.gain.cancelScheduledValues(0.0);
             this._envelopeGain.gain.setValueAtTime(this._envelopeGain.gain.value, now);
-            this._envelopeGain.gain.linearRampToValueAtTime(0, now + this._envelopeReleaseTime);
+            this._envelopeGain.gain.linearRampToValueAtTime(
+                this._envelopeReleaseEndGain,
+                now + this._envelopeReleaseEndTime);
+            console.log(this._envelopeReleaseEndGain);
 
             this._noteIsOn = false;
         }
