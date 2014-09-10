@@ -63,36 +63,22 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
 
                 switch(myPoint.getId()) {
                     case GlobalConstants.CTRL_ATTACK_POINT:
-                        var decayPoint      = graph.getPointById(GlobalConstants.CTRL_DECAY_POINT);
+                        var decayPoint      = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
 
                         leftBound           = graphX;
                         rightBound          = graphX + decayPoint.getX();
                         break;
-                    case GlobalConstants.CTRL_DECAY_POINT:
+                    case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
                         var attackPoint     = graph.getPointById(GlobalConstants.CTRL_ATTACK_POINT);
-                        var releasePoint    = graph.getPointById(GlobalConstants.CTRL_SUSTAIN_POINT);
+                        var releasePoint    = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT);
 
                         leftBound           = graphX + attackPoint.getX();
                         rightBound          = graphX + releasePoint.getX();
                         break;
-                    case GlobalConstants.CTRL_SUSTAIN_POINT:
-                        var decayPoint      = graph.getPointById(GlobalConstants.CTRL_DECAY_POINT);
-                        var sustainPoint    = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT);
-
-                        leftBound           = graphX + decayPoint.getX();
-                        rightBound          = graphX + sustainPoint.getX();
-                        break;
                     case GlobalConstants.CTRL_RELEASE_POINT:
-                        var sustainPoint    = graph.getPointById(GlobalConstants.CTRL_SUSTAIN_POINT);
-                        var releasePointEnd = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT_END);
+                        var decayPointPoint    = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
 
-                        leftBound           = graphX + sustainPoint.getX();
-                        rightBound          = graphX + releasePointEnd.getX();
-                        break;
-                    case GlobalConstants.CTRL_RELEASE_POINT_END:
-                        var releasePoint    = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT);
-
-                        leftBound           = graphX + releasePoint.getX();
+                        leftBound           = graphX + decayPointPoint.getX();
                         rightBound          = graphX + graph.getMaxPixelTime();
                         break;
                     default:

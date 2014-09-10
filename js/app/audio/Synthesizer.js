@@ -13,20 +13,14 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
 
         _masterGain: null,
 
-        _envelopeAttackEndGain: null,
-        _envelopeAttackEndTime: null,
+        _envelopeAttackGain: null,
+        _envelopeAttackTime: null,
 
-        _envelopeDecayEndGain: null,
-        _envelopeDecayEndTime: null,
+        _envelopeSustainGain: null,
+        _envelopeDecayTime: null,
 
-        _envelopeSustainEndGain: null,
-        _envelopeSustainEndTime: null,
-
-        _envelopeReleaseEndGain: null,
-        _envelopeReleaseEndTime: null,
-
-        _envelopeReleaseHoldGain: null,
-        _envelopeReleaseHoldTime: null,
+        _envelopeReleaseGain: null,
+        _envelopeReleaseTime: null,
 
         _filter: null,
 
@@ -54,44 +48,28 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
             return this._masterGain;
         },
 
-        setEnvelopeAttackEndGain: function(attackEndGain) {
-            this._envelopeAttackEndGain = attackEndGain;
+        setEnvelopeAttackGain: function(attackGain) {
+            this._envelopeAttackGain = attackGain;
         },
 
-        setEnvelopeAttackEndTime: function(attackEndTime) {
-            this._envelopeAttackEndTime = attackEndTime;
+        setEnvelopeAttackTime: function(attackTime) {
+            this._envelopeAttackTime = attackTime;
+        },
+
+        setEnvelopeDecayTime: function(decayTime) {
+            this._envelopeDecayTime = decayTime;
         },
 
         setEnvelopeSustainGain: function(sustainGain) {
             this._envelopeSustainGain = sustainGain;
         },
 
-        setEnvelopeDecayEndTime: function(decayEndTime) {
-            this._envelopeDecayEndTime = decayEndTime;
+        setEnvelopeReleaseGain: function(releaseGain) {
+            this._envelopeReleaseGain = releaseGain;
         },
 
-        setEnvelopeSustainEndGain: function(sustainEndGain) {
-            this._envelopeSustainEndGain = sustainEndGain;
-        },
-
-        setEnvelopeSustainEndTime: function(sustainEndTime) {
-            this._envelopeSustainEndTime = sustainEndTime;
-        },
-
-        setEnvelopeReleaseEndGain: function(releaseEndGain) {
-            this._envelopeReleaseEndGain = releaseEndGain;
-        },
-
-        setEnvelopeReleaseEndTime: function(releaseEndTime) {
-            this._envelopeReleaseEndTime = releaseEndTime;
-        },
-
-        setEnvelopeReleaseHoldGain: function(releaseHoldGain) {
-            this._envelopeReleaseHoldGain = releaseHoldGain;
-        },
-
-        setEnvelopeReleaseHoldTime: function(releaseHoldTime) {
-            this._envelopeReleaseHoldTime = releaseHoldTime;
+        setEnvelopeReleaseTime: function(releaseTime) {
+            this._envelopeReleaseTime = releaseTime;
         },
 
         getFilter: function() {
@@ -162,14 +140,14 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
             this._filter.frequency.value   = Synthesizer.FILTER_DEFAULT_FREQ;
             this._filter.Q.value           = Synthesizer.FILTER_DEFAULT_RES;
 
-            this._envelopeAttackEndGain   = 1;
-            this._envelopeAttackEndTime   = 1;
+            this._envelopeAttackGain   = 1;
+            this._envelopeAttackTime   = 1;
 
-            this._envelopeSustainGain     = 1;
-            this._envelopeDecayEndTime    = 3;
+            this._envelopeSustainGain  = 1;
+            this._envelopeDecayTime    = 3;
 
-            this._envelopeReleaseEndGain  = 0.2;
-            this._envelopeReleaseEndTime  = 7;
+            this._envelopeReleaseGain  = 0.2;
+            this._envelopeReleaseTime  = 7;
 
             this._noteIsOn                = false;
 
@@ -206,26 +184,24 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
                 var frequency  = AudioUtils.calcFreqByKey(note);
                 var now        = this._audioContext.currentTime;
 
-                this._osc1.frequency.setValueAtTime(frequency,now);
-                this._osc2.frequency.setValueAtTime(frequency,now);
+                this._osc1.frequency.setValueAtTime(frequency, now);
+                this._osc2.frequency.setValueAtTime(frequency, now);
 
                 // ADSR - envelope
                 // reset all schedulers
                 this._envelopeGain.gain.cancelScheduledValues(0.0);
                 this._envelopeGain.gain.setValueAtTime(0, now);
+
+                // Ramp to attack-values
                 this._envelopeGain.gain.linearRampToValueAtTime(
-                    this._envelopeAttackEndGain,
-                    now + this._envelopeAttackEndTime
+                    this._envelopeAttackGain,
+                    now + this._envelopeAttackTime
                 );
 
+                // Ramp to decay time and sustain gain
                 this._envelopeGain.gain.linearRampToValueAtTime(
                     this._envelopeSustainGain,
-                    now + this._envelopeDecayEndTime
-                );
-
-                this._envelopeGain.gain.linearRampToValueAtTime(
-                    this._envelopeSustainEndGain,
-                    now + this._envelopeSustainEndTime
+                    now + this._envelopeDecayTime
                 );
             }
         },
@@ -234,14 +210,15 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
             var now = this._audioContext.currentTime;
             this._envelopeGain.gain.cancelScheduledValues(0.0);
             this._envelopeGain.gain.setValueAtTime(this._envelopeGain.gain.value, now);
+
+            // ramp to release
             this._envelopeGain.gain.linearRampToValueAtTime(
-                this._envelopeReleaseEndGain,
-                now + this._envelopeReleaseEndTime);
-            console.log(this._envelopeReleaseEndGain);
+                this._envelopeReleaseGain,
+                now + this._envelopeReleaseTime);
 
             this._noteIsOn = false;
         }
-
     });
+
     return Synthesizer;
 });

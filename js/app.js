@@ -114,16 +114,10 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         var envelopePoint   = new EnvelopePoint(GlobalConstants.CTRL_ATTACK_POINT, canvasState, 1, 1, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_DECAY_POINT, canvasState, 1, 3, '#AABBCC', envelopeControl);
-        envelopeControl.addPoint(envelopePoint);
-
-        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_SUSTAIN_POINT, canvasState, 0.5, 6, '#AABBCC', envelopeControl);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT, canvasState, 1, 3, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
         envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT, canvasState, 0.2, 7, '#AABBCC', envelopeControl);
-        envelopeControl.addPoint(envelopePoint);
-
-        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT_END, canvasState, 0, 8, '#AABBCC', envelopeControl);
         envelopeControl.addPoint(envelopePoint);
 
         canvasState.addControl(envelopeControl);
@@ -167,24 +161,16 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
                             synth.getMasterGain().gain.setValueAtTime(eventValue, now);
                             break;
                         case GlobalConstants.CTRL_ATTACK_POINT:
-                            synth.setEnvelopeAttackEndGain(eventValue.gain);
-                            synth.setEnvelopeAttackEndTime(eventValue.time);
+                            synth.setEnvelopeAttackGain(eventValue.gain);
+                            synth.setEnvelopeAttackTime(eventValue.time);
                             break;
-                        case GlobalConstants.CTRL_DECAY_POINT:
-                            synth.setEnvelopeDecayEndGain(eventValue.gain);
-                            synth.setEnvelopeDecayEndTime(eventValue.time);
-                            break;
-                        case GlobalConstants.CTRL_SUSTAIN_POINT:
-                            synth.setEnvelopeReleaseEndGain(eventValue.gain);
-                            synth.setEnvelopeSustainEndTime(eventValue.time);
+                        case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
+                            synth.setEnvelopeSustainGain(eventValue.gain);
+                            synth.setEnvelopeDecayTime(eventValue.time);
                             break;
                         case GlobalConstants.CTRL_RELEASE_POINT:
-                            synth.setEnvelopeReleaseEndGain(eventValue.gain);
-                            synth.setEnvelopeReleaseEndTime(eventValue.time);
-                            break;
-                        case GlobalConstants.CTRL_RELEASE_POINT_END:
-                            synth.setEnvelopeReleaseHoldGain(eventValue.gain);
-                            synth.setEnvelopeReleaseHoldTime(eventValue.time);
+                            synth.setEnvelopeReleaseGain(eventValue.gain);
+                            synth.setEnvelopeReleaseTime(eventValue.time);
                             break;
                         case GlobalConstants.CTRL_FLT_TYPE:
                             synth.getFilter().type = eventObject.getValue();
