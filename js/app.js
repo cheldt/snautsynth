@@ -36,10 +36,10 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         var canvasState = new CanvasState(600, 800, 'syn');
 
         var radioGroup = new RadioGroup(GlobalConstants.CTRL_OSC1_WAVE, 0, 20, Synthesizer.WAVEFORM_SINE, canvasState);
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORM_SINE, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORM_SINE, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
         canvasState.addControl(radioGroup);
 
         canvasState.addControl(new Label(1, 0, 20, canvasState, '#000', 'OSC1-Waveform'));
@@ -57,10 +57,10 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(new Label(1, 0, 180, canvasState, '#000', 'OSC2-Waveform'));
 
         radioGroup = new RadioGroup(GlobalConstants.CTRL_OSC2_WAVE, 0, 100, Synthesizer.WAVEFORM_SINE, canvasState);
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORM_SINE, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORM_SINE, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Square", Synthesizer.WAVEFORM_SQUARE, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Saw", Synthesizer.WAVEFORM_SAWTOOTH, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
         canvasState.addControl(radioGroup);
 
 
@@ -73,33 +73,16 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC2_GAIN, 180, 100, 1, canvasState, 100, 0, 1, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
         canvasState.addControl(new Label(1, 370, 180, canvasState, '#000', 'OSC1-Gain'));
 
-
         canvasState.addControl(new Knob(GlobalConstants.CTRL_MASTERGAIN, 240, 60, 0.5, canvasState, 100, 0, 0.5, 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
         canvasState.addControl(new Label(1, 490, 100, canvasState, '#000', 'Mastergain'));
 
-
-        canvasState.addControl(new Label(1, 0, 320, canvasState, '#000', 'ADSR-Envelope'));
-        /*
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_ADSR_A, 0, 180, 1, canvasState, 1, 0, 6, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
-        canvasState.addControl(new Label(1, 30, 345, canvasState, '#000', 'A'));
-
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_ADSR_D, 40, 180, 2, canvasState, 1, 0, 6, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
-        canvasState.addControl(new Label(1, 110, 345, canvasState, '#000', 'D'));
-
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_ADSR_S, 80, 180, 0.5,canvasState, 100, 0, 1, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
-        canvasState.addControl(new Label(1, 190, 345, canvasState, '#000', 'S'));
-
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_ADSR_R, 120, 180, 1, canvasState, 1, 0, 6, 30, '#AABBCC', 0, 0, null, new NumberFormatter('#0')));
-        canvasState.addControl(new Label(1, 270, 345, canvasState, '#000', 'R'));
-        */
-
-
         canvasState.addControl(new Label(1, 350, 320, canvasState, '#000', 'Filter'));
         canvasState.addControl(new Label(1, 350, 340, canvasState, '#000', 'Type'));
+
         radioGroup = new RadioGroup(GlobalConstants.CTRL_FLT_TYPE, 350, 180, Synthesizer.FILTER_LOWPASS, canvasState);
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Lowpass", Synthesizer.FILTER_LOWPASS, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Bandpass", Synthesizer.FILTER_BANDPASS, '#000', '#FFF'));
-        radioGroup.addButton(new RadioButton(0, 0, 0, canvasState, "Highpass", Synthesizer.FILTER_HIGHPASS, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Lowpass", Synthesizer.FILTER_LOWPASS, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Bandpass", Synthesizer.FILTER_BANDPASS, '#000', '#FFF'));
+        radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Highpass", Synthesizer.FILTER_HIGHPASS, '#000', '#FFF'));
         canvasState.addControl(radioGroup);
 
         canvasState.addControl(new Label(1, 450, 340, canvasState, '#000', 'Freq'));
@@ -109,98 +92,21 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_RESONANCE, 530, 370, 0.0001, canvasState, 1, 0.0001, 50, 100, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
 
 
+        canvasState.addControl(new Label(1, 0, 320, canvasState, '#000', 'ADSR-Envelope'));
         var envelopeControl = new EnvelopeGraph(GlobalConstants.CTRL_ENVELOPE, 20, 350, canvasState, 8);
 
-        var envelopePoint   = new EnvelopePoint(GlobalConstants.CTRL_ATTACK_POINT, canvasState, 1, 1, '#AABBCC', envelopeControl);
-        envelopeControl.addPoint(envelopePoint);
+        var envelopePoint   = new EnvelopePoint(GlobalConstants.CTRL_ATTACK_POINT, {'gain' : 1, 'time' : 1}, canvasState, '#AABBCC', envelopeControl);
+        envelopeControl.addControl(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT, canvasState, 1, 3, '#AABBCC', envelopeControl);
-        envelopeControl.addPoint(envelopePoint);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT, {'gain' : 1, 'time' : 3}, canvasState, '#AABBCC', envelopeControl);
+        envelopeControl.addControl(envelopePoint);
 
-        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT, canvasState, 0.2, 7, '#AABBCC', envelopeControl);
-        envelopeControl.addPoint(envelopePoint);
+        envelopePoint       = new EnvelopePoint(GlobalConstants.CTRL_RELEASE_POINT, {'gain' : 0.2, 'time' : 7}, canvasState, '#AABBCC', envelopeControl);
+        envelopeControl.addControl(envelopePoint);
 
         canvasState.addControl(envelopeControl);
 
-        function handleEvents() {
-            var eventObject = canvasState.getBaseLayer().getAttr('event');
-            var now = audioCtx.currentTime;
 
-            if(typeof eventObject !== 'undefined' ) {
-                if (eventObject.getType() == Event.TYPE_VALUE_CHANGED) {
-                    var eventValue = eventObject.getValue();
-
-                    switch (eventObject.getControlId()) {
-                        case GlobalConstants.CTRL_OSC1_WAVE:
-                            console.log(eventObject.getValue());
-                            synth.getOsc1().type = eventObject.getValue();
-                            console.log(synth.getOsc1());
-                            break;
-                        case GlobalConstants.CTRL_OSC1_TUNE:
-                            synth.getOsc1().detune.setValueAtTime(eventValue * 100, now);
-                            break;
-                        case GlobalConstants.CTRL_OSC1_OCT:
-                            synth.getOsc1().detune.setValueAtTime(eventValue * 1200, now);
-                            break;
-                        case GlobalConstants.CTRL_OSC1_GAIN:
-                            synth.getOsc1Gain().gain.setValueAtTime(eventValue, now);
-                            break;
-                        case GlobalConstants.CTRL_OSC2_WAVE:
-                            synth.getOsc2().type = eventValue;
-                            break;
-                        case GlobalConstants.CTRL_OSC2_TUNE:
-                            synth.getOsc2().detune.setValueAtTime(eventValue * 100,now);
-                            break;
-                        case GlobalConstants.CTRL_OSC2_OCT:
-                            synth.getOsc2().detune.setValueAtTime(eventValue * 1200,now);
-                            break;
-                        case GlobalConstants.CTRL_OSC2_GAIN:
-                            synth.getOsc2Gain().gain.setValueAtTime(eventValue, now);
-                            break;
-                        case GlobalConstants.CTRL_MASTERGAIN:
-                            synth.getMasterGain().gain.setValueAtTime(eventValue, now);
-                            break;
-                        case GlobalConstants.CTRL_ATTACK_POINT:
-                            synth.setEnvelopeAttackGain(eventValue.gain);
-                            synth.setEnvelopeAttackTime(eventValue.time);
-                            break;
-                        case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
-                            synth.setEnvelopeSustainGain(eventValue.gain);
-                            synth.setEnvelopeDecayTime(eventValue.time);
-                            break;
-                        case GlobalConstants.CTRL_RELEASE_POINT:
-                            synth.setEnvelopeReleaseGain(eventValue.gain);
-                            synth.setEnvelopeReleaseTime(eventValue.time);
-                            break;
-                        case GlobalConstants.CTRL_FLT_TYPE:
-                            synth.getFilter().type = eventObject.getValue();
-                            break;
-                        case GlobalConstants.CTRL_FLT_FREQUENCY:
-                            synth.getFilter().frequency.setValueAtTime(eventObject.getValue(),now);
-                            break;
-                        case GlobalConstants.CTRL_FLT_RESONANCE:
-                            synth.getFilter().Q.setValueAtTime(eventObject.getValue(),now);
-                            break
-                    }
-                }
-            }
-        }
-
-        canvasState.getContainer().addEventListener("mousemove",
-            function(evt) {
-                if (canvasState.getPointerLocked()) {
-                    handleEvents();
-                }
-            }
-        );
-
-        canvasState.getStage().on("dragmove",
-            function(evt) {
-                handleEvents();
-            }
-        );
-
-        canvasState.getContainer().addEventListener("click", function(evt) { handleEvents() });
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         var audioCtx        = new window.AudioContext();
@@ -208,12 +114,34 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
         synth.init();
 
-        window.addEventListener("keyup", function() {
-            synth.noteOff();
-        });
+        canvasState.getContainer().addEventListener(
+            "click",
+            function(evt) {
+                var eventObject = canvasState.getBaseLayer().getAttr('event');
+                synth.processEventObject(eventObject, canvasState);
+            }
+        );
 
-        window.addEventListener("keydown", function(e) {
-            synth.noteOn(e.keyCode);
-        });
+        canvasState.getContainer().addEventListener(
+            "mousemove",
+            function(evt) {
+                if (canvasState.getPointerLocked()) {
+                    var eventObject = canvasState.getBaseLayer().getAttr('event');
+                    synth.processEventObject(eventObject, canvasState);
+                }
+            }
+        );
+
+        canvasState.getStage().on(
+            "dragmove",
+            function(evt) {
+                var eventObject = canvasState.getBaseLayer().getAttr('event');
+                synth.processEventObject(eventObject, canvasState);
+            }
+        );
+
+        window.addEventListener("keyup", function() { synth.noteOff(); });
+
+        window.addEventListener("keydown", function(e) { synth.noteOn(e.keyCode); });
     }
 );

@@ -8,7 +8,6 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
         _maxTime:         null,
         _maxPixelGain:    null,
         _maxPixelTime:    null,
-        _points:          null,
         _pointConnection: null,
 
         getMaxPixelGain: function() {
@@ -31,8 +30,8 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
         initialize: function(id, x, y, canvasState, maxTime) {
             this.$super(id, x, y, canvasState);
 
-            this._maxTime    = maxTime;
-            this._points     = [];
+            this._controls     = [];
+            this._maxTime      = maxTime;
 
             this._maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
             this._maxPixelTime = maxTime * Graph.PIXEL_PER_TIME;
@@ -65,11 +64,6 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
             });
 
             this._kineticGroup.add(this._pointConnection);
-
-
-            //this._kineticGroup.on('click', function(evt) {
-
-            //});
         },
 
         /**
@@ -77,9 +71,8 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
          *
          * @param point
          */
-        addPoint: function(point) {
-            this._points.push(point);
-            this._kineticGroup.add(point.getKineticGroup());
+        addControl: function(point) {
+            this.$super(point);
 
             var newPosition = null;
             newPosition     = point.calcPositionByValues();
@@ -96,13 +89,13 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
         connectPoints: function() {
             var pointConnectorCoordsList = [0, Graph.PIXEL_PER_GAIN];
 
-            for (var pointIndex = 0; pointIndex < this._points.length; pointIndex++) {
-                var point = this._points[pointIndex];
+            for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
+                var point = this._controls[pointIndex];
                 pointConnectorCoordsList.push(point.getX());
                 pointConnectorCoordsList.push(point.getY());
             }
 
-            var lastPoint = this._points[this._points.length - 1];
+            var lastPoint = this._controls[this._controls.length - 1];
 
             pointConnectorCoordsList.push(this._maxPixelTime, lastPoint.getY())
 
@@ -112,33 +105,14 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
         getPointById: function(id) {
             var point = null;
 
-            for (var pointIndex = 0; pointIndex < this._points.length; pointIndex++) {
-                point = this._points[pointIndex];
+            for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
+                point = this._controls[pointIndex];
 
                 if (point.getId() == id) {
                     return point;
                 }
             }
         }
-
-
-
-        /*
-        calcPointPositionsByValues: function(pointId) {
-            var xOffset     = 0;
-            var yOffset     = 0;
-            var pointCount  = this._points.length;
-            var point       = null;
-
-
-            for (var pointIndex = 0; pointIndex < pointCount; pointIndex++) {
-                point       = this._points[pointIndex];
-                newPosition = point.calcPositionFromValues();
-
-                point.updatePosition(newPosition);
-            }
-        }
-        */
     });
 
     return Graph;

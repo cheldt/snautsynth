@@ -1,13 +1,11 @@
-define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Graph', 'app/utils/GlobalConstants', 'app/event/Event'], function(dejavu, Kinetic, Control, Graph, GlobalConstants, Event){
+define(['dejavu','kinetic', 'app/controls/ui/UIControl', 'app/controls/ui/envelope/Graph', 'app/utils/GlobalConstants', 'app/event/Event'], function(dejavu, Kinetic, UIControl, Graph, GlobalConstants, Event){
     var Point = dejavu.Class.declare({
         $name: 'Point',
 
-        $extends: Control,
+        $extends: UIControl,
 
-        _gain: null,
         _graph: null,
         _point: null,
-        _time: null,
 
         getGraph: function() {
             return this._graph;
@@ -17,37 +15,19 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
             return this;
         },
 
-        getGain: function() {
-            return this._gain;
-        },
-        setGain: function(gain) {
-            this._gain = gain;
-            return this;
-        },
-
-        getTime: function() {
-            return this._time;
-        },
-        setTime: function(time) {
-            this._time = time;
-            return this;
-        },
-
         $constants: {
             RADIUS: 8
         },
 
-        initialize: function(id, canvasState, gain, time, color, graph) {
-            this.$super(id, 0, 0, canvasState);
+        initialize: function(id, value, canvasState, color, graph) {
+            this.$super(id, 0, 0, value, canvasState);
 
             this._graph = graph;
-            this._gain  = gain;
-            this._time  = time;
 
             this._point = new Kinetic.Circle({
-                fill:      color,
-                id:        id,
-                radius:    Point.RADIUS
+                fill:   color,
+                id:     id,
+                radius: Point.RADIUS
             });
 
             this._kineticGroup.setDraggable(true);
@@ -76,7 +56,7 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
                         rightBound          = graphX + releasePoint.getX();
                         break;
                     case GlobalConstants.CTRL_RELEASE_POINT:
-                        var decayPointPoint    = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
+                        var decayPointPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
 
                         leftBound           = graphX + decayPointPoint.getX();
                         rightBound          = graphX + graph.getMaxPixelTime();
@@ -107,13 +87,14 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
             this._kineticGroup.on('dragmove',function() {
                 myPoint.getGraph().connectPoints();
 
-                myPoint.setValuesFromPosition();
+                myPoint.setValueFromPosition();
 
-                var eventReturn = {'gain' : myPoint.getGain(), 'time' : myPoint.getTime()};
+                var eventReturn = myPoint.getValue();
 
                 myPoint.getCanvasState().getBaseLayer().setAttr(
                     'event',
-                    new Event(myPoint.getId(), eventReturn, Event.TYPE_VALUE_CHANGED));
+                    new Event(myPoint.getId(), eventReturn, Event.TYPE_VALUE_CHANGED)
+                );
             });
 
             this._kineticGroup.add(this._point);
@@ -122,14 +103,16 @@ define(['dejavu','kinetic', 'app/controls/Control', 'app/controls/ui/envelope/Gr
         calcPositionByValues: function() {
             var halfRadius = Point.RADIUS / 2;
             return {
-                x: this._time * Graph.PIXEL_PER_TIME,
-                y: Graph.PIXEL_PER_GAIN - this._gain * Graph.PIXEL_PER_GAIN
+                x: this._value.time * Graph.PIXEL_PER_TIME,
+                y: Graph.PIXEL_PER_GAIN - this._value.gain * Graph.PIXEL_PER_GAIN
             };
         },
 
-        setValuesFromPosition: function() {
-            this._time = this.getX() / Graph.PIXEL_PER_TIME;
-            this._gain = Graph.MAX_GAIN - (this.getY() / Graph.PIXEL_PER_GAIN);
+        setValueFromPosition: function() {
+            this._value = {
+                'gain' : Graph.MAX_GAIN - (this.getY() / Graph.PIXEL_PER_GAIN),
+                'time' : this.getX() / Graph.PIXEL_PER_TIME
+            };
         },
 
         updatePosition: function(newPosition) {

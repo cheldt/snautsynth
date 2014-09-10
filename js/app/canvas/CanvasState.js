@@ -145,6 +145,8 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             document.addEventListener('mozpointerlockchange', function() { myState.lockChangeCallback() }, false);
             document.addEventListener('webkitpointerlockchange', function() { myState.lockChangeCallback() }, false);
 
+            this._controls = [];
+
 
             /*
             this._canvas = canvas;
@@ -156,7 +158,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             this._canvas.height = height;
             this._canvasContext = this._canvas.getContext("2d");
 
-            this._controls = [];
+
             this._drawInterval = 30;
             this._scale = 1;
 
@@ -196,6 +198,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
         addControl: function(control) {
             // add group to baseLayer of canvasState
+            this._controls.push(control);
             this.addNodeToBLayer(control.getKineticGroup());
         },
 

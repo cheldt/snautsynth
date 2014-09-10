@@ -1,4 +1,4 @@
-define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], function(dejavu, AudioUtils, GlobalConstants){
+define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/event/Event'], function(dejavu, AudioUtils, GlobalConstants, Event){
     var Synthesizer = dejavu.Class.declare({
         $name: 'Synthesizer',
 
@@ -169,6 +169,71 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
             this._osc2.start(0);
         },
 
+        processEventObject: function(eventObject, canvasState) {
+            var now = this._audioContext.currentTime;
+
+            if(typeof eventObject !== 'undefined' ) {
+                if (eventObject.getType() == Event.TYPE_VALUE_CHANGED) {
+                    var eventValue = eventObject.getValue();
+
+                    switch (eventObject.getControlId()) {
+                        case GlobalConstants.CTRL_OSC1_WAVE:
+                            this.getOsc1().type = eventValue;
+                            break;
+                        case GlobalConstants.CTRL_OSC1_TUNE:
+                            var osc1OctaveValue = canvasState.getValueByControlId(GlobalConstants.CTRL_OSC1_OCT);
+                            this.getOsc1().detune.setValueAtTime(eventValue * 100 + osc1OctaveValue * 1200, now);
+                            break;
+                        case GlobalConstants.CTRL_OSC1_OCT:
+                            var osc1TuneValue = canvasState.getValueByControlId(GlobalConstants.CTRL_OSC1_TUNE);
+                            this.getOsc1().detune.setValueAtTime(eventValue * 1200 + osc1TuneValue * 100, now);
+                            break;
+                        case GlobalConstants.CTRL_OSC1_GAIN:
+                            this.getOsc1Gain().gain.setValueAtTime(eventValue, now);
+                            break;
+                        case GlobalConstants.CTRL_OSC2_WAVE:
+                            this.getOsc2().type = eventValue;
+                            break;
+                        case GlobalConstants.CTRL_OSC2_TUNE:
+                            var osc2OctaveValue = canvasState.getValueByControlId(GlobalConstants.CTRL_OSC2_OCT);
+                            this.getOsc2().detune.setValueAtTime(eventValue * 100 + osc2OctaveValue * 1200,now);
+                            break;
+                        case GlobalConstants.CTRL_OSC2_OCT:
+                            var osc2TuneValue = canvasState.getValueByControlId(GlobalConstants.CTRL_OSC2_TUNE);
+                            this.getOsc2().detune.setValueAtTime(eventValue * 1200 + osc2TuneValue * 100, now);
+                            break;
+                        case GlobalConstants.CTRL_OSC2_GAIN:
+                            this.getOsc2Gain().gain.setValueAtTime(eventValue, now);
+                            break;
+                        case GlobalConstants.CTRL_MASTERGAIN:
+                            this.getMasterGain().gain.setValueAtTime(eventValue, now);
+                            break;
+                        case GlobalConstants.CTRL_ATTACK_POINT:
+                            this.setEnvelopeAttackGain(eventValue.gain);
+                            this.setEnvelopeAttackTime(eventValue.time);
+                            break;
+                        case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
+                            this.setEnvelopeSustainGain(eventValue.gain);
+                            this.setEnvelopeDecayTime(eventValue.time);
+                            break;
+                        case GlobalConstants.CTRL_RELEASE_POINT:
+                            this.setEnvelopeReleaseGain(eventValue.gain);
+                            this.setEnvelopeReleaseTime(eventValue.time);
+                            break;
+                        case GlobalConstants.CTRL_FLT_TYPE:
+                            this.getFilter().type = eventValue;
+                            break;
+                        case GlobalConstants.CTRL_FLT_FREQUENCY:
+                            this.getFilter().frequency.setValueAtTime(eventValue, now);
+                            break;
+                        case GlobalConstants.CTRL_FLT_RESONANCE:
+                            this.getFilter().Q.setValueAtTime(eventValue, now);
+                            break
+                    }
+                }
+            }
+        },
+
         noteOn: function(keycode) {
             var arrayLength = this._keycode_note_mapping.length;
             var note        = null;
@@ -179,7 +244,7 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants'], functio
                 }
             }
 
-            if(!this._noteIsOn) {
+            if(!this._noteIsOn && note != null) {
                 this._noteIsOn = true;
                 var frequency  = AudioUtils.calcFreqByKey(note);
                 var now        = this._audioContext.currentTime;

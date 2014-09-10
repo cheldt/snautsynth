@@ -4,13 +4,7 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/
 
         $extends: UIControl,
 
-        _radioButtons: null,
-
         _lastRadioY: null,
-
-        getRadioButtons: function() {
-            return this._radioButtons;
-        },
 
         initialize: function (id, x, y, value, canvasState) {
             this.$super(id, x, y, value, canvasState);
@@ -19,7 +13,7 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/
 
             this._maxRadius    = 0;
 
-            this._radioButtons = [];
+            this._controls = [];
 
             var myRadioGroup = this;
 
@@ -29,7 +23,7 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/
                 var eventObject =  myRadioGroup.getCanvasState().getBaseLayer().getAttr('event');
                 if(typeof eventObject !== 'undefined') {
                     if (eventObject.getType() == Event.TYPE_CHECKED_CHANGED) {
-                        var radioButtonList = myRadioGroup.getRadioButtons();
+                        var radioButtonList = myRadioGroup.getControls();
                         var ctrCount        = radioButtonList.length;
 
                         for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
@@ -55,11 +49,11 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/
             });
         },
 
-        addButton: function(radioButton) {
-            radioButton.setY(this._lastRadioY)
+        addControl: function(radioButton) {
+            radioButton.setY(this._lastRadioY);
 
-            this._radioButtons.push(radioButton);
-            this._kineticGroup.add(radioButton.getKineticGroup());
+            this.$super(radioButton);
+
             if (radioButton.getValue() == this._value) {
                 radioButton.changeCheckedState(true);
             }
