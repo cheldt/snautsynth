@@ -33,7 +33,7 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
            'app/controls/ui/envelope/Graph', 'app/controls/ui/envelope/Point'],
     function (Event, CanvasState, Knob, RadioGroup, RadioButton, Fader, Synthesizer, NumberFormatter, Label, GlobalConstants, EnvelopeGraph, EnvelopePoint) {
 
-        var canvasState = new CanvasState(600, 800, 'syn');
+        var canvasState = new CanvasState(600, 550, 'syn');
 
         var radioGroup = new RadioGroup(GlobalConstants.CTRL_OSC1_WAVE, 0, 20, Synthesizer.WAVEFORM_SINE, canvasState);
         radioGroup.addControl(new RadioButton(0, 0, 0, canvasState, "Sine", Synthesizer.WAVEFORM_SINE, '#000', '#FFF'));

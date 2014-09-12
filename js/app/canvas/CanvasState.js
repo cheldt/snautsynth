@@ -96,18 +96,10 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
         initialize: function(width, height, containerId) {
 
-
-            // create canvas element
-            //var canvas = document.createElement('canvas');
-            //canvas.setAttribute('id','cvs');
-
-            // append canvas into dom-tree
-            //document.body.appendChild(canvas);
-
             this._stage = new Kinetic.Stage({
                 container: containerId,
-                width: width,
-                height: height,
+                width:     width,
+                height:    height,
                 scale: {x: 1, y: 1}
             });
 
@@ -122,14 +114,14 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
             this._drawInterval = 30;
 
             var myState = this;
-            
-            
-            (function animloop(){
-                window.requestAnimationFrame(animloop);
-                myState.draw();
-            })();
-            
-            //setInterval(function() { myState.draw(); }, 30);
+
+            var anim = new Kinetic.Animation(function(frame) {
+                var time = frame.time,
+                    timeDiff = frame.timeDiff,
+                    frameRate = frame.frameRate;
+            }, this._baseLayer);
+
+            anim.start();
 
             window.onresize = function () {
                 myState.resize();
@@ -137,63 +129,11 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
 
             this._canvas = this._baseLayer.getCanvas()._canvas;
 
-            //this._container.addEventListener('mouseup', function(e) {
-               //myState.unlockPointer();
-            //}, false);
-
             document.addEventListener('pointerlockchange', function() { myState.lockChangeCallback() }, false);
             document.addEventListener('mozpointerlockchange', function() { myState.lockChangeCallback() }, false);
             document.addEventListener('webkitpointerlockchange', function() { myState.lockChangeCallback() }, false);
 
             this._controls = [];
-
-
-            /*
-            this._canvas = canvas;
-            this._width = width;
-            this._height = height;
-
-
-            this._canvas.width = width;
-            this._canvas.height = height;
-            this._canvasContext = this._canvas.getContext("2d");
-
-
-            this._drawInterval = 30;
-            this._scale = 1;
-
-            this.resize();
-
-            //fixes a problem where double clicking causes text to get selected on the canvas
-            this._canvas.addEventListener('selectstart', function(e) {e.preventDefault(); return false; }, false);
-
-            var myState = this;
-            this._canvas.addEventListener('mousedown', function(e) {
-                var mousePos = myState.getMousePosition(e);
-                myState.setLastMouseDownEventTmstamp( new Date().getTime() );
-                myState.fire("mousedown", myState, mousePos);
-            },true);
-
-            this._canvas.addEventListener('mousemove', function(e) {
-                var mousePos = myState.getMousePosition(e);
-                myState.fire("mousemove", myState,mousePos);
-                myState.setLastMouseY(mousePos.getY());
-            }, true)
-
-            this._canvas.addEventListener('mouseup', function(e) {
-                myState.fire("mouseup",myState, {});
-            }, true);
-
-            this._canvas.addEventListener('mouseout', function(e) {
-                myState.fire("mouseout",myState, {});
-            }, true),
-
-            
-
-
-            setInterval(function() { myState.draw(); }, myState.interval);
-
-            */
         },
 
         addControl: function(control) {
@@ -311,7 +251,6 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'],
                 this._scale = scale;
 
                 this._stage.setScale({ x: scale, y: scale });
-                this._stage.draw();
             }
         },
 
