@@ -238,39 +238,87 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
         },
 
         $statics: {
-            // calculate degree from radian
-            calcRadToDeg: function(radian) {
-                return (radian * 180) / Math.PI;
-            },
-
-            // calculate radian from degree
+            /**
+             * Calculates radian from degree
+             *
+             * @param {Number} degree  The degree-value
+             *
+             * @return {Number}  The calculated radian-value
+             */
             calcDegToRad: function(degree) {
                 return (degree * Math.PI) / 180;
             },
 
+            /**
+             * Calculates radian from controller-value
+             * depending on the min/max values of radian and controller-value
+             *
+             * @param {Number} value     The controller-value
+             * @param {Number} minRad    The minium radian
+             * @param {Number} maxRad    The maximum radian
+             * @param {Number} minValue  The minimum controller-value
+             * @param {Number} maxValue  The maximum controller-value
+             *
+             * @returns {Number}  The calculated radian
+             */
             calcRadFromValue: function(value, minRad, maxRad, minValue, maxValue) {
-                var totalRad = maxRad - minRad;
+                var totalRad   = maxRad - minRad;
                 var totalValue = maxValue - minValue;
 
-                // totalRadian                  -> totalValue
-                // resultradian + radian-offset -> (value - value-offset)
+                // totalRadian                       -> totalValue
+                // calculated radian + radian-offset -> (value - value-offset)
                 return ((totalRad * (value - minValue)) / totalValue) + minRad;
             },
 
+            /**
+             * Calculates degree from radian
+             *
+             * @param {Number} radian
+             *
+             * @return {Number}  The calculated degree-value
+             */
+            calcRadToDeg: function(radian) {
+                return (radian * 180) / Math.PI;
+            },
+
+            /**
+             * Calculates controller-value from radian
+             * depending on the min/max values of radian and controller-value
+             *
+             * @param {Number} radian    The radian
+             * @param {Number} minRad    The minium radian
+             * @param {Number} maxRad    The maximum radian
+             * @param {Number} minValue  The minimum controller-value
+             * @param {Number} maxValue  The maximum controller-value
+             *
+             * @returns {Number}  The calculated controller-value
+             */
             calcValueFromRad: function(radian, minRad, maxRad, minValue, maxValue) {
-                var totalRad = maxRad - minRad;
+                var totalRad   = maxRad - minRad;
                 var totalValue = maxValue - minValue;
 
-                // totalValue                  -> totalRadian
-                // resultvalue + value-offset  -> (radian - radian-offset)
+                // totalValue                       -> totalRadian
+                // calculated value + value-offset  -> (radian - radian-offset)
                 return ((totalValue * (radian - minRad)) / totalRad) + minValue;
             },
 
-            // x,y is the point to test
-            // cx, cy is circle center, and radius is circle radius
-            pointInCircle: function(x, y, cx, cy, radius) {
-                var distancesquared = (x - cx) * (x - cx) + (y - cy) * (y - cy);
-                return distancesquared <= radius * radius;
+            /**
+             * Checks if point lies inside circle
+             *
+             * @param {Number} pointX         The x-coordinate of point
+             * @param {Number} pointY         The y-coordinate of point
+             * @param {Number} circleCenterX  The x-coordinate of circle center-point
+             * @param {Number} circleCenterY  The y-coordinate of circle center-point
+             * @param {Number} radius         The radius of circle
+             *
+             * @returns {Boolean}  True when point is part of circle, false if not
+             */
+            pointInCircle: function(pointX, pointY, circleCenterX, circleCenterY, radius) {
+                var distanceSquared =
+                    (pointX - circleCenterX) * (pointX - circleCenterX) +
+                    (pointY - circleCenterY) * (pointY - circleCenterY);
+
+                return distanceSquared <= radius * radius;
             }
         },
 

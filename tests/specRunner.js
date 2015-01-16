@@ -7,8 +7,8 @@ require.config({
 		jasmine:        'lib/jasmine/jasmine',
 		'jasmine-html': 'lib/jasmine/jasmine-html',
 		boot:           'lib/jasmine/boot',
-		prelude:        'lib/prelude-browser-min',
-		quickcheck:     'lib/jasmine-quick-check'
+		quickcheck:     'lib/jasmine-quick-check',
+		src:            'src'
 	},
 
 	packages: [
