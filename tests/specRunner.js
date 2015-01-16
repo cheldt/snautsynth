@@ -3,7 +3,7 @@ require.config({
 	paths: {
 		app:            '../js/app',
 		mout:           '../js/vendor/mout/src',
-		kinetic:        '../js/vendor/kinetic.min',
+		kinetic:        '../js/vendor/kinetic/kinetic.min',
 		jasmine:        'lib/jasmine/jasmine',
 		'jasmine-html': 'lib/jasmine/jasmine-html',
 		boot:           'lib/jasmine/boot',
@@ -14,7 +14,7 @@ require.config({
 	packages: [
 		{
 			name:     'dejavu',
-			location: '../js/vendor/js-dejavu/dist/amd/strict'
+			location: '../js/vendor/dejavu/dist/amd/strict'
 		}
 	],
 
