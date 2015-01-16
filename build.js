@@ -1,8 +1,8 @@
 ({
     paths: {
-        kinetic    : 'vendor/kinetic.min',
+        kinetic    : 'vendor/kinetic/kinetic.min',
         mout       : 'vendor/mout/src',
-        requireLib : 'vendor/require'
+        requireLib : 'vendor/requirejs/require'
     },
 
     include : ['requireLib'],
@@ -11,7 +11,7 @@
     packages: [
         {
             name: 'dejavu',
-            location: 'vendor/js-dejavu/dist/amd/loose'
+            location: 'vendor/dejavu/dist/amd/loose'
         },
     ],
 

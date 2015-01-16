@@ -1,0 +1,24 @@
+{
+  "name": "snautsynth",
+  "version": "0.0.0",
+  "homepage": "https://github.com/cheldt/snautsynth",
+  "authors": [
+    "Christian Heldt <christian.heldt@mayflower.de>"
+  ],
+  "description": "simple synth using webaudio-api",
+  "main": "index.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "dejavu": "~0.4.8",
+    "kinetic": "~5.1.9",
+    "requirejs": "~2.1.15"
+  }
+}

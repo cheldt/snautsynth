@@ -6,13 +6,13 @@ require.config({
         app:     '../app',
         mout:    'mout/src',
         //libs
-        kinetic: 'kinetic.min'
+        kinetic: 'kinetic/kinetic.min'
 
     },
     packages: [
         {
             name:     'dejavu',
-            location: 'js-dejavu/dist/amd/strict'
+            location: 'dejavu/dist/amd/strict'
         }
     ],
 
