@@ -6,10 +6,10 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/
 
         _lastRadioY: null,
 
-        initialize: function (id, x, y, value, canvasState) {
-            this.$super(id, x, y, value, canvasState);
+        initialize: function (id, position, value, canvasState) {
+            this.$super(id, position, value, canvasState);
 
-            this._lastRadioY   = y;
+            this._lastRadioY   = position.getY();
 
             this._maxRadius    = 0;
 

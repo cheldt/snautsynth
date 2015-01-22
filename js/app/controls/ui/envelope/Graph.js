@@ -27,8 +27,8 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
             POINTCONNECTOR_WIDTH: 1.5
         },
 
-        initialize: function(id, x, y, canvasState, maxTime) {
-            this.$super(id, x, y, canvasState);
+        initialize: function(id, position, canvasState, maxTime) {
+            this.$super(id, position, canvasState);
 
             this._controls     = [];
             this._maxTime      = maxTime;

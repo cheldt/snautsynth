@@ -1,4 +1,4 @@
-define(['dejavu','app/event/CustomEvent', 'app/utils/MousePosition', 'kinetic'], function(dejavu, CustomEvent, MousePosition, Kinetic){
+define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], function(dejavu, CustomEvent, MousePosition, Kinetic){
 
 
     var CanvasState = dejavu.Class.declare({

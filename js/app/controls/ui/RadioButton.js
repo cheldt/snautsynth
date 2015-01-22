@@ -46,8 +46,8 @@ define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl','mout/lang/defa
             BORDER_WIDTH:            3
         },
 
-        initialize: function(id, x, y, canvasState, label, value, color, checkedColor, radius) {
-            this.$super(id, x, y, value, canvasState);
+        initialize: function(id, position, canvasState, label, value, color, checkedColor, radius) {
+            this.$super(id, position, value, canvasState);
 
             this._radius = defaults(radius, RadioButton.BUTTON_RADIUS);
 

@@ -1,4 +1,4 @@
-define(['dejavu','kinetic', 'app/controls/ui/UIControl', 'app/controls/ui/envelope/Graph', 'app/utils/GlobalConstants', 'app/event/Event'], function(dejavu, Kinetic, UIControl, Graph, GlobalConstants, Event){
+define(['dejavu','kinetic', 'app/controls/ui/UIControl', 'app/controls/ui/envelope/Graph', 'app/utils/GlobalConstants', 'app/event/Event', 'app/utils/Position'], function(dejavu, Kinetic, UIControl, Graph, GlobalConstants, Event, Position){
     var Point = dejavu.Class.declare({
         $name: 'Point',
 
@@ -20,7 +20,7 @@ define(['dejavu','kinetic', 'app/controls/ui/UIControl', 'app/controls/ui/envelo
         },
 
         initialize: function(id, value, canvasState, color, graph) {
-            this.$super(id, 0, 0, value, canvasState);
+            this.$super(id, new Position(0, 0), value, canvasState);
 
             this._graph = graph;
 

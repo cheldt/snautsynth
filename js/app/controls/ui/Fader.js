@@ -37,8 +37,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
          * Constructor for Fader
          *
          * @param {Number} id
-         * @param {Number} x
-         * @param {Number} y
+         * @param {Object} position
          * @param {Number} value
          * @param {Object} canvasState
          * @param {Number} valueDspMult
@@ -52,12 +51,12 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
          * @param {Number} orientation
          */
         initialize: function(
-            id, x, y, value, canvasState,
+            id, position, value, canvasState,
             valueDspMult, valueRange,
             length, color, snapStep, snapDistance,
             doubleClickSnapValue, formatter,
             orientation) {
-            this.$super(id, x, y, value, canvasState, valueDspMult, valueRange, snapStep,
+            this.$super(id, position, value, canvasState, valueDspMult, valueRange, snapStep,
                 snapDistance, doubleClickSnapValue, formatter);
 
             this._length      = length;

@@ -23,8 +23,8 @@ define(['dejavu', 'app/controls/layout/LayoutControl'], function(dejavu, LayoutC
             return this;
         },
 
-        initialize: function(id, x, y, canvasState, color, text) {
-            this.$super(id, x, y, canvasState);
+        initialize: function(id, position, canvasState, color, text) {
+            this.$super(id, position, canvasState);
 
             this._color = color;
             this._text  = text;

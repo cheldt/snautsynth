@@ -36,8 +36,7 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
          * Constructor for RangeControl
          *
          * @param {Number} id
-         * @param {Number} x
-         * @param {Number} y
+         * @param {Object} position
          * @param {Number} value
          * @param {Object} canvasState
          * @param {Number} valueDspMult
@@ -47,14 +46,14 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
          * @param {Number} doubleClickSnapValue
          * @param {Object} formatter
          */
-        initialize: function (id, x, y,
+        initialize: function (id, position,
             value, canvasState,
             valueDspMult,
             valueRange,
             snapStep, snapDistance,
             doubleClickSnapValue,
             formatter) {
-            this.$super(id, x, y, value, canvasState);
+            this.$super(id, position, value, canvasState);
 
             this._valueDspMult         = valueDspMult;
             this._valueRange           = valueRange;

@@ -37,8 +37,8 @@ define(['dejavu', 'app/controls/Control'], function(dejavu, Control){
             this._selected = selected;
         },
 
-        initialize: function(id, x, y, value, canvasState) {
-            this.$super(id, x, y, canvasState);
+        initialize: function(id, position, value, canvasState) {
+            this.$super(id, position, canvasState);
             this._value    = value;
             this._selected = false;
         }

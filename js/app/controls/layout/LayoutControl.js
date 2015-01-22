@@ -4,8 +4,8 @@ define(['dejavu', 'app/controls/Control'], function(dejavu, Control) {
 
         $extends: Control,
 
-        initialize: function(id, x, y, canvasState) {
-            this.$super(id, x, y, canvasState);
+        initialize: function(id, position, canvasState) {
+            this.$super(id, position, canvasState);
         }
     });
 

@@ -74,14 +74,15 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic',
          * @param {Number} doubleClickSnapValue
          * @param {Object} formatter
          */
-        initialize: function (id, x, y,
+        initialize: function (id,
+                              position,
                               value, canvasState,
                               valueDspMult,
                               valueRange,
                               radius, color,
                               snapStep, snapDistance,
                               doubleClickSnapValue, formatter) {
-            this.$super(id, x, y,
+            this.$super(id, position,
                         value, canvasState,
                         valueDspMult,
                         valueRange,
