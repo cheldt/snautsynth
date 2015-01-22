@@ -2,8 +2,9 @@ define(['app/canvas/CanvasState',
 		'app/utils/formatter/NumberFormatter',
 		'app/controls/ui/Knob',
 		'src/Helper',
-		'quickcheck'],
-	function(CanvasState, NumberFormatter, Knob, TestHelper, QuickCheck) {
+		'quickcheck',
+		'app/datatypes/NumberRange'],
+	function(CanvasState, NumberFormatter, Knob, TestHelper, QuickCheck, NumberRange) {
 	'use strict';
 
 	describe('Knob-Control', function() {
@@ -12,8 +13,9 @@ define(['app/canvas/CanvasState',
 		beforeEach(function() {
 			var canvasState     = new CanvasState(600, 550, 'syn');
 			var numberFormatter = new NumberFormatter('#0');
+			var valueRange      = new NumberRange(0, 100);
 
-			knob = new Knob(1, 100, 100, 10, canvasState, 100, 0, 100, 10, '#FFF', 10, 2, 5, numberFormatter);
+			knob = new Knob(1, 100, 100, 10, canvasState, 100, valueRange, 10, '#FFF', 10, 2, 5, numberFormatter);
 		});
 
 		it('Tests rad to deg and deg to rad convertion - calcRadToDeg() -> calcDegToRad()', function() {
@@ -30,25 +32,16 @@ define(['app/canvas/CanvasState',
 			function() {
 				expect(
 					function(randomRealValue) {
-						var minRad = knob.getMinPointerRad();
-						var maxRad = knob.getMaxPointerRad();
-						var minValue = knob.getMinValue();
-						var maxValue = knob.getMaxValue();
-
 						var calculatedRad  = Knob.calcRadFromValue(
 							randomRealValue,
-							minRad,
-							maxRad,
-							minValue,
-							maxValue
+							knob.getPointerRadRange(),
+							knob.getValueRange()
 						);
 
 						var calculatedValue = Knob.calcValueFromRad(
 							calculatedRad,
-							minRad,
-							maxRad,
-							minValue,
-							maxValue
+							knob.getPointerRadRange(),
+							knob.getValueRange()
 						);
 
 						return TestHelper.roundTwoDecPlaces(randomRealValue) == TestHelper.roundTwoDecPlaces(calculatedValue);

@@ -1,54 +1,28 @@
-define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic'],
-    function(dejavu, RangeControl, Event, Kinetic){
+define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic', 'app/datatypes/NumberRange'],
+    function(dejavu, RangeControl, Event, Kinetic, NumberRange){
     var Knob = dejavu.Class.declare({
         $name: 'Knob',
 
         $extends: RangeControl,
 
-        _borderColor: null,
-
-        _color: null,
-
-        _knobX: null,
-
-        _knobY: null,
-
-        _knobCircle: null,
-
-        _maxPointerRad: null,
-
-        _minPointerRad: null,
-
-        _pointerColor: null,
-
-        _pointer: null,
-
-        _pointerRadian: null,
-
-        _radius: null,
-
+        _borderColor:      null,
+        _color:            null,
+        _knobX:            null,
+        _knobY:            null,
+        _knobCircle:       null,
+        _pointerRadRange:  null,
+        _pointerColor:     null,
+        _pointer:          null,
+        _pointerRadian:    null,
+        _radius:           null,
         _valueDisplayArea: null,
-
         _valueDisplayText: null,
+        _tmpPointerRad:    null,
 
-        _tmpPointerRad: null,
-        
-        getMaxPointerRad: function() {
-            return this._maxPointerRad;
-        },
- 
-        getMaxValue: function() {
-            return this._maxValue;    
+        getPointerRadRange: function() {
+            return this._pointerRadRange;
         },
 
-        getMinPointerRad: function() {
-            return this._minPointerRad;
-        },
-
-        getMinValue: function() {
-            return this._minValue;
-        },
-        
         getKnobCircle: function() {
             return this._knobCircle;
         },
@@ -56,6 +30,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
         getPointerRadian: function() {
             return this._pointerRadian;
         },
+
         setPointerRadian: function(pointerRadian) {
             this._pointerRadian = pointerRadian;
             return this;
@@ -82,33 +57,46 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
             VAL_DISPLAY_Y:             32
         },
 
+        /**
+         * Constructor for knob
+         *
+         * @param {Number} id
+         * @param {Number} x
+         * @param {Number} y
+         * @param {Number} value
+         * @param {Object} canvasState
+         * @param {Number} valueDspMult
+         * @param {Object} valueRange
+         * @param {Number} radius
+         * @param {String} color
+         * @param {Number} snapStep
+         * @param {Number} snapDistance
+         * @param {Number} doubleClickSnapValue
+         * @param {Object} formatter
+         */
         initialize: function (id, x, y,
                               value, canvasState,
                               valueDspMult,
-                              minValue, maxValue,
+                              valueRange,
                               radius, color,
                               snapStep, snapDistance,
                               doubleClickSnapValue, formatter) {
             this.$super(id, x, y,
                         value, canvasState,
                         valueDspMult,
-                        minValue, maxValue,
+                        valueRange,
                         snapStep, snapDistance,
                         doubleClickSnapValue, formatter);
-            
-            this._minValue      = minValue;
-            this._maxValue      = maxValue;
-            
-            var pointerDeg      = Knob.POINTER_MAX_DEG - Knob.POINTER_MIN_DEG;
 
-
-            this._minPointerRad = Knob.calcDegToRad(Knob.POINTER_MIN_DEG);
-            this._maxPointerRad = Knob.calcDegToRad(Knob.POINTER_MAX_DEG);
+            var pointerDeg        = Knob.POINTER_MAX_DEG - Knob.POINTER_MIN_DEG;
+            this._pointerRadRange = new NumberRange(
+                Knob.calcDegToRad(Knob.POINTER_MIN_DEG),
+                Knob.calcDegToRad(Knob.POINTER_MAX_DEG)
+            );
 
             this._radius        = radius;
-
             // init pointer radian from value
-            this._pointerRadian = Knob.calcRadFromValue(value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
+            this._pointerRadian = Knob.calcRadFromValue(value, this._pointerRadRange, this._valueRange);
             this._tmpPointerRad = this._pointerRadian;
 
             // create components of control
@@ -121,7 +109,7 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                 y:      this._knobY,
                 radius: radius,
                 fill:   color,
-                id: id
+                id:     id
              });
 
             this._kineticGroup.add(this._knobCircle);
@@ -241,9 +229,9 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
             /**
              * Calculates radian from degree
              *
-             * @param {Number} degree  The degree-value
+             * @param {Number} degree The degree-value
              *
-             * @return {Number}  The calculated radian-value
+             * @return {Number} The calculated radian-value
              */
             calcDegToRad: function(degree) {
                 return (degree * Math.PI) / 180;
@@ -253,21 +241,19 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
              * Calculates radian from controller-value
              * depending on the min/max values of radian and controller-value
              *
-             * @param {Number} value     The controller-value
-             * @param {Number} minRad    The minium radian
-             * @param {Number} maxRad    The maximum radian
-             * @param {Number} minValue  The minimum controller-value
-             * @param {Number} maxValue  The maximum controller-value
+             * @param {Number} value       The controller-value
+             * @param {Object} radianRange The minimum and maximum radian
+             * @param {Object} valueRange  The minimum and maximum controller-value
              *
              * @returns {Number}  The calculated radian
              */
-            calcRadFromValue: function(value, minRad, maxRad, minValue, maxValue) {
-                var totalRad   = maxRad - minRad;
-                var totalValue = maxValue - minValue;
+            calcRadFromValue: function(value, radianRange, valueRange) {
+                var totalRad   = radianRange.calcRange();
+                var totalValue = valueRange.calcRange();
 
                 // totalRadian                       -> totalValue
                 // calculated radian + radian-offset -> (value - value-offset)
-                return ((totalRad * (value - minValue)) / totalValue) + minRad;
+                return ((totalRad * (value - valueRange.getMin())) / totalValue) + radianRange.getMin();
             },
 
             /**
@@ -285,21 +271,19 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
              * Calculates controller-value from radian
              * depending on the min/max values of radian and controller-value
              *
-             * @param {Number} radian    The radian
-             * @param {Number} minRad    The minium radian
-             * @param {Number} maxRad    The maximum radian
-             * @param {Number} minValue  The minimum controller-value
-             * @param {Number} maxValue  The maximum controller-value
+             * @param {Number} radian      The radian
+             * @param {Object} radianRange The minimum and maximum radian
+             * @param {Object} valueRange  The minimum and maximum controller-value
              *
-             * @returns {Number}  The calculated controller-value
+             * @returns {Number} The calculated controller-value
              */
-            calcValueFromRad: function(radian, minRad, maxRad, minValue, maxValue) {
-                var totalRad   = maxRad - minRad;
-                var totalValue = maxValue - minValue;
+            calcValueFromRad: function(radian, radianRange, valueRange) {
+                var totalRad   = radianRange.calcRange();
+                var totalValue = valueRange.calcRange();
 
                 // totalValue                       -> totalRadian
                 // calculated value + value-offset  -> (radian - radian-offset)
-                return ((totalValue * (radian - minRad)) / totalRad) + minValue;
+                return ((totalValue * (radian - radianRange.getMin())) / totalRad) + valueRange.getMin();
             },
 
             /**
@@ -356,35 +340,35 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
                 var lastValue      = this._canvasState.getLastValue();
                 var speed          = 0.05
 
-                if(this._snapStep == 0) {
+                if (this._snapStep == 0) {
                    speed = speed * speedup;
                 }
 
-                if( mouseY < 0 ) {
+                if (mouseY < 0) {
 
                     //check if knob was turned to far clockwise
-                    if ( ( this._tmpPointerRad + speed) <= this._maxPointerRad ) {
+                    if ((this._tmpPointerRad + speed) <= this._pointerRadRange.getMax()) {
                         this._tmpPointerRad += speed;
                     }
                     else {
-                        this._tmpPointerRad = this._maxPointerRad;
+                        this._tmpPointerRad = this._pointerRadRange.getMax();
                     }
 
                     forward = true;
                 } else if ( mouseY > 0 ) {
 
                     //check if knob was turned to far counter clockwise
-                    if ( ( this._tmpPointerRad - speed) >= this._minPointerRad ) {
+                    if ((this._tmpPointerRad - speed) >= this._pointerRadRange.getMin()) {
                         this._tmpPointerRad -= speed;
                     }
                     else {
-                        this._tmpPointerRad = this._minPointerRad;
+                        this._tmpPointerRad = this._pointerRadRange.getMin();
                     }
                 } else {
                     mouseMoves = false;
                 }
 
-                value = Knob.calcValueFromRad(this._tmpPointerRad, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
+                value = Knob.calcValueFromRad(this._tmpPointerRad, this._pointerRadRange, this._valueRange);
 
                 if(mouseMoves) {
                     if(this._snapStep != 0) {
@@ -401,36 +385,42 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event',  'kinetic']
 
                         if (snap) {
                             var step = this._snapStep;
-                            if ( forward ) {
-                                if(this._value + step <= this._maxValue) {
+                            if (forward) {
+                                if (this._value + step <= this._valueRange.getMax()) {
                                     this._value = this._value + step;
                                 }
                                 else {
-                                    this._value = this._maxValue;
+                                    this._value = this._valueRange.getMax();
                                 }
                             }
                             else {
-                                if(this._value - step >= this._minValue) {
+                                if (this._value - step >= this._valueRange.getMin()) {
                                     this._value = this._value - step;
                                 }
                                 else {
-                                    this._value = this._minValue;
+                                    this._value = this._valueRange.getMin();
                                 }
                             }
+
                             this._canvasState.setLastValue(this._value);
-                            this._pointerRadian = Knob.calcRadFromValue(this._value, this._minPointerRad, this._maxPointerRad, this._minValue, this._maxValue);
+
+                            this._pointerRadian = Knob.calcRadFromValue(
+                                this._value,
+                                this._pointerRadRange,
+                                this._valueRange
+                            );
                             var newPointerPos = this.calcPointerPos();
+
                             this.updatePointerPosition(newPointerPos);
                             this.updateValueDisplayText();
                         }
                     } else {
                         this._pointerRadian = this._tmpPointerRad;
-                        this._value = value;
-                        var newPointerPos = this.calcPointerPos();
+                        this._value         = value;
+                        var newPointerPos   = this.calcPointerPos();
                         this.updatePointerPosition(newPointerPos);
                         this.updateValueDisplayText();
                     }
-
                 }
             }
         },

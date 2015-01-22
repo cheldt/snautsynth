@@ -5,30 +5,18 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
         $extends: RangeControl,
 
-        _borderColor: null,
-
-        _color: null,
-
-        _faderBorder: null,
-
-        _faderKnob: null,
-
-        _length: null,
-
-        _position: null,
-
-        _orientation: null,
-
-        _tmpPosition: null,
-
-        _trackLength: null,
-
-        _startTrackX: null,
-
-        _startTrackY: null,
-
+        _borderColor:      null,
+        _color:            null,
+        _faderBorder:      null,
+        _faderKnob:        null,
+        _length:           null,
+        _position:         null,
+        _orientation:      null,
+        _tmpPosition:      null,
+        _trackLength:      null,
+        _startTrackX:      null,
+        _startTrackY:      null,
         _valueDisplayArea: null,
-
         _valueDisplayText: null,
 
         $constants: {
@@ -45,14 +33,32 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             VAL_DISPLAY_FONT_SIZE:    18
         },
 
-        initialize: function (
+        /**
+         * Constructor for Fader
+         *
+         * @param {Number} id
+         * @param {Number} x
+         * @param {Number} y
+         * @param {Number} value
+         * @param {Object} canvasState
+         * @param {Number} valueDspMult
+         * @param {Object} valueRange
+         * @param {Number} length
+         * @param {String} color
+         * @param {Number} snapStep
+         * @param {Number} snapDistance
+         * @param {Number} doubleClickSnapValue
+         * @param {Object} formatter
+         * @param {Number} orientation
+         */
+        initialize: function(
             id, x, y, value, canvasState,
-            valueDspMult, minValue, maxValue,
+            valueDspMult, valueRange,
             length, color, snapStep, snapDistance,
             doubleClickSnapValue, formatter,
-            orientation ) {
-            this.$super(id, x, y, value, canvasState, valueDspMult, minValue, maxValue, snapStep,
-                snapDistance, doubleClickSnapValue, formatter );
+            orientation) {
+            this.$super(id, x, y, value, canvasState, valueDspMult, valueRange, snapStep,
+                snapDistance, doubleClickSnapValue, formatter);
 
             this._length      = length;
             this._color       = color;
@@ -158,7 +164,6 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
             this._kineticGroup.add(this._valueDisplayArea);
 
-
             this._valueDisplayText = new Kinetic.Text({
                 fill:     '#000',
                 fontSize: Fader.VAL_DISPLAY_FONT_SIZE
@@ -215,6 +220,13 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             });
         },
 
+        /**
+         * Calculates faderknob-coordinates from position
+         *
+         * @param {Number} position
+         *
+         * @returns {Object}
+         */
         calcKnobPosition: function(position) {
             var knob       = this._faderKnob;
             var knobHeight = knob.getHeight();
@@ -234,26 +246,33 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
             };
         },
 
+        /**
+         * Calculates faderknob-position from value
+         *
+         * @param {Number} value
+         *
+         * @returns {Number}
+         */
         calcPositionFromValue: function(value) {
-            var valueRange = this._maxValue - this._minValue;
-
             // _trackLength => valueRange
             // position => value
-            return (this._trackLength * value) / valueRange;
+            return (this._trackLength * value) / this._valueRange.calcRange();
         },
 
-        calcValueFromPosition: function(position) {
-            var minValue   = this._minValue;
-            var maxValue   = this._maxValue;
-            var valueRange = this._maxValue - this._minValue;
 
+        /**
+         * Calculates value from position
+         *
+         * @param {Number} position
+         * @returns {Number}
+         */
+        calcValueFromPosition: function(position) {
             // valueRange => this._trackLength
             // value => position
-
             if (0 == position) {
-                return this._minValue;
+                return this._valueRange.getMin();
             } else {
-                return this._minValue + (valueRange * position) / this._trackLength;
+                return this._valueRange.getMin() + (this._valueRange.calcRange() * position) / this._trackLength;
             }
         },
 
@@ -277,7 +296,6 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
 
                 var speedup    = Math.abs((10 * mouseDelta) / maxMouseDelta);
                 var speed      = 2.05
-
                 var mouseMoves = true;
 
                 if (0 == this._snapStep) {
@@ -310,26 +328,26 @@ define(['dejavu', 'app/controls/ui/RangeControl', 'app/event/Event', 'kinetic'],
                         var snap = false;
                         if (forward && value - lastValue >= this._snapStep - this._snapDistance) {
                             snap = true;
-                        } else if( Math.abs(value - lastValue) >=  this._snapStep - this._snapDistance ) {
+                        } else if (Math.abs(value - lastValue) >=  this._snapStep - this._snapDistance) {
                             snap = true;
                         }
 
                         if (snap) {
                             var step = this._snapStep;
-                            if ( !forward ) {
-                                if(this._value + step <= this._maxValue) {
+                            if (!forward) {
+                                if(this._value + step <= this._valueRange.getMax()) {
                                     this._value = this._value + step;
                                 }
                                 else {
-                                    this._value = this._maxValue;
+                                    this._value = this._valueRange.getMax();
                                 }
                             }
                             else {
-                                if(this._value - step >= this._minValue) {
+                                if(this._value - step >= this._valueRange.getMin()) {
                                     this._value = this._value - step;
                                 }
                                 else {
-                                    this._value = this._minValue;
+                                    this._value = this._valueRange.getMin();
                                 }
                             }
                             this._canvasState.setLastValue(this._value);
