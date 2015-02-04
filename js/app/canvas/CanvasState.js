@@ -87,7 +87,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
         },
 
         getScale: function() {
-            return this._scale;
+            return this._stage.getScale();
         },
 
         getStage: function() {
@@ -182,8 +182,10 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
         /**
          * Returns mouse-delta or position depending on pointer-lock.
          * Position is calculated scaling
+         *
          * @param e
-         * @returns {app.utils.MousePosition}
+         *
+         * @return {app.utils.MousePosition}
          */
         getMousePosition: function(e) {
             var mx, my;

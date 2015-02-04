@@ -25,17 +25,41 @@ require.config({
 });
 
 // Start the main app logic.
-requirejs(['app/event/Event', 'app/canvas/CanvasState',
-           'app/controls/ui/Knob', 'app/controls/ui/RadioGroup',
-           'app/controls/ui/RadioButton', 'app/controls/ui/Fader',
-           'app/audio/Synthesizer', 'app/utils/formatter/NumberFormatter',
-           'app/controls/layout/Label', 'app/utils/GlobalConstants',
-           'app/controls/ui/envelope/Graph', 'app/controls/ui/envelope/Point',
-           'app/datatypes/NumberRange',
-           'app/utils/Position'],
-    function (Event, CanvasState, Knob, RadioGroup,
-              RadioButton, Fader, Synthesizer,
-              NumberFormatter, Label, GlobalConstants, EnvelopeGraph, EnvelopePoint, NumberRange, Position) {
+requirejs(
+    [
+        'app/event/Event',
+        'app/canvas/CanvasState',
+        'app/control/ui/rangecontrol/Knob',
+        'app/control/ui/RadioGroup',
+        'app/control/ui/RadioButton',
+        'app/control/ui/rangecontrol/Fader',
+        'app/audio/Synthesizer',
+        'app/utils/formatter/NumberFormatter',
+        'app/control/layout/Label',
+        'app/utils/GlobalConstants',
+        'app/control/ui/envelope/Graph',
+        'app/control/ui/envelope/Point',
+        'app/datatype/NumberRange',
+        'app/utils/Position',
+        'app/control/ui/rangecontrol/SnapOptions'
+    ],
+    function (
+        Event,
+        CanvasState,
+        Knob,
+        RadioGroup,
+        RadioButton,
+        Fader,
+        Synthesizer,
+        NumberFormatter,
+        Label,
+        GlobalConstants,
+        EnvelopeGraph,
+        EnvelopePoint,
+        NumberRange,
+        Position,
+        SnapOptions
+    ) {
 
         var canvasState = new CanvasState(600, 550, 'syn');
 
@@ -48,13 +72,13 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
 
         canvasState.addControl(new Label(1, new Position(0, 20), canvasState, '#000', 'OSC1-Waveform'));
 
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC1_TUNE, new Position(60, 20), 0, canvasState, 1, new NumberRange(-12, 12), 50,'#AABBCC', 0, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC1_TUNE, new Position(60, 20), 0, canvasState, 1, new NumberRange(-12, 12), 50,'#AABBCC', new SnapOptions(0, 0, 0.5), new NumberFormatter('#0')));
         canvasState.addControl(new Label(1, new Position(130, 20), canvasState, '#000', 'OSC1-Tune'));
 
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC1_OCT, new Position(120, 20), 0, canvasState, 1, new NumberRange(-4, 4), 50,'#AABBCC', 1, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC1_OCT, new Position(120, 20), 0, canvasState, 1, new NumberRange(-4, 4), 50,'#AABBCC', new SnapOptions(0, 0.5, 1), new NumberFormatter('#0')));
         canvasState.addControl(new Label(1, new Position(250, 20), canvasState, '#000', 'OSC1-Octave'));
 
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC1_GAIN, new Position(180, 20), 1, canvasState, 100, new NumberRange(0, 1), 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
+        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC1_GAIN, new Position(180, 20), 1, canvasState, 100, new NumberRange(0, 1), 50,'#AABBCC', null, new NumberFormatter('#0.0')));
         canvasState.addControl(new Label(1, new Position(370, 20), canvasState, '#000', 'OSC1-Gain'));
 
         canvasState.addControl(new Label(1, new Position(0, 180), canvasState, '#000', 'OSC2-Waveform'));
@@ -66,17 +90,16 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         radioGroup.addControl(new RadioButton(0, new Position(0, 0), canvasState, "Triangle", Synthesizer.WAVEFORM_TRIANGLE, '#000', '#FFF'));
         canvasState.addControl(radioGroup);
 
-
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC2_TUNE, new Position(60, 100), 0, canvasState, 1, new NumberRange(-12, 12), 50,'#AABBCC', 0, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC2_TUNE, new Position(60, 100), 0, canvasState, 1, new NumberRange(-12, 12), 50,'#AABBCC', new SnapOptions(0, 0, 0.5), new NumberFormatter('#0')));
         canvasState.addControl(new Label(1, new Position(130, 180), canvasState, '#000', 'OSC1-Tune'));
 
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC2_OCT, new Position(120, 100), 0, canvasState, 1, new NumberRange(-4, 4), 50,'#AABBCC', 1, 0.5, 0, new NumberFormatter('#0')));
+        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC2_OCT, new Position(120, 100), 0, canvasState, 1, new NumberRange(-4, 4), 50,'#AABBCC', new SnapOptions(0, 0.5, 1), new NumberFormatter('#0')));
         canvasState.addControl(new Label(1, new Position(250, 180), canvasState, '#000', 'OSC1-Octave'));
 
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC2_GAIN, new Position(180, 100), 1, canvasState, 100, new NumberRange(0, 1), 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
+        canvasState.addControl(new Knob(GlobalConstants.CTRL_OSC2_GAIN, new Position(180, 100), 1, canvasState, 100, new NumberRange(0, 1), 50,'#AABBCC', null, new NumberFormatter('#0.0')));
         canvasState.addControl(new Label(1, new Position(370, 180), canvasState, '#000', 'OSC1-Gain'));
 
-        canvasState.addControl(new Knob(GlobalConstants.CTRL_MASTERGAIN, new Position(240, 60), 0.5, canvasState, 100, new NumberRange(0, 0.5), 50,'#AABBCC', 0, 0, null, new NumberFormatter('#0.0')));
+        canvasState.addControl(new Knob(GlobalConstants.CTRL_MASTERGAIN, new Position(240, 60), 0.5, canvasState, 100, new NumberRange(0, 0.5), 50,'#AABBCC', null, new NumberFormatter('#0.0')));
         canvasState.addControl(new Label(1, new Position(490, 100), canvasState, '#000', 'Mastergain'));
 
         canvasState.addControl(new Label(1, new Position(350, 320), canvasState, '#000', 'Filter'));
@@ -89,10 +112,10 @@ requirejs(['app/event/Event', 'app/canvas/CanvasState',
         canvasState.addControl(radioGroup);
 
         canvasState.addControl(new Label(1, new Position(450, 340), canvasState, '#000', 'Freq'));
-        canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_FREQUENCY, new Position(450, 370), 22050, canvasState, 1, new NumberRange(60, 22050), 100, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
+        canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_FREQUENCY, new Position(450, 370), 22050, canvasState, 1, new NumberRange(60, 22050), 100, '#AABBCC', null, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
 
         canvasState.addControl(new Label(1, new Position(530, 340), canvasState, '#000', 'Res'));
-        canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_RESONANCE, new Position(530, 370), 0.0001, canvasState, 1, new NumberRange(0.0001, 50), 100, '#AABBCC', 0, 0, 0, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
+        canvasState.addControl(new Fader(GlobalConstants.CTRL_FLT_RESONANCE, new Position(530, 370), 0.0001, canvasState, 1, new NumberRange(0.0001, 50), 100, '#AABBCC', null, new NumberFormatter('#0'), Fader.ORIENTATION_VERTICAL));
 
         canvasState.addControl(new Label(1, new Position(0, 320), canvasState, '#000', 'ADSR-Envelope'));
         var envelopeControl = new EnvelopeGraph(GlobalConstants.CTRL_ENVELOPE, new Position(20, 350), canvasState, 8);

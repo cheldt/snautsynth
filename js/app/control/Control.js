@@ -12,21 +12,21 @@ define(['dejavu','kinetic'], function(dejavu,Kinetic){
         _kineticGroup: null,
 
         /**
-         * @returns {Object}
+         * @return {Object}
          */
         getCanvasState: function() {
             return this._canvasState;
         },
 
         /**
-         * @returns {Object}
+         * @return {Object}
          */
         getControls: function() {
             return this._controls;
         },
 
         /**
-         * @returns {Number}
+         * @return {Number}
          */
         getId: function() {
             return this._id;
@@ -40,7 +40,7 @@ define(['dejavu','kinetic'], function(dejavu,Kinetic){
         },
 
         /**
-         * @returns {Object}
+         * @return {Object}
          */
         getKineticGroup: function() {
             return this._kineticGroup;
@@ -55,7 +55,7 @@ define(['dejavu','kinetic'], function(dejavu,Kinetic){
         },
 
         /**
-         * @returns {Number}
+         * @return {Number}
          */
         getX: function() {
             return this._kineticGroup.getX();
@@ -69,7 +69,7 @@ define(['dejavu','kinetic'], function(dejavu,Kinetic){
         },
 
         /**
-         * @returns {Number}
+         * @return {Number}
          */
         getY: function() {
             return this._kineticGroup.getY();

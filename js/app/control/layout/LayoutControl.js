@@ -1,4 +1,4 @@
-define(['dejavu', 'app/controls/Control'], function(dejavu, Control) {
+define(['dejavu', 'app/control/Control'], function(dejavu, Control) {
     var LayoutControl = dejavu.Class.declare({
         $name: 'LayoutControl',
 

@@ -4,18 +4,19 @@ define(['dejavu'], function(dejavu) {
 
         /** @type {Number} */
         _x: null,
+
         /** @type {Number} */
         _y: null,
 
         /**
-         * @returns {Number}
+         * @return {Number}
          */
         getX: function() {
             return this._x;
         },
 
         /**
-         * @returns {Number}
+         * @return {Number}
          */
         getY: function() {
             return this._y;

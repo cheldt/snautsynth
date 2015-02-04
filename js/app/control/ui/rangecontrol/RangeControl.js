@@ -1,32 +1,30 @@
-define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
+define(['dejavu', '../UIControl'], function(dejavu, UIControl){
     var RangeControl = dejavu.Class.declare({
         $name: 'RangeControl',
 
         $extends: UIControl,
 
-        _doubleClickSnapValue: null,
         _formatter:            null,
         _valueRange:           null,
-        _snapDistance:         null,
-        _snapStep:             null,
+        _snapOptions:          null,
         _valueDspMult:         null,
 
         /**
-         * @returns {Number}
-         */
-        getDoubleClickSnapValue: function() {
-           return this._doubleClickSnapValue;
-        },
-
-        /**
-         * @returns {Object}
+         * @return {Object}
          */
         getFormatter: function() {
             return this._formatter;
         },
 
         /**
-         * @returns {Object}
+         * @return {Object}
+         */
+        getSnapOptions: function() {
+            return this._snapOptions;
+        },
+
+        /**
+         * @return {Object}
          */
         getValueRange: function() {
             return this._valueRange;
@@ -41,25 +39,23 @@ define(['dejavu', 'app/controls/ui/UIControl'], function(dejavu, UIControl){
          * @param {Object} canvasState
          * @param {Number} valueDspMult
          * @param {Object} valueRange
-         * @param {Number} snapStep
-         * @param {Number} snapDistance
-         * @param {Number} doubleClickSnapValue
+         * @param {Object} snapOptions
          * @param {Object} formatter
          */
-        initialize: function (id, position,
-            value, canvasState,
+        initialize: function (
+            id,
+            position,
+            value,
+            canvasState,
             valueDspMult,
             valueRange,
-            snapStep, snapDistance,
-            doubleClickSnapValue,
+            snapOptions,
             formatter) {
             this.$super(id, position, value, canvasState);
 
             this._valueDspMult         = valueDspMult;
             this._valueRange           = valueRange;
-            this._snapStep             = snapStep;
-            this._snapDistance         = snapDistance;
-            this._doubleClickSnapValue = doubleClickSnapValue;
+            this._snapOptions          = snapOptions;
             this._formatter            = formatter;
         }
 

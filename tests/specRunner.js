@@ -40,7 +40,7 @@ require.config({
 });
 
 var specs = [
-	'spec/app/controls/ui/KnobSpec'
+	'spec/app/control/ui/KnobSpec'
 ];
 
 

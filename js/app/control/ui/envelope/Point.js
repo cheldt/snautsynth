@@ -1,4 +1,4 @@
-define(['dejavu','kinetic', 'app/controls/ui/UIControl', 'app/controls/ui/envelope/Graph', 'app/utils/GlobalConstants', 'app/event/Event', 'app/utils/Position'], function(dejavu, Kinetic, UIControl, Graph, GlobalConstants, Event, Position){
+define(['dejavu','kinetic', 'app/control/ui/UIControl', 'app/control/ui/envelope/Graph', 'app/utils/GlobalConstants', 'app/event/Event', 'app/utils/Position'], function(dejavu, Kinetic, UIControl, Graph, GlobalConstants, Event, Position){
     var Point = dejavu.Class.declare({
         $name: 'Point',
 
@@ -32,34 +32,36 @@ define(['dejavu','kinetic', 'app/controls/ui/UIControl', 'app/controls/ui/envelo
 
             this._kineticGroup.setDraggable(true);
 
-            var myPoint            = this;
-            var graphY             = this._graph.getY();
-            var graphX             = this._graph.getX();
-            var graphBorderBottomY = graphY + this._graph.getMaxPixelGain();
+            var myPoint = this;
 
             this._kineticGroup.setDragBoundFunc(function(pos) {
+                var scale              = graph.getCanvasState().getScale();
+                var graphY             = graph.getY() * scale.y;
+                var graphX             = graph.getX() * scale.x;
+                var graphBorderBottomY = graphY + graph.getMaxPixelGain() * scale.y;
+
                 var leftBound  = 0;
                 var rightBound = 0;
 
                 switch(myPoint.getId()) {
                     case GlobalConstants.CTRL_ATTACK_POINT:
-                        var decayPoint      = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
+                        var decayPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
 
-                        leftBound           = graphX;
-                        rightBound          = graphX + decayPoint.getX();
+                        leftBound  = graphX;
+                        rightBound = graphX + decayPoint.getX() * scale.x;
                         break;
                     case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
-                        var attackPoint     = graph.getPointById(GlobalConstants.CTRL_ATTACK_POINT);
-                        var releasePoint    = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT);
+                        var attackPoint  = graph.getPointById(GlobalConstants.CTRL_ATTACK_POINT);
+                        var releasePoint = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT);
 
-                        leftBound           = graphX + attackPoint.getX();
-                        rightBound          = graphX + releasePoint.getX();
+                        leftBound  = graphX + attackPoint.getX() * scale.x;
+                        rightBound = graphX + releasePoint.getX() * scale.x;
                         break;
                     case GlobalConstants.CTRL_RELEASE_POINT:
                         var decayPointPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
 
-                        leftBound           = graphX + decayPointPoint.getX();
-                        rightBound          = graphX + graph.getMaxPixelTime();
+                        leftBound  = graphX + decayPointPoint.getX() * scale.x;
+                        rightBound = graphX + graph.getMaxPixelTime() * scale.x;
                         break;
                     default:
                         return pos;

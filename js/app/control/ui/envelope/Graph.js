@@ -1,4 +1,4 @@
-define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, Control){
+define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Control){
     var Graph = dejavu.Class.declare({
         $name: 'Graph',
 
@@ -74,8 +74,7 @@ define(['dejavu','kinetic', 'app/controls/Control'], function(dejavu, Kinetic, C
         addControl: function(point) {
             this.$super(point);
 
-            var newPosition = null;
-            newPosition     = point.calcPositionByValues();
+            var newPosition = point.calcPositionByValues();
 
             point.updatePosition(newPosition);
 

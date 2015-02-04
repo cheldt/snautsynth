@@ -9,7 +9,7 @@ define(['dejavu'], function(dejavu){
         _min: null,
 
         /**
-         * @returns {Number}
+         * @return {Number}
          */
         getMax: function() {
             return this._max;
@@ -23,7 +23,7 @@ define(['dejavu'], function(dejavu){
         },
 
         /**
-         * @returns {Number}
+         * @return {Number}
          */
         getMin: function() {
             return this._min;
@@ -48,7 +48,7 @@ define(['dejavu'], function(dejavu){
         /**
          * Calculates value from min to max
          *
-         * @returns {Number}
+         * @return {Number}
          */
         calcRange: function() {
             return this._max - this._min;

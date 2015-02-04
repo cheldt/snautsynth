@@ -1,4 +1,4 @@
-define(['dejavu', 'app/event/Event', 'app/controls/ui/UIControl', 'app/controls/ui/RadioButton'], function(dejavu, Event, UIControl, RadioButton){
+define(['dejavu', 'app/event/Event', 'app/control/ui/UIControl', 'app/control/ui/RadioButton'], function(dejavu, Event, UIControl, RadioButton){
     var RadioGroup = dejavu.Class.declare({
         $name: 'RadioGroup',
 
