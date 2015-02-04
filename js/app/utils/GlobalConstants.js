@@ -3,6 +3,13 @@ define(['dejavu'], function(dejavu) {
         $name: 'GlobalConstants',
 
         $constants: {
+            CLASS_TYPE_BUTTON:      1,
+            CLASS_TYPE_FADER:       2,
+            CLASS_TYPE_ENVELOPE:    3,
+            CLASS_TYPE_RADIOGROUP:  4,
+            CLASS_TYPE_RADIOBUTTON: 5,
+            CLASS_TYPE_LABEL:       6,
+
             CTRL_MASTERGAIN:                  1,
             CTRL_OSC1_WAVE:                   2,
             CTRL_OSC1_TUNE:                   3,

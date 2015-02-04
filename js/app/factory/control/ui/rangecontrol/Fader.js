@@ -1,23 +1,23 @@
 define(
     [
-        'app/control/ui/rangecontrol/Knob',
+        'app/control/ui/rangecontrol/Fader',
         'app/control/ui/rangecontrol/SnapOptions',
         'app/datatype/NumberRange',
         'app/utils/formatter/NumberFormatter',
         'app/utils/Position',
-        'dejavu',
+        'dejavu'
 
     ]
     , function(
-        Knob,
+        Fader,
         SnapOptions,
         NumberRange,
         NumberFormatter,
         Position,
         dejavu
     ) {
-        var KnobFactory = dejavu.Class.declare({
-                $name: 'Knob',
+        return dejavu.Class.declare({
+                $name: 'Fader',
 
                 create: function(canvasState, options) {
                     var position    = new Position(options.position.x, options.position.y);
@@ -33,22 +33,21 @@ define(
                         );
                     }
 
-                    return new Knob(
+                    return new Fader(
                         options.id,
                         position,
                         options.value,
                         canvasState,
                         options.valueDisplayMultiplier,
                         valueRange,
-                        options.radius,
+                        options.length,
                         options.color,
                         snapOptions,
-                        formatter
+                        formatter,
+                        options.orientation
                     );
                 }
             }
         );
-
-        return KnobFactory;
     }
 );

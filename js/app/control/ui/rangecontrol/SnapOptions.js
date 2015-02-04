@@ -33,7 +33,6 @@ define(['dejavu'], function(dejavu){
             return this._snapStep;
         },
 
-
         /**
          * @param {Number} doubleClickSnapValue The value to which the controller jumps on double-click
          * @param {Number} snapDistance         The distance to next/prev step, which triggers snap to step

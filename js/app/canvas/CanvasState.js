@@ -139,10 +139,10 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
         addControl: function(control) {
             // add group to baseLayer of canvasState
             this._controls.push(control);
-            this.addNodeToBLayer(control.getKineticGroup());
+            this.addNodeToBaseLayer(control.getKineticGroup());
         },
 
-        addNodeToBLayer: function(kineticNode) {
+        addNodeToBaseLayer: function(kineticNode) {
             this._baseLayer.add(kineticNode);
         },
 

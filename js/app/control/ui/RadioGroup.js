@@ -11,13 +11,9 @@ define(['dejavu', 'app/event/Event', 'app/control/ui/UIControl', 'app/control/ui
 
             this._lastRadioY   = position.getY();
 
-            this._maxRadius    = 0;
-
             this._controls = [];
 
             var myRadioGroup = this;
-
-            this._isFirstButton = true;
 
             this._kineticGroup.on('click', function(evt) {
                 var eventObject =  myRadioGroup.getCanvasState().getBaseLayer().getAttr('event');
