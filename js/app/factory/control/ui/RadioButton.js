@@ -12,6 +12,11 @@ define(
         return dejavu.Class.declare({
                 $name: 'RadioButton',
 
+                /**
+                 * @param {Object} canvasState
+                 * @param {Object} options
+                 * @return {Object}
+                 */
                 create: function(canvasState, options) {
                     var position = new Position(options.position.x, options.position.y);
 

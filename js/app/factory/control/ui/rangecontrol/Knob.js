@@ -19,6 +19,11 @@ define(
         var KnobFactory = dejavu.Class.declare({
                 $name: 'Knob',
 
+                /**
+                 * @param {Object} canvasState
+                 * @param {Object} options
+                 * @return {Object}
+                 */
                 create: function(canvasState, options) {
                     var position    = new Position(options.position.x, options.position.y);
                     var valueRange  = new NumberRange(options.valueRange.min, options.valueRange.max);

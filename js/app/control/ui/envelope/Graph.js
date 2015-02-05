@@ -20,14 +20,14 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
 
         $constants: {
             PIXEL_PER_GAIN:       100,
-            PIXEL_PER_TIME:       40,
+            PIXEL_PER_TIME:       80,
             MAX_GAIN:             1,
 
             X_Y_AXIS_WIDTH:       3,
             POINTCONNECTOR_WIDTH: 1.5
         },
 
-        initialize: function(id, position, canvasState, maxTime) {
+        initialize: function(id, position, canvasState, color, maxTime) {
             this.$super(id, position, canvasState);
 
             this._controls     = [];
@@ -39,7 +39,7 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
             var xAxis = new Kinetic.Line({
                 points:      [0, this._maxPixelGain , this._maxPixelTime, this._maxPixelGain ],
                 strokeWidth: Graph.X_Y_AXIS_WIDTH,
-                stroke:      '#000',
+                stroke:      color,
                 lineCap:     'round',
                 lineJoin:    'round'
             });
@@ -49,7 +49,7 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
             var yAxis = new Kinetic.Line({
                 points:      [0, 0, 0, this._maxPixelGain],
                 strokeWidth: Graph.X_Y_AXIS_WIDTH,
-                stroke:      '#000',
+                stroke:      color,
                 lineCap:     'round',
                 lineJoin:    'round'
             });
@@ -58,7 +58,7 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
 
             this._pointConnection = new Kinetic.Line({
                 strokeWidth: Graph.POINTCONNECTOR_WIDTH,
-                stroke:      '#000',
+                stroke:      color,
                 lineCap:     'round',
                 lineJoin:    'round'
             });

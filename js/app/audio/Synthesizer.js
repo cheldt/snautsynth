@@ -24,7 +24,7 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
 
         _filter: null,
 
-        _noteIsOn: null,
+        _noteStartTime: null,
 
         _keycode_note_mapping: null,
 
@@ -77,6 +77,8 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
         },
 
         $constants: {
+            OSC1_ID:             1,
+            OSC2_ID:             2,
             WAVEFORM_SINE :      'sine',
             WAVEFORM_SQUARE:     'square',
             WAVEFORM_SAWTOOTH:   'sawtooth',
@@ -93,22 +95,20 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
         initialize: function(audioContext) {
             this._audioContext = audioContext;
 
-            this._keycode_note_mapping = [
-                {key:  GlobalConstants.KEY_CODE_A, value: GlobalConstants.NOTE_C_5},
-                {key:  GlobalConstants.KEY_CODE_W, value: GlobalConstants.NOTE_Cis5},
-                {key:  GlobalConstants.KEY_CODE_S, value: GlobalConstants.NOTE_D_5},
-                {key:  GlobalConstants.KEY_CODE_E, value: GlobalConstants.NOTE_Dis5},
-                {key:  GlobalConstants.KEY_CODE_D, value: GlobalConstants.NOTE_E_5},
-                {key:  GlobalConstants.KEY_CODE_F, value: GlobalConstants.NOTE_F_5},
-                {key:  GlobalConstants.KEY_CODE_T, value: GlobalConstants.NOTE_Fis5},
-                {key:  GlobalConstants.KEY_CODE_G, value: GlobalConstants.NOTE_G_5},
-                {key:  GlobalConstants.KEY_CODE_Z, value: GlobalConstants.NOTE_Gis5},
-                {key:  GlobalConstants.KEY_CODE_H, value: GlobalConstants.NOTE_A_5},
-                {key:  GlobalConstants.KEY_CODE_U, value: GlobalConstants.NOTE_Ais5},
-                {key:  GlobalConstants.KEY_CODE_J, value: GlobalConstants.NOTE_B_5},
-                {key:  GlobalConstants.KEY_CODE_K, value: GlobalConstants.NOTE_C_6}
-            ];
+            this._keycode_note_mapping = {};
 
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_A] = GlobalConstants.NOTE_Cis5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_W] = GlobalConstants.NOTE_D_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_S] = GlobalConstants.NOTE_Dis5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_E] = GlobalConstants.NOTE_E_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_D] = GlobalConstants.NOTE_F_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_F] = GlobalConstants.NOTE_Fis5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_T] = GlobalConstants.NOTE_G_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_G] = GlobalConstants.NOTE_Gis5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_Z] = GlobalConstants.NOTE_A_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_U] = GlobalConstants.NOTE_Ais5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_J] = GlobalConstants.NOTE_B_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_K] = GlobalConstants.NOTE_C_6;
         },
 
         init: function() {
@@ -209,16 +209,16 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
                             this.getMasterGain().gain.setValueAtTime(eventValue, now);
                             break;
                         case GlobalConstants.CTRL_ATTACK_POINT:
-                            this.setEnvelopeAttackGain(eventValue.gain);
-                            this.setEnvelopeAttackTime(eventValue.time);
+                            this.setEnvelopeAttackGain(eventValue.getGain());
+                            this.setEnvelopeAttackTime(eventValue.getTime());
                             break;
                         case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
-                            this.setEnvelopeSustainGain(eventValue.gain);
-                            this.setEnvelopeDecayTime(eventValue.time);
+                            this.setEnvelopeSustainGain(eventValue.getGain());
+                            this.setEnvelopeDecayTime(eventValue.getTime());
                             break;
                         case GlobalConstants.CTRL_RELEASE_POINT:
-                            this.setEnvelopeReleaseGain(eventValue.gain);
-                            this.setEnvelopeReleaseTime(eventValue.time);
+                            this.setEnvelopeReleaseGain(eventValue.getGain());
+                            this.setEnvelopeReleaseTime(eventValue.getTime());
                             break;
                         case GlobalConstants.CTRL_FLT_TYPE:
                             this.getFilter().type = eventValue;
@@ -235,19 +235,17 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
         },
 
         noteOn: function(keycode) {
-            var arrayLength = this._keycode_note_mapping.length;
-            var note        = null;
+            var note = null;
 
-            for (var i = 0; i < arrayLength; i++) {
-                if(this._keycode_note_mapping[i].key == keycode) {
-                    note = this._keycode_note_mapping[i].value;
-                }
+            if (this._keycode_note_mapping.hasOwnProperty(keycode)) {
+                note = this._keycode_note_mapping[keycode];
             }
 
-            if(!this._noteIsOn && note != null) {
-                this._noteIsOn = true;
-                var frequency  = AudioUtils.calcFreqByKey(note);
-                var now        = this._audioContext.currentTime;
+            if(null === this._noteStartTime && note != null) {
+                var frequency = AudioUtils.calcFreqByKey(note);
+                var now       = this._audioContext.currentTime;
+
+                this._noteStartTime = now;
 
                 this._osc1.frequency.setValueAtTime(frequency, now);
                 this._osc2.frequency.setValueAtTime(frequency, now);
@@ -268,20 +266,31 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
                     this._envelopeSustainGain,
                     now + this._envelopeDecayTime
                 );
+
+                // ramp to release
+                this._envelopeGain.gain.linearRampToValueAtTime(
+                    this._envelopeReleaseGain,
+                    now + this._envelopeReleaseTime
+                );
+
+                console.log(this._envelopeReleaseGain);
             }
         },
 
         noteOff: function() {
-            var now = this._audioContext.currentTime;
-            this._envelopeGain.gain.cancelScheduledValues(0.0);
-            this._envelopeGain.gain.setValueAtTime(this._envelopeGain.gain.value, now);
+            if (null !== this._noteStartTime) {
+                var now = this._audioContext.currentTime;
+                this._envelopeGain.gain.cancelScheduledValues(0.0);
+                this._envelopeGain.gain.setValueAtTime(this._envelopeGain.gain.value, now);
 
-            // ramp to release
-            this._envelopeGain.gain.linearRampToValueAtTime(
-                this._envelopeReleaseGain,
-                now + this._envelopeReleaseTime);
+                // ramp to release
+                this._envelopeGain.gain.linearRampToValueAtTime(
+                    this._envelopeReleaseGain,
+                    now + this._envelopeReleaseTime
+                );
 
-            this._noteIsOn = false;
+                this._noteStartTime = null;
+            }
         }
     });
 

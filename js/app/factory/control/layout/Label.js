@@ -9,7 +9,7 @@ define(
         Position,
         dejavu
     ) {
-        var LabelFactory = dejavu.Class.declare({
+        return dejavu.Class.declare({
                 $name: 'Label',
 
                 create: function(canvasState, options) {
@@ -19,7 +19,5 @@ define(
                 }
             }
         );
-
-        return LabelFactory;
     }
 );
