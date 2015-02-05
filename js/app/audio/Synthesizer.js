@@ -3,10 +3,10 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
         $name: 'Synthesizer',
 
         _audioContext: null,
-        _osc1: null,
+        _canvasState: null,
+
         _osc1Gain: null,
 
-        _osc2: null,
         _osc2Gain: null,
 
         _envelopeGain: null,
@@ -28,16 +28,10 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
 
         _keycode_note_mapping: null,
 
-        getOsc1: function() {
-          return this._osc1;
-        },
+        _runningOscillators: null,
 
         getOsc1Gain: function() {
             return this._osc1Gain;
-        },
-
-        getOsc2: function() {
-            return this._osc2;
         },
 
         getOsc2Gain: function() {
@@ -92,49 +86,118 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
             FILTER_DEFAULT_RES:  0.0001
         },
 
-        initialize: function(audioContext) {
+        initialize: function(audioContext, canvasState) {
             this._audioContext = audioContext;
+            this._canvasState  = canvasState;
 
             this._keycode_note_mapping = {};
 
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_A] = GlobalConstants.NOTE_Cis5;
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_W] = GlobalConstants.NOTE_D_5;
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_S] = GlobalConstants.NOTE_Dis5;
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_E] = GlobalConstants.NOTE_E_5;
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_D] = GlobalConstants.NOTE_F_5;
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_F] = GlobalConstants.NOTE_Fis5;
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_T] = GlobalConstants.NOTE_G_5;
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_G] = GlobalConstants.NOTE_Gis5;
-            this._keycode_note_mapping[GlobalConstants.KEY_CODE_Z] = GlobalConstants.NOTE_A_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_A] = GlobalConstants.NOTE_C_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_W] = GlobalConstants.NOTE_Cis5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_S] = GlobalConstants.NOTE_D_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_E] = GlobalConstants.NOTE_Dis5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_D] = GlobalConstants.NOTE_E_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_F] = GlobalConstants.NOTE_F_5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_T] = GlobalConstants.NOTE_Fis5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_G] = GlobalConstants.NOTE_G_5
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_Z] = GlobalConstants.NOTE_Gis5;
+            this._keycode_note_mapping[GlobalConstants.KEY_CODE_H] = GlobalConstants.NOTE_A_5;
             this._keycode_note_mapping[GlobalConstants.KEY_CODE_U] = GlobalConstants.NOTE_Ais5;
             this._keycode_note_mapping[GlobalConstants.KEY_CODE_J] = GlobalConstants.NOTE_B_5;
             this._keycode_note_mapping[GlobalConstants.KEY_CODE_K] = GlobalConstants.NOTE_C_6;
         },
 
+        /**
+         * Creates oscillators per triggered note and starts them
+         *
+         * @param {Number} note
+         */
+        createOscillators: function(note) {
+            if (this._runningOscillators === null) {
+                this._runningOscillators = {};
+            }
+
+            if (this._runningOscillators[note] !== undefined) {
+                return;
+            }
+
+            var frequency = AudioUtils.calcFreqByKey(note);
+
+            //create new oscillators
+            var osc1             = this._audioContext.createOscillator();
+            osc1.type            = this._canvasState.getValueByControlId(GlobalConstants.CTRL_OSC1_WAVE);
+            osc1.frequency.value = frequency;
+
+            osc1.connect(this._osc1Gain);
+
+            var osc2             = this._audioContext.createOscillator();
+            osc2.type            = this._canvasState.getValueByControlId(GlobalConstants.CTRL_OSC2_WAVE);
+            osc2.frequency.value = frequency;
+
+            osc2.connect(this._osc2Gain);
+
+            this._runningOscillators[note] = {};
+
+            this._runningOscillators[note][Synthesizer.OSC1_ID] = osc1;
+            this._runningOscillators[note][Synthesizer.OSC2_ID] = osc2;
+
+            var now = this._audioContext.currentTime;
+
+            var value = this._canvasState.getValueByControlId(GlobalConstants.CTRL_OSC1_TUNE);
+            this.changeOscillatorTune(value, osc1, GlobalConstants.CTRL_OSC1_OCT, now);
+
+            value = this._canvasState.getValueByControlId(GlobalConstants.CTRL_OSC1_OCT);
+            this.changeOscillatorOctave(value, osc1, GlobalConstants.CTRL_OSC1_TUNE, now);
+
+            value = this._canvasState.getValueByControlId(GlobalConstants.CTRL_OSC2_TUNE);
+            this.changeOscillatorTune(value, osc2, GlobalConstants.CTRL_OSC2_OCT, now);
+
+            value = this._canvasState.getValueByControlId(GlobalConstants.CTRL_OSC2_OCT);
+            this.changeOscillatorOctave(value, osc2, GlobalConstants.CTRL_OSC2_TUNE, now);
+
+            osc1.start(0);
+            osc2.start(0);
+        },
+
+        /**
+         * @param {Number} note
+         */
+        destroyOscillators: function(note) {
+            if (this._runningOscillators === null) {
+                return;
+            }
+
+            for (var oscillatorKey in this._runningOscillators) {
+                if (oscillatorKey == note && undefined !== this._runningOscillators[oscillatorKey]) {
+                    var oscillators = this._runningOscillators[oscillatorKey];
+
+                    for (var key in oscillators) {
+                        var oscillator = oscillators[key];
+                        oscillator.disconnect();
+                        oscillator.stop();
+                    }
+
+                    this._runningOscillators[oscillatorKey] = undefined;
+                }
+            }
+        },
+
         init: function() {
-            // Create first oscillator and init values
-            this._osc1                    = this._audioContext.createOscillator(); // Create sound source
-            this._osc1.type               = Synthesizer.WAVEFORM_SINE; // Sine wave
-            this._osc1.frequency.value    = 0; // Frequency in hertz (passed from input button)
             this._osc1Gain                = this._audioContext.createGain();
             this._osc1Gain.gain.value     = 1;
 
-            // Create second oscillator and init values
-            this._osc2                    = this._audioContext.createOscillator(); // Create sound source
-            this._osc2.type               = Synthesizer.WAVEFORM_SINE; // Sine wave
-            this._osc2.frequency.value    = 0; // Frequency in hertz (passed from input button)
             this._osc2Gain                = this._audioContext.createGain();
             this._osc2Gain.gain.value     = 1;
 
-            // Create envelope gainnode
+            // Create envelope gainNode
             this._envelopeGain            = this._audioContext.createGain();
-            this._envelopeGain.gain.value = 0;
+            this._envelopeGain.gain.value = 1;
 
-            // Create GainNode
+            // Create master-gainNode
             this._masterGain               = this._audioContext.createGain(); // Create gain node
             this._masterGain.gain.value    = 0.5; // Set gain to full volume
 
-            // Create FilterNode
+            // Create filterNode
             this._filter                   = this._audioContext.createBiquadFilter();
             this._filter.type              = Synthesizer.FILTER_LOWPASS;
             this._filter.frequency.value   = Synthesizer.FILTER_DEFAULT_FREQ;
@@ -149,12 +212,6 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
             this._envelopeReleaseGain  = 0.2;
             this._envelopeReleaseTime  = 7;
 
-            this._noteIsOn                = false;
-
-            // Connect the Nodes
-            this._osc1.connect(this._osc1Gain); // Connect oscillator to gain
-            this._osc2.connect(this._osc2Gain); // Connect oscillator to gain
-
             this._osc1Gain.connect(this._envelopeGain);
             this._osc2Gain.connect(this._envelopeGain);
 
@@ -163,44 +220,162 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
             this._filter.connect(this._masterGain);
 
             this._masterGain.connect(this._audioContext.destination); // Connect gain to output
+        },
 
-            //start osc
-            this._osc1.start(0);
-            this._osc2.start(0);
+        /**
+         * @param {String|Number} eventValue
+         * @param {Number} oscillatorId
+         */
+        changeRunningOscillatorsWaveType: function(eventValue, oscillatorId) {
+            if (null === this._runningOscillators) {
+                return;
+            }
+
+            for (var noteKey in this._runningOscillators) {
+                if (undefined === this._runningOscillators[noteKey]) {
+                    return;
+                }
+
+                var oscillators = this._runningOscillators[noteKey];
+
+                for (var oscillatorKey in oscillators) {
+                    if (oscillatorKey != oscillatorId) {
+                        continue;
+                    }
+
+                    var oscillator = oscillators[oscillatorKey];
+                    oscillator.type = eventValue;
+                }
+            }
+        },
+
+
+        /**
+         * @param {Number} value
+         * @param {Object} oscillator
+         * @param {Number} octaveControllerId
+         * @param {Number} currentTime
+         */
+        changeOscillatorTune: function(value, oscillator, octaveControllerId, currentTime) {
+            var octaveValue = this._canvasState.getValueByControlId(octaveControllerId);
+            oscillator.detune.setValueAtTime(value * 100 + octaveValue * 1200, currentTime);
+        },
+
+        /**
+         * @param {String|Number} value
+         * @param {Number} oscillatorId
+         * @param {Number} octaveControllerId
+         */
+        changeRunningOscillatorsTune: function(value, oscillatorId, octaveControllerId) {
+            if (null === this._runningOscillators) {
+                return;
+            }
+
+            var now = this._audioContext.currentTime;
+
+            for (var noteKey in this._runningOscillators) {
+                if (undefined === this._runningOscillators[noteKey]) {
+                    return
+                }
+
+                var oscillators = this._runningOscillators[noteKey];
+
+                for (var oscillatorKey in oscillators) {
+                    if (oscillatorId != oscillatorKey) {
+                        continue;
+                    }
+
+                    var oscillator = oscillators[oscillatorKey];
+                    this.changeOscillatorTune(value, oscillator, octaveControllerId, now)
+                }
+            }
+        },
+
+        /**
+         * @param {Number} value
+         * @param {Object} oscillator
+         * @param {Number} tuneControllerId
+         * @param {Number} currentTime
+         */
+        changeOscillatorOctave: function(value, oscillator, tuneControllerId, currentTime) {
+            var tuneValue = this._canvasState.getValueByControlId(tuneControllerId);
+            oscillator.detune.setValueAtTime(value * 1200 + tuneValue * 100, currentTime);
+        },
+
+        /**
+         * @param {String|Number} value
+         * @param {Number} oscillatorId
+         * @param {Number} tuneControllerId
+         */
+        changeRunningOscillatorsOctave: function(value, oscillatorId, tuneControllerId) {
+            if (null === this._runningOscillators) {
+                return;
+            }
+
+            var now = this._audioContext.currentTime;
+
+            for (var noteKey in this._runningOscillators) {
+                if (undefined === this._runningOscillators[noteKey]) {
+                    return;
+                }
+
+                var oscillators = this._runningOscillators[noteKey];
+
+                for (var oscillatorKey in oscillators) {
+                    if (oscillatorKey != oscillatorId) {
+                        continue;
+                    }
+
+                    var oscillator = oscillators[oscillatorKey];
+                    this.changeOscillatorOctave(value, oscillator, tuneControllerId, now);
+                }
+            }
         },
 
         processEventObject: function(eventObject, canvasState) {
             var now = this._audioContext.currentTime;
 
-            if(typeof eventObject !== 'undefined' ) {
+            if (typeof eventObject !== 'undefined') {
                 if (eventObject.getType() == Event.TYPE_VALUE_CHANGED) {
                     var eventValue = eventObject.getValue();
 
                     switch (eventObject.getControlId()) {
                         case GlobalConstants.CTRL_OSC1_WAVE:
-                            this.getOsc1().type = eventValue;
+                            this.changeRunningOscillatorsWaveType(eventValue, Synthesizer.OSC1_ID);
                             break;
                         case GlobalConstants.CTRL_OSC1_TUNE:
-                            var osc1OctaveValue = canvasState.getValueByControlId(GlobalConstants.CTRL_OSC1_OCT);
-                            this.getOsc1().detune.setValueAtTime(eventValue * 100 + osc1OctaveValue * 1200, now);
+                            this.changeRunningOscillatorsTune(
+                                eventValue,
+                                Synthesizer.OSC1_ID,
+                                GlobalConstants.CTRL_OSC1_OCT
+                            );
                             break;
                         case GlobalConstants.CTRL_OSC1_OCT:
-                            var osc1TuneValue = canvasState.getValueByControlId(GlobalConstants.CTRL_OSC1_TUNE);
-                            this.getOsc1().detune.setValueAtTime(eventValue * 1200 + osc1TuneValue * 100, now);
+                            this.changeRunningOscillatorsOctave(
+                                eventValue,
+                                Synthesizer.OSC1_ID,
+                                GlobalConstants.CTRL_OSC1_TUNE
+                            );
                             break;
                         case GlobalConstants.CTRL_OSC1_GAIN:
                             this.getOsc1Gain().gain.setValueAtTime(eventValue, now);
                             break;
                         case GlobalConstants.CTRL_OSC2_WAVE:
-                            this.getOsc2().type = eventValue;
+                            this.changeRunningOscillatorsWaveType(eventValue, Synthesizer.OSC2_ID);
                             break;
                         case GlobalConstants.CTRL_OSC2_TUNE:
-                            var osc2OctaveValue = canvasState.getValueByControlId(GlobalConstants.CTRL_OSC2_OCT);
-                            this.getOsc2().detune.setValueAtTime(eventValue * 100 + osc2OctaveValue * 1200,now);
+                            this.changeRunningOscillatorsTune(
+                                eventValue,
+                                Synthesizer.OSC2_ID,
+                                GlobalConstants.CTRL_OSC2_OCT
+                            );
                             break;
                         case GlobalConstants.CTRL_OSC2_OCT:
-                            var osc2TuneValue = canvasState.getValueByControlId(GlobalConstants.CTRL_OSC2_TUNE);
-                            this.getOsc2().detune.setValueAtTime(eventValue * 1200 + osc2TuneValue * 100, now);
+                            this.changeRunningOscillatorsOctave(
+                                eventValue,
+                                Synthesizer.OSC2_ID,
+                                GlobalConstants.CTRL_OSC2_TUNE
+                            );
                             break;
                         case GlobalConstants.CTRL_OSC2_GAIN:
                             this.getOsc2Gain().gain.setValueAtTime(eventValue, now);
@@ -234,12 +409,22 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
             }
         },
 
+
+
         noteOn: function(keycode) {
             var note = null;
 
             if (this._keycode_note_mapping.hasOwnProperty(keycode)) {
                 note = this._keycode_note_mapping[keycode];
             }
+
+            if (null === note) {
+                return;
+            }
+
+            this.createOscillators(note);
+
+            /*
 
             if(null === this._noteStartTime && note != null) {
                 var frequency = AudioUtils.calcFreqByKey(note);
@@ -273,11 +458,25 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
                     now + this._envelopeReleaseTime
                 );
 
-                console.log(this._envelopeReleaseGain);
+
             }
+            */
         },
 
-        noteOff: function() {
+        noteOff: function(keycode) {
+            var note = null;
+
+            if (this._keycode_note_mapping.hasOwnProperty(keycode)) {
+                note = this._keycode_note_mapping[keycode];
+            }
+
+            if (null === note) {
+                return;
+            }
+
+            this.destroyOscillators(note);
+
+            /*
             if (null !== this._noteStartTime) {
                 var now = this._audioContext.currentTime;
                 this._envelopeGain.gain.cancelScheduledValues(0.0);
@@ -291,6 +490,7 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
 
                 this._noteStartTime = null;
             }
+            */
         }
     });
 

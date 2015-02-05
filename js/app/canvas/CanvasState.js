@@ -42,7 +42,7 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
             return this;
         },
 
-        getCanvas: function() {
+        getCanvas: function() {2
             return this._canvas;
         },
         setCanvas: function(canvas) {

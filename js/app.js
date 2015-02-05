@@ -80,8 +80,6 @@ requirejs(
         factories[GlobalConstants.CLASS_TYPE_FADER]      = FaderFactory;
         factories[GlobalConstants.CLASS_TYPE_GRAPH]      = GraphFactory;
 
-        console.log(factories);
-
         var controlOptions = [
             {
                 id:       -1,
@@ -150,7 +148,7 @@ requirejs(
                 valueRange:             {min: -12, max: 12},
                 radius:                 50,
                 color:                  '#AABBCC',
-                snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0.5},
+                snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
                 numberFormat:           '#0.0'
             },
             {
@@ -258,7 +256,7 @@ requirejs(
                 valueRange:             {min: -12, max: 12},
                 radius:                 50,
                 color:                  '#AABBCC',
-                snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0.5},
+                snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
                 numberFormat:           '#0.0'
             },
             {
@@ -407,7 +405,8 @@ requirejs(
                 snapOptions:            null,
                 numberFormat:           '#0',
                 orientation:            Fader.ORIENTATION_VERTICAL
-            },
+            }
+            /*
             {
                 id:       -1,
                 type:     GlobalConstants.CLASS_TYPE_LABEL,
@@ -441,9 +440,8 @@ requirejs(
                         color: '#AABBCC'
                     },
                 ]
-
             }
-
+            */
         ];
 
         controlOptions.forEach(function(controlOption) {
@@ -455,7 +453,7 @@ requirejs(
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         var audioCtx        = new window.AudioContext();
-        var synth           = new Synthesizer(audioCtx);
+        var synth           = new Synthesizer(audioCtx, canvasState);
 
         synth.init();
 
@@ -485,7 +483,7 @@ requirejs(
             }
         );
 
-        window.addEventListener("keyup", function() { synth.noteOff(); });
+        window.addEventListener("keyup", function(e) { synth.noteOff(e.keyCode); });
 
         window.addEventListener("keydown", function(e) { synth.noteOn(e.keyCode); });
     }
