@@ -27,21 +27,10 @@ require.config({
 // Start the main app logic.
 requirejs(
     [
-        'app/event/Event',
         'app/canvas/CanvasState',
-        'app/control/ui/rangecontrol/Knob',
-        'app/control/ui/RadioGroup',
-        'app/control/ui/RadioButton',
         'app/control/ui/rangecontrol/Fader',
         'app/audio/Synthesizer',
-        'app/utils/formatter/NumberFormatter',
-        'app/control/layout/Label',
         'app/utils/GlobalConstants',
-        'app/control/ui/envelope/Graph',
-        'app/control/ui/envelope/Point',
-        'app/datatype/NumberRange',
-        'app/utils/Position',
-        'app/control/ui/rangecontrol/SnapOptions',
         'app/factory/control/layout/Label',
         'app/factory/control/ui/RadioGroup',
         'app/factory/control/ui/envelope/Graph',
@@ -49,21 +38,10 @@ requirejs(
         'app/factory/control/ui/rangecontrol/Knob'
     ],
     function (
-        Event,
         CanvasState,
-        Knob,
-        RadioGroup,
-        RadioButton,
         Fader,
         Synthesizer,
-        NumberFormatter,
-        Label,
         GlobalConstants,
-        EnvelopeGraph,
-        EnvelopePoint,
-        NumberRange,
-        Position,
-        SnapOptions,
         LabelFactory,
         RadioGroupFactory,
         GraphFactory,
@@ -363,7 +341,7 @@ requirejs(
                         value:        Synthesizer.FILTER_HIGHPASS,
                         color:        '#000',
                         checkedColor: '#FFF'
-                    },
+                    }
                 ]
             },
             {
