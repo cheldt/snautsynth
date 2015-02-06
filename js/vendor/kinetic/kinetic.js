@@ -1021,7 +1021,7 @@ var Kinetic = {};
             };
         },
         /*
-         * other utils
+         * other util
          */
         _hasMethods: function(obj) {
             var names = [],

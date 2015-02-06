@@ -1,5 +1,4 @@
 /**
- * @module    app/control/ui/RadioGroup
  * @namespace Snautsynth.Control.UI
  */
 define(
@@ -15,262 +14,271 @@ define(
         UIControl,
         defaults
     ) {
+        'use strict';
+
         var RadioButton = dejavu.Class.declare({
-                $name: 'RadioButton',
+            $name: 'RadioButton',
 
-                $extends: UIControl,
+            $extends: UIControl,
 
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {boolean}
+             */
+            _checked: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {string}
+             */
+            _checkedColor: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {string}
+             */
+            _color: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {string}
+             */
+            _fontFormatStr: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
+            _fontSize: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {string}
+             */
+            _labelText: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
+            _radius: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {Kinetic.Circle}
+             */
+            _buttonCircle: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {Kinetic.Circle}
+             */
+            _checkedCircle: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {*}
+             */
+            _value: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             *
+             * @return {boolean}
+             */
+            getChecked: function() {
+                return this._checked;
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             *
+             * @param {boolean} checked
+             */
+            setChecked: function(checked) {
+                this._checked = checked;
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             *
+             * @return {*}
+             */
+            getValue: function() {
+                return this._value;
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             *
+             * @return {number}
+             */
+            getRadius: function() {
+                return this._radius;
+            },
+
+            $constants: {
                 /**
                  * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
-                 *
-                 * @type {boolean}
-                 */
-                _checked: null,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
-                 *
-                 * @type {string}
-                 */
-                _checkedColor: null,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
-                 *
-                 * @type {string}
-                 */
-                _color: null,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
-                 *
-                 * @type {string}
-                 */
-                _fontFormatStr: null,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
+                 * @constant
+                 * @default
                  *
                  * @type {number}
                  */
-                _fontSize: null,
-
+                BUTTON_RADIUS:           10,
                 /**
                  * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
-                 *
-                 * @type {string}
-                 */
-                _labelText: null,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
+                 * @constant
+                 * @default
                  *
                  * @type {number}
                  */
-                _radius: null,
-
+                LABEL_DISPLAY_FONT_SIZE: 18,
                 /**
                  * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
+                 * @constant
+                 * @default
                  *
-                 * @type {Kinetic.Circle}
+                 * @type {number}
                  */
-                _buttonCircle: null,
-
+                LABEL_BUTTON_SPACE:      2,
                 /**
                  * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
+                 * @constant
+                 * @default
                  *
-                 * @type {Kinetic.Circle}
+                 * @type {number}
                  */
-                _checkedCircle: null,
+                BORDER_WIDTH:            3
+            },
 
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 * @protected
-                 *
-                 * @type {*}
-                 */
-                _value: null,
+            /**
+             * @constructor
+             * @class   Snautsynth.Control.UI.RadioButton
+             * @extends Snautsynth.Control.UI.UIControl
+             *
+             * @param {number}                        id
+             * @param {Snautsynth.Util.Position}      position
+             * @param {Snautsynth.Canvas.CanvasState} canvasState
+             * @param {string}                        labelText
+             * @param {*}                             value
+             * @param {string}                        color
+             * @param {string}                        checkedColor
+             * @param {number}                        radius
+             */
+            initialize: function(id, position, canvasState, labelText, value, color, checkedColor, radius) {
+                this.$super(id, position, value, canvasState);
 
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 *
-                 * @return {boolean}
-                 */
-                getChecked: function() {
-                    return this._checked;
-                },
+                this._radius = defaults(radius, RadioButton.BUTTON_RADIUS);
 
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 *
-                 * @param {boolean} checked
-                 */
-                setChecked: function(checked) {
-                    this._checked = checked;
-                },
+                this._canvasState  = canvasState;
+                this._checkedColor = checkedColor;
+                this._color        = color;
 
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 *
-                 * @return {*}
-                 */
-                getValue: function() {
-                    return this._value;
-                },
+                this._labelText    = labelText;
+                this._value        = value;
 
-                /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 *
-                 * @return {number}
-                 */
-                getRadius: function() {
-                    return this._radius;
-                },
+                // create button
+                this._buttonCircle = new Kinetic.Circle({
+                    x:      this.getX() + this._radius + RadioButton.BORDER_WIDTH,
+                    y:      this.getY() + this._radius + RadioButton.BORDER_WIDTH,
 
-                $constants: {
-                    /**
-                     * @memberof Snautsynth.Control.UI.RadioButton
-                     * @constant
-                     * @type {number}
-                     */
-                    BUTTON_RADIUS:           10,
-                    /**
-                     * @memberof Snautsynth.Control.UI.RadioButton
-                     * @constant
-                     * @type {number}
-                     */
-                    LABEL_DISPLAY_FONT_SIZE: 18,
-                    /**
-                     * @memberof Snautsynth.Control.UI.RadioButton
-                     * @constant
-                     * @type {number}
-                     */
-                    LABEL_BUTTON_SPACE:      2,
-                    /**
-                     * @memberof Snautsynth.Control.UI.RadioButton
-                     * @constant
-                     * @type {number}
-                     */
-                    BORDER_WIDTH:            3
-                },
+                    radius: this._radius,
+                    fill:   color
+                });
 
-                /**
-                 * @constructor
-                 * @class   Snautsynth.Control.UI.RadioButton
-                 * @extends Snautsynth.Control.UI.UIControl
-                 *
-                 * @param {number}                        id
-                 * @param {Snautsynth.Util.Position}      position
-                 * @param {Snautsynth.Canvas.CanvasState} canvasState
-                 * @param {string}                        labelText
-                 * @param {*}                             value
-                 * @param {string}                        color
-                 * @param {string}                        checkedColor
-                 * @param {number}                        radius
-                 */
-                initialize: function(id, position, canvasState, labelText, value, color, checkedColor, radius) {
-                    this.$super(id, position, value, canvasState);
+                this._kineticGroup.add(this._buttonCircle);
 
-                    this._radius = defaults(radius, RadioButton.BUTTON_RADIUS);
+                // create button border
+                var arc = new Kinetic.Arc({
+                    x:           this._buttonCircle.getX(),
+                    y:           this._buttonCircle.getY(),
 
-                    this._canvasState  = canvasState;
-                    this._checkedColor = checkedColor;
-                    this._color        = color;
+                    angle:       360,
+                    fill:        color,
+                    innerRadius: this._radius - RadioButton.BORDER_WIDTH,
+                    outerRadius: this._radius,
+                    stroke:      color
+                });
 
-                    this._labelText    = labelText;
-                    this._value        = value;
+                this._kineticGroup.add(arc);
 
-                    // create button
-                    this._buttonCircle = new Kinetic.Circle({
-                        x:      this.getX() + this._radius + RadioButton.BORDER_WIDTH,
-                        y:      this.getY() + this._radius + RadioButton.BORDER_WIDTH,
+                // create label
+                var label = new Kinetic.Text({
+                   fill:     '#000',
+                   fonzSize: RadioButton.LABEL_DISPLAY_FONT_SIZE,
+                   text:     this._labelText
+                });
 
-                        radius: this._radius,
-                        fill:   color
-                    });
+                var textHeight = label.getTextHeight();
 
-                    this._kineticGroup.add(this._buttonCircle);
+                label.setX(this._buttonCircle.getX() + this._radius + RadioButton.LABEL_BUTTON_SPACE);
+                label.setY(this._buttonCircle.getY() - textHeight / 2);
 
-                    // create button border
-                    var arc = new Kinetic.Arc({
-                        x:           this._buttonCircle.getX(),
-                        y:           this._buttonCircle.getY(),
+                this._kineticGroup.add(label);
 
-                        angle:       360,
-                        fill:        color,
-                        innerRadius: this._radius - RadioButton.BORDER_WIDTH,
-                        outerRadius: this._radius,
-                        stroke:      color
-                    });
+                var myRadioButton = this;
+                this._kineticGroup.on('click', function(evt) {
+                        myRadioButton.getCanvasState().getBaseLayer().setAttr('event', new Event(
+                        myRadioButton.getId(),
+                        myRadioButton.getValue(),
+                        Event.TYPE_CHECKED_CHANGED
+                    ));
+                });
+            },
 
-                    this._kineticGroup.add(arc);
+            /**
+             * Change state and mark as selected
+             *
+             * @memberof Snautsynth.Control.UI.RadioButton
+             * @instance
+             *
+             * @param {boolean} checked
+             */
+            changeCheckedState: function(checked) {
+                this._checked = checked;
 
-                    // create label
-                    var label = new Kinetic.Text({
-                       fill:     '#000',
-                       fonzSize: RadioButton.LABEL_DISPLAY_FONT_SIZE,
-                       text:     this._labelText
-                    });
-
-                    $textHeight = label.getTextHeight();
-
-                    label.setX(this._buttonCircle.getX() + this._radius + RadioButton.LABEL_BUTTON_SPACE);
-                    label.setY(this._buttonCircle.getY() - $textHeight / 2);
-
-                    this._kineticGroup.add(label);
-
-                    var myRadioButton = this;
-                    this._kineticGroup.on('click', function(evt) {
-                            myRadioButton.getCanvasState().getBaseLayer().setAttr('event', new Event(
-                            myRadioButton.getId(),
-                            myRadioButton.getValue(),
-                            Event.TYPE_CHECKED_CHANGED
-                        ));
-                    });
-                },
-
-                /**
-                 * Change state and mark as selected
-                 *
-                 * @memberof Snautsynth.Control.UI.RadioButton
-                 * @instance
-                 *
-                 * @param {boolean} checked
-                 */
-                changeCheckedState: function(checked) {
-                    this._checked = checked;
-
-                    if(this._checked) {
-                        this._buttonCircle.setFill(this._checkedColor);
-                    } else {
-                        this._buttonCircle.setFill(this._color);
-                    }
+                if(this._checked) {
+                    this._buttonCircle.setFill(this._checkedColor);
+                } else {
+                    this._buttonCircle.setFill(this._color);
                 }
             }
-        );
+        });
 
         return RadioButton;
     }

@@ -339,15 +339,13 @@ define(
          * @return {null|*}
          */
         getValueByControlId: function(id) {
-            var ctrCount = this._controls.length;
+            for (var controlIndex = 0; 0 < this._controls.length; controlIndex++) {
+                var control = this._controls[controlIndex];
 
-            this._controls.forEach(
-                function(control) {
-                    if (control.getId() == id) {
-                        return ctrl.getValue();
-                    }
+                if (control.getId() === id) {
+                    return control.getValue();
                 }
-            );
+            }
 
             return null;
         },

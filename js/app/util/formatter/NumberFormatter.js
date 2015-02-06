@@ -5,10 +5,11 @@
  * (c)2011 ecava
  * Dual licensed under the MIT or GPL Version 2 licenses.
  *
- * @module    app/util/formatter/NumberFormatter
  * @namespace Snautsynth.Util.Formatter
  */
-define(['dejavu','app/util/formatter/Formatter'], function(dejavu, Formatter) {
+define(['dejavu', 'app/util/formatter/Formatter'], function(dejavu, Formatter) {
+    'use strict';
+
     var NumberFormatter = dejavu.Class.declare({
         $name: 'NumberFormatter',
 
@@ -37,7 +38,6 @@ define(['dejavu','app/util/formatter/Formatter'], function(dejavu, Formatter) {
         /**
          * @memberof Snautsynth.Util.NumberFormatter
          * @instance
-         * @function
          *
          * @param {number} numValue
          *
@@ -107,7 +107,7 @@ define(['dejavu','app/util/formatter/Formatter'], function(dejavu, Formatter) {
             return (isNegative?'-':'') + v[0] + v[1]; //put back any negation and combine integer and fraction.
         }
     });
-    
+
     return NumberFormatter;
 });
 

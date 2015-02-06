@@ -1,10 +1,10 @@
 define(['app/canvas/CanvasState',
-		'app/utils/formatter/NumberFormatter',
+		'app/util/formatter/NumberFormatter',
 		'app/control/ui/rangecontrol/Knob',
 		'src/Helper',
 		'quickcheck',
 		'app/datatype/NumberRange',
-		'app/utils/Position',],
+		'app/util/Position',],
 	function(CanvasState, NumberFormatter, Knob, TestHelper, QuickCheck, NumberRange, Position) {
 	'use strict';
 

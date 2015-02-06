@@ -1,13 +1,14 @@
 /**
- * @module    app/util/formatter/Formatter
  * @namespace Snautsynth.Util.Formatter
  */
-define(['dejavu'], function(dejavu){
+define(['dejavu'], function(dejavu) {
+    'use strict';
+
     /**
      * @class Snautsynth.Util.Formatter.Formatter
      * @abstract
      */
-    var Formatter = dejavu.AbstractClass.declare({
+    return dejavu.AbstractClass.declare({
         $name: 'Formatter',
 
         $abstracts: {
@@ -15,12 +16,12 @@ define(['dejavu'], function(dejavu){
              * @memberof Snautsynth.Util.Formatter.Formatter
              * @abstract
              * @instance
+             *
              * @param {number} value
+             *
              * @return {string}
              */
             format: function(value) {}
         }
     });
-
-    return Formatter;
 });

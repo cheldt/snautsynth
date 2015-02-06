@@ -1,5 +1,4 @@
 /**
- * @module    app/control/ui/rangecontrol/RangeControl
  * @namespace Snautsynth.Control.UI.RangeControl
  */
 define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
@@ -87,23 +86,16 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          * @param {Snautsynth.Control.UI.RangeControl.SnapOptions} snapOptions
          * @param {Snautsynth.Util.Formatter.NumberFormatter}      formatter
          */
-        initialize: function (
-            id,
-            position,
-            value,
-            canvasState,
-            valueDspMult,
-            valueRange,
-            snapOptions,
-            formatter) {
+        initialize: function (id, position, value, canvasState, valueDspMult, valueRange, snapOptions, formatter) {
             this.$super(id, position, value, canvasState);
 
-            this._valueDspMult         = valueDspMult;
-            this._valueRange           = valueRange;
-            this._snapOptions          = snapOptions;
-            this._formatter            = formatter;
+            this._valueDspMult = valueDspMult;
+            this._valueRange   = valueRange;
+            this._snapOptions  = snapOptions;
+            this._formatter    = formatter;
         }
 
     });
+
     return RangeControl;
 });

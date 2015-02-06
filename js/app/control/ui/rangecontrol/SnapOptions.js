@@ -1,5 +1,4 @@
 /**
- * @module    app/control/ui/RangeControl/SnapOptions
  * @namespace Snautsynth.Control.UI.RangeControl
  */
 define(['dejavu'], function(dejavu){

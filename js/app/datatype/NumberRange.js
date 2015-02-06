@@ -1,5 +1,4 @@
 /**
- * @module    app/datatype/NumberRange
  * @namespace Snautsynth.DataType
  */
 define(['dejavu'], function(dejavu){
@@ -34,15 +33,6 @@ define(['dejavu'], function(dejavu){
             return this._max;
         },
 
-        /**
-         * @memberof Snautsynth.DataType.NumberRange
-         * @instance
-         *
-         * @param {number} max
-         */
-        setMax: function(max) {
-            this._max = max;
-        },
 
         /**
          * @memberof Snautsynth.DataType.NumberRange
@@ -52,16 +42,6 @@ define(['dejavu'], function(dejavu){
          */
         getMin: function() {
             return this._min;
-        },
-
-        /**
-         * @memberof Snautsynth.DataType.NumberRange
-         * @instance
-         *
-         * @param {number} min
-         */
-        setMin: function(min) {
-            this._min = min;
         },
 
         /**

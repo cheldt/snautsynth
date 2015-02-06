@@ -1,18 +1,17 @@
-'use strict';
-
 require.config({
-    baseUrl: 'js/vendor',
-    paths: {
-        app:     '../app',
-        mout:    'mout/src',
-        //libs
-        kinetic: 'kinetic/kinetic.min'
+    baseUrl: 'js',
 
+    paths: {
+        app:     'app',
+        mout:    'vendor/mout/src',
+        //libs
+        kinetic: 'vendor/kinetic/kinetic.min'
     },
+
     packages: [
         {
             name:     'dejavu',
-            location: 'dejavu/dist/amd/strict'
+            location: 'vendor/dejavu/dist/amd/strict'
         }
     ],
 
@@ -30,7 +29,7 @@ requirejs(
         'app/canvas/CanvasState',
         'app/control/ui/rangecontrol/Fader',
         'app/audio/Synthesizer',
-        'app/utils/GlobalConstants',
+        'app/util/GlobalConstants',
         'app/factory/control/layout/Label',
         'app/factory/control/ui/RadioGroup',
         'app/factory/control/ui/envelope/Graph',
@@ -286,9 +285,9 @@ requirejs(
                 id:                     GlobalConstants.CTRL_MASTERGAIN,
                 type:                   GlobalConstants.CLASS_TYPE_BUTTON,
                 position:               {x: 240, y: 60},
-                value:                  0.5,
-                valueDisplayMultiplier: 100,
-                valueRange:             {min: 0, max: 1},
+                value:                  0.1,
+                valueDisplayMultiplier: 1000,
+                valueRange:             {min: 0, max: 0.1},
                 radius:                 50,
                 color:                  '#AABBCC',
                 snapOptions:            null,
