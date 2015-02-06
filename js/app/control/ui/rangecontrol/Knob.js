@@ -5,7 +5,7 @@ define(
         '../../../event/Event',
         'kinetic',
         'app/datatype/NumberRange',
-        'app/utils/Position'
+        'app/util/Position'
     ],
     function(
         dejavu,
@@ -38,10 +38,10 @@ define(
         /** @type {Object} */
         _pointer:          null,
 
-        /** @type {Number} */
+        /** @type {number} */
         _pointerRadian:    null,
 
-        /** @type {Number} */
+        /** @type {number} */
         _radius:           null,
 
         /** @type {Object} */
@@ -50,7 +50,7 @@ define(
         /** @type {Object} */
         _valueDisplayText: null,
 
-        /** @type {Number} */
+        /** @type {number} */
         _tmpPointerRad:    null,
 
         /**
@@ -68,14 +68,14 @@ define(
         },
 
         /**
-         * @return {Number}
+         * @return {number}
          */
         getPointerRadian: function() {
             return this._pointerRadian;
         },
 
         /**
-         * @param {Number} pointerRadian
+         * @param {number} pointerRadian
          */
         setPointerRadian: function(pointerRadian) {
             this._pointerRadian = pointerRadian;
@@ -83,7 +83,7 @@ define(
         },
 
         /**
-         * @param {Number} tmpPointerRad
+         * @param {number} tmpPointerRad
          */
         setTmpPointerRad: function(tmpPointerRad) {
             this._tmpPointerRad = tmpPointerRad;
@@ -108,14 +108,14 @@ define(
         /**
          * Constructor for knob
          *
-         * @param {Number} id
+         * @param {number} id
          * @param {Object} position
-         * @param {Number} value
+         * @param {number} value
          * @param {Object} canvasState
-         * @param {Number} valueDspMult
+         * @param {number} valueDspMult
          * @param {Object} valueRange
-         * @param {Number} radius
-         * @param {String} color
+         * @param {number} radius
+         * @param {string} color
          * @param {Object} snapOptions
          * @param {Object} formatter
          */
@@ -298,9 +298,9 @@ define(
             /**
              * Calculates radian from degree
              *
-             * @param {Number} degree The degree-value
+             * @param {number} degree The degree-value
              *
-             * @return {Number} The calculated radian-value
+             * @return {number} The calculated radian-value
              */
             calcDegToRad: function(degree) {
                 return (degree * Math.PI) / 180;
@@ -310,11 +310,11 @@ define(
              * Calculates radian from controller-value
              * depending on the min/max values of radian and controller-value
              *
-             * @param {Number} value       The controller-value
+             * @param {number} value       The controller-value
              * @param {Object} radianRange The minimum and maximum radian
              * @param {Object} valueRange  The minimum and maximum controller-value
              *
-             * @return {Number}  The calculated radian
+             * @return {number}  The calculated radian
              */
             calcRadFromValue: function(value, radianRange, valueRange) {
                 var totalRad   = radianRange.calcRange();
@@ -328,9 +328,9 @@ define(
             /**
              * Calculates degree from radian
              *
-             * @param {Number} radian
+             * @param {number} radian
              *
-             * @return {Number}  The calculated degree-value
+             * @return {number}  The calculated degree-value
              */
             calcRadToDeg: function(radian) {
                 return (radian * 180) / Math.PI;
@@ -340,11 +340,11 @@ define(
              * Calculates controller-value from radian
              * depending on the min/max values of radian and controller-value
              *
-             * @param {Number} radian      The radian
+             * @param {number} radian      The radian
              * @param {Object} radianRange The minimum and maximum radian
              * @param {Object} valueRange  The minimum and maximum controller-value
              *
-             * @return {Number} The calculated controller-value
+             * @return {number} The calculated controller-value
              */
             calcValueFromRad: function(radian, radianRange, valueRange) {
                 var totalRad   = radianRange.calcRange();
@@ -358,11 +358,11 @@ define(
             /**
              * Checks if point lies inside circle
              *
-             * @param {Number} pointX         The x-coordinate of point
-             * @param {Number} pointY         The y-coordinate of point
-             * @param {Number} circleCenterX  The x-coordinate of circle center-point
-             * @param {Number} circleCenterY  The y-coordinate of circle center-point
-             * @param {Number} radius         The radius of circle
+             * @param {number} pointX         The x-coordinate of point
+             * @param {number} pointY         The y-coordinate of point
+             * @param {number} circleCenterX  The x-coordinate of circle center-point
+             * @param {number} circleCenterY  The y-coordinate of circle center-point
+             * @param {number} radius         The radius of circle
              *
              * @return {Boolean}  True when point is part of circle, false if not
              */

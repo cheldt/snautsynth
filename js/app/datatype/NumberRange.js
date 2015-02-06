@@ -1,44 +1,75 @@
 /**
- * Created by snaut on 22/01/15.
+ * @module    app/datatype/NumberRange
+ * @namespace Snautsynth.DataType
  */
 define(['dejavu'], function(dejavu){
     var NumberRange = dejavu.Class.declare({
         $name: 'NumberRange',
 
+        /**
+         * @memberof Snautsynth.DataType.NumberRange
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _max: null,
+
+        /**
+         * @memberof Snautsynth.DataType.NumberRange
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _min: null,
 
         /**
-         * @return {Number}
+         * @memberof Snautsynth.DataType.NumberRange
+         * @instance
+         *
+         * @return {number}
          */
         getMax: function() {
             return this._max;
         },
 
         /**
-         * @param {Number} max
+         * @memberof Snautsynth.DataType.NumberRange
+         * @instance
+         *
+         * @param {number} max
          */
         setMax: function(max) {
             this._max = max;
         },
 
         /**
-         * @return {Number}
+         * @memberof Snautsynth.DataType.NumberRange
+         * @instance
+         *
+         * @return {number}
          */
         getMin: function() {
             return this._min;
         },
 
         /**
-         * @params {Number} min
+         * @memberof Snautsynth.DataType.NumberRange
+         * @instance
+         *
+         * @param {number} min
          */
         setMin: function(min) {
             this._min = min;
         },
 
         /**
-         * @param {Number} min
-         * @param {Number} max
+         * @constructor
+         * @class Snautsynth.DataType.NumberRange
+         *
+         * @param {number} min
+         * @param {number} max
          */
         initialize: function (min, max) {
             this._max = max;
@@ -46,9 +77,12 @@ define(['dejavu'], function(dejavu){
         },
 
         /**
-         * Calculates value from min to max
+         * Calculates range-value from min to max
          *
-         * @return {Number}
+         * @memberof Snautsynth.DataType.NumberRange
+         * @instance
+         *
+         * @return {number}
          */
         calcRange: function() {
             return this._max - this._min;

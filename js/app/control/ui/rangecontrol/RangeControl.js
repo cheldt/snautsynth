@@ -1,46 +1,91 @@
-define(['dejavu', '../UIControl'], function(dejavu, UIControl){
+/**
+ * @module    app/control/ui/rangecontrol/RangeControl
+ * @namespace Snautsynth.Control.UI.RangeControl
+ */
+define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
     var RangeControl = dejavu.Class.declare({
         $name: 'RangeControl',
 
         $extends: UIControl,
 
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         * @protected
+         *
+         * @type {Snautsynth.Util.Formatter.NumberFormatter}
+         */
         _formatter:            null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         * @protected
+         *
+         * @type {Snautsynth.DataType.NumberRange}
+         */
         _valueRange:           null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         * @protected
+         *
+         * @type {Snautsynth.Control.UI.RangeControl.SnapOptions}
+         */
         _snapOptions:          null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _valueDspMult:         null,
 
         /**
-         * @return {Object}
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         *
+         * @return {Snautsynth.Util.Formatter.NumberFormatter}
          */
         getFormatter: function() {
             return this._formatter;
         },
 
         /**
-         * @return {Object}
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         *
+         * @return {Snautsynth.Control.UI.RangeControl.SnapOptions}
          */
         getSnapOptions: function() {
             return this._snapOptions;
         },
 
         /**
-         * @return {Object}
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         *
+         * @return {Snautsynth.DataType.NumberRange}
          */
         getValueRange: function() {
             return this._valueRange;
         },
 
         /**
-         * Constructor for RangeControl
+         * @constructor
+         * @class Snautsynth.Control.UI.RangeControl.RangeControl
          *
-         * @param {Number} id
-         * @param {Object} position
-         * @param {Number} value
-         * @param {Object} canvasState
-         * @param {Number} valueDspMult
-         * @param {Object} valueRange
-         * @param {Object} snapOptions
-         * @param {Object} formatter
+         * @param {number}                                         id
+         * @param {Snautsynth.Util.Position}                       position
+         * @param {*}                                              value
+         * @param {Snautsynth.Canvas.CanvasState}                  canvasState
+         * @param {number}                                         valueDspMult
+         * @param {Snautsynth.DataType.NumberRange}                valueRange
+         * @param {Snautsynth.Control.UI.RangeControl.SnapOptions} snapOptions
+         * @param {Snautsynth.Util.Formatter.NumberFormatter}      formatter
          */
         initialize: function (
             id,

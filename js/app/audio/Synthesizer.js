@@ -1,4 +1,4 @@
-define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/event/Event'], function(dejavu, AudioUtils, GlobalConstants, Event){
+define(['dejavu', 'app/audio/util/Audio', 'app/util/GlobalConstants',  'app/event/Event'], function(dejavu, AudioUtils, GlobalConstants, Event){
     var Synthesizer = dejavu.Class.declare({
         $name: 'Synthesizer',
 
@@ -110,7 +110,7 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
         /**
          * Creates oscillators per triggered note and starts them
          *
-         * @param {Number} note
+         * @param {number} note
          */
         createOscillators: function(note) {
             if (this._runningOscillators === null) {
@@ -160,7 +160,7 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
         },
 
         /**
-         * @param {Number} note
+         * @param {number} note
          */
         destroyOscillators: function(note) {
             if (this._runningOscillators === null) {
@@ -224,7 +224,7 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
 
         /**
          * @param {String|Number} eventValue
-         * @param {Number} oscillatorId
+         * @param {number} oscillatorId
          */
         changeRunningOscillatorsWaveType: function(eventValue, oscillatorId) {
             if (null === this._runningOscillators) {
@@ -251,10 +251,10 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
 
 
         /**
-         * @param {Number} value
+         * @param {number} value
          * @param {Object} oscillator
-         * @param {Number} octaveControllerId
-         * @param {Number} currentTime
+         * @param {number} octaveControllerId
+         * @param {number} currentTime
          */
         changeOscillatorTune: function(value, oscillator, octaveControllerId, currentTime) {
             var octaveValue = this._canvasState.getValueByControlId(octaveControllerId);
@@ -263,8 +263,8 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
 
         /**
          * @param {String|Number} value
-         * @param {Number} oscillatorId
-         * @param {Number} octaveControllerId
+         * @param {number} oscillatorId
+         * @param {number} octaveControllerId
          */
         changeRunningOscillatorsTune: function(value, oscillatorId, octaveControllerId) {
             if (null === this._runningOscillators) {
@@ -292,10 +292,10 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
         },
 
         /**
-         * @param {Number} value
+         * @param {number} value
          * @param {Object} oscillator
-         * @param {Number} tuneControllerId
-         * @param {Number} currentTime
+         * @param {number} tuneControllerId
+         * @param {number} currentTime
          */
         changeOscillatorOctave: function(value, oscillator, tuneControllerId, currentTime) {
             var tuneValue = this._canvasState.getValueByControlId(tuneControllerId);
@@ -304,8 +304,8 @@ define(['dejavu', 'app/audio/utils/Audio', 'app/utils/GlobalConstants',  'app/ev
 
         /**
          * @param {String|Number} value
-         * @param {Number} oscillatorId
-         * @param {Number} tuneControllerId
+         * @param {number} oscillatorId
+         * @param {number} tuneControllerId
          */
         changeRunningOscillatorsOctave: function(value, oscillatorId, tuneControllerId) {
             if (null === this._runningOscillators) {

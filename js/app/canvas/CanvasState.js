@@ -1,101 +1,235 @@
-define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], function(dejavu, CustomEvent, MousePosition, Kinetic){
-
-
+/**
+ * @namespace Snautsynth.Canvas
+ */
+define(
+    [
+        'dejavu',
+        'app/event/CustomEvent',
+        'app/util/Position',
+        'kinetic'
+    ],
+    function(
+        dejavu,
+        CustomEvent,
+        Position,
+        Kinetic
+    ) {
     var CanvasState = dejavu.Class.declare({
         $name: 'CanvasState',
 
-        //$extends: CustomEvent,
-
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {Kinetic.Layer}
+         */
         _baseLayer: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {Kinetic.Canvas}
+         */
         _canvas: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {Kinetic.Context}
+         */
         _canvasContext: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {Object}
+         */
         _container: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {Array.<*>}
+         */
         _controls: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {number}
+         */
         _height: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {number}
+         */
         _drawInterval: null,
 
-        _lastMouseX: null,
-
-        _lastMouseY: null,
-
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {*}
+         */
         _lastValue: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {boolean}
+         */
         _pointerLocked: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {number}
+         */
         _scale: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {Kinetic.Stage}
+         */
         _stage: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @type {number}
+         */
         _width: null,
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {Kinetic.Layer}
+         */
         getBaseLayer: function() {
             return this._baseLayer;
         },
+
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @param {Kinetic.Layer} baseLayer
+         */
         setBaseLayer: function(baseLayer) {
             this._baseLayer = baseLayer;
-            return this;
         },
 
-        getCanvas: function() {2
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {Kinetic.Canvas}
+         */
+        getCanvas: function() {
             return this._canvas;
         },
+
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @param {Kinetic.Canvas} canvas
+         */
         setCanvas: function(canvas) {
             this._canvas = canvas;
-            return this;
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {Kinetic.Context}
+         */
         getCanvasContext: function() {
             return this._canvasContext;
         },
-        
+
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {Object}
+         */
         getContainer: function() {
             return this._container;
         },
 
-        getLastMouseX: function() {
-            return this._lastMouseX;
-        },
-        setLastMouseX: function(lastMouseX) {
-            this._lastMouseX = lastMouseX;
-        },
-
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {*}
+         */
         getLastValue: function() {
             return this._lastValue;
         },
+
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @param {*} lastValue
+         */
         setLastValue: function(lastValue) {
             this._lastValue = lastValue;
         },
 
-        getLastMouseY: function() {
-            return this._lastMouseY;
-        },
-        setLastMouseY: function(lastMouseY) {
-            this._lastMouseY = lastMouseY;
-        },
-
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {boolean}
+         */
         getPointerLocked: function() {
             return this._pointerLocked;
         },
+
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @param {boolean} pointerLocked
+         */
         setPointerLocked: function(pointerLocked) {
             this._pointerLocked = pointerLocked;
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {Object}
+         */
         getScale: function() {
             return this._stage.getScale();
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {Kinetic.Stage}
+         */
         getStage: function() {
             return this._stage;
         },
 
+        /**
+         * @constructor
+         * @class Snautsynth.Canvas.CanvasState
+         *
+         * @param {number} width
+         * @param {number} height
+         * @param {string} containerId
+         */
         initialize: function(width, height, containerId) {
-
             this._stage = new Kinetic.Stage({
                 container: containerId,
                 width:     width,
@@ -136,46 +270,85 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
             this._controls = [];
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @param {Snautsynth.Control.Control} control
+         */
         addControl: function(control) {
             // add group to baseLayer of canvasState
             this._controls.push(control);
             this.addNodeToBaseLayer(control.getKineticGroup());
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @param {Kinetic.Node} kineticNode
+         */
         addNodeToBaseLayer: function(kineticNode) {
             this._baseLayer.add(kineticNode);
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         */
         clear: function() {
             this._canvasContext.clearRect(0, 0, this._canvas.width, this._canvas.height);
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         */
         draw: function() {
             this._stage.clear();
             this._stage.draw();
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @return {undefined|Snautsynth.Util.Position}
+         */
         findPosition: function() {
-            var obj = this._canvas;
+            var obj     = this._canvas;
             var curleft = 0, curtop = 0;
             if (obj.offsetParent) {
                 do {
                     curleft += obj.offsetLeft;
-                    curtop += obj.offsetTop;
+                    curtop  += obj.offsetTop;
                     obj = obj.offsetParent;
                 } while (obj);
-                return { x: curleft, y: curtop };
+                return new Position(curleft, curtop);
             }
             return undefined;
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @function
+         *
+         * @param {number} id
+         *
+         * @return {null|*}
+         */
         getValueByControlId: function(id) {
             var ctrCount = this._controls.length;
-            for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
-                var ctrl = this._controls[ctrIndex];
-                if(ctrl.getId() == id)
-                    return ctrl.getValue();
-            }
+
+            this._controls.forEach(
+                function(control) {
+                    if (control.getId() == id) {
+                        return ctrl.getValue();
+                    }
+                }
+            );
+
             return null;
         },
 
@@ -183,9 +356,13 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
          * Returns mouse-delta or position depending on pointer-lock.
          * Position is calculated scaling
          *
-         * @param e
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @function
          *
-         * @return {app.utils.MousePosition}
+         * @param {Object} e
+         *
+         * @return {Snautsynth.Util.Position}
          */
         getMousePosition: function(e) {
             var mx, my;
@@ -205,11 +382,15 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
                 my = (e.pageY - pos.y) / this._stage.getScale();
             }
 
-            return new MousePosition(mx, my);
+            return new Position(mx, my);
         },
 
         /**
          * Called after mouse-pointer lock is achieved
+         *
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @function
          */
         lockChangeCallback: function() {
             if (document.pointerLockElement === this._container ||
@@ -223,6 +404,10 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
 
         /**
          * Try to lock mouse-pointer
+         *
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @function
          */
         lockPointer: function() {
             this._container.requestPointerLock = this._container.requestPointerLock ||
@@ -234,13 +419,17 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
 
         /**
          * Resize stage on viewport
+         *
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @function
          */
         resize: function () {
             // browser viewport size
-            var windowWidth = window.innerWidth;
+            var windowWidth  = window.innerWidth;
             var windowHeight = window.innerHeight;
 
-            var stageWidth = this._stage.getWidth();
+            var stageWidth  = this._stage.getWidth();
             var stageHeight = this._stage.getHeight();
 
             // check of stage fits in viewport => scale when viewport is to small
@@ -256,6 +445,11 @@ define(['dejavu','app/event/CustomEvent', 'app/utils/Position', 'kinetic'], func
             }
         },
 
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         * @function
+         */
         unlockPointer: function() {
             if (this._pointerLocked) {
                 document.exitPointerLock =  document.exitPointerLock ||

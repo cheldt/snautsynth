@@ -8,29 +8,29 @@ define(
         return dejavu.Class.declare({
                 $name: 'PointValue',
 
-                /** @type {Number} */
+                /** @type {number} */
                 _gain: null,
 
-                /** @type {Number} */
+                /** @type {number} */
                 _time: null,
 
                 /**
-                 * @return {Number}
+                 * @return {number}
                  */
                 getGain: function() {
                     return this._gain;
                 },
 
                 /**
-                 * @return {Number}
+                 * @return {number}
                  */
                 getTime: function() {
                     return this._time;
                 },
 
                 /**
-                 * @param {Number} gain
-                 * @param {Number} time
+                 * @param {number} gain
+                 * @param {number} time
                  */
                 initialize: function(gain, time) {
                     this._gain = gain;

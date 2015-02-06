@@ -1,26 +1,62 @@
-define(['dejavu', 'app/event/Event', 'app/control/ui/UIControl', 'app/control/ui/RadioButton'], function(dejavu, Event, UIControl, RadioButton){
-    var RadioGroup = dejavu.Class.declare({
-        $name: 'RadioGroup',
+/**
+ * @module    app/control/ui/RadioGroup
+ * @namespace Snautsynth.Control.UI
+ */
+(define(
+    [
+        'dejavu',
+        'app/event/Event',
+        'app/control/ui/UIControl'
+    ],
+    function (
+        dejavu,
+        Event,
+        UIControl
+    ) {
+        return dejavu.Class.declare({
+                $name: 'RadioGroup',
 
-        $extends: UIControl,
+                $extends: UIControl,
 
-        _lastRadioY: null,
+                /**
+                 * @memberof Snautsynth.Control.UI.UIControl
+                 * @instance
+                 * @protected
+                 *
+                 * @type {number}
+                 */
+                _lastRadioY: null,
 
-        initialize: function (id, position, value, canvasState) {
-            this.$super(id, position, value, canvasState);
+                /**
+                 * @constructor
+                 * @class    Snautsynth.Control.UI.RadioGroup
+                 * @extends  Snautsynth.Control.UI.UIControl
+                 *
+                 * @param {number}                        id
+                 * @param {Snautsynth.Util.Position}      position
+                 * @param {*}                             value
+                 * @param {Snautsynth.Canvas.CanvasState} canvasState
+                 */
+                initialize: function (id, position, value, canvasState) {
+                    this.$super(id, position, value, canvasState);
 
-            this._lastRadioY   = position.getY();
+                    this._lastRadioY = position.getY();
+                    this._controls = [];
+                    var myRadioGroup = this;
 
-            this._controls = [];
+                    this._kineticGroup.on('click', function (evt) {
+                        var eventObject = myRadioGroup.getCanvasState().getBaseLayer().getAttr('event');
 
-            var myRadioGroup = this;
+                        if (typeof eventObject === 'undefined') {
+                            return;
+                        }
 
-            this._kineticGroup.on('click', function(evt) {
-                var eventObject =  myRadioGroup.getCanvasState().getBaseLayer().getAttr('event');
-                if(typeof eventObject !== 'undefined') {
-                    if (eventObject.getType() == Event.TYPE_CHECKED_CHANGED) {
+                        if (eventObject.getType() != Event.TYPE_CHECKED_CHANGED) {
+                            return;
+                        }
+
                         var radioButtonList = myRadioGroup.getControls();
-                        var ctrCount        = radioButtonList.length;
+                        var ctrCount = radioButtonList.length;
 
                         for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
                             var radioButton = radioButtonList[ctrIndex];
@@ -30,33 +66,41 @@ define(['dejavu', 'app/event/Event', 'app/control/ui/UIControl', 'app/control/ui
                         for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
                             var radioButton = radioButtonList[ctrIndex];
 
-                            if( radioButton.getValue() == eventObject.getValue() ) {
-                                radioButton.changeCheckedState(true);
-                                myRadioGroup.setValue(radioButton.getValue());
-                                myRadioGroup.getCanvasState().getBaseLayer().setAttr('event', new Event(
+                            if (radioButton.getValue() != eventObject.getValue()) {
+                                continue;
+                            }
+
+                            radioButton.changeCheckedState(true);
+
+                            myRadioGroup.setValue(radioButton.getValue());
+
+                            myRadioGroup.getCanvasState().getBaseLayer().setAttr('event', new Event(
                                     myRadioGroup.getId(),
                                     myRadioGroup.getValue(),
                                     Event.TYPE_VALUE_CHANGED)
-                                );
-                            }
+                            );
                         }
+                    });
+                },
+
+                /**
+                 * @memberof Snautsynth.Control.UI.UIControl
+                 * @instance
+                 *
+                 * @param {Snautsynth.Control.UI.RadioButton} radioButton
+                 */
+                addControl: function (radioButton) {
+                    radioButton.setY(this._lastRadioY);
+
+                    this.$super(radioButton);
+
+                    if (radioButton.getValue() == this._value) {
+                        radioButton.changeCheckedState(true);
                     }
+
+                    this._lastRadioY += radioButton.getRadius() * 2 + 5;
                 }
-            });
-        },
-
-        addControl: function(radioButton) {
-            radioButton.setY(this._lastRadioY);
-
-            this.$super(radioButton);
-
-            if (radioButton.getValue() == this._value) {
-                radioButton.changeCheckedState(true);
             }
-
-            this._lastRadioY += radioButton.getRadius() * 2 + 5;
-        }
-    });
-
-    return RadioGroup;
-});
+        );
+    }
+));

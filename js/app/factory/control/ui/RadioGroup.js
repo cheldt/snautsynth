@@ -2,7 +2,7 @@ define(
     [
         'app/factory/control/ui/RadioButton',
         'app/control/ui/RadioGroup',
-        'app/utils/Position',
+        'app/util/Position',
         'dejavu'
     ],
     function(

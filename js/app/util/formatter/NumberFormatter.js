@@ -4,19 +4,45 @@
  * author: KPL, KHL
  * (c)2011 ecava
  * Dual licensed under the MIT or GPL Version 2 licenses.
+ *
+ * @module    app/util/formatter/NumberFormatter
+ * @namespace Snautsynth.Util.Formatter
  */
-define(['dejavu','app/utils/formatter/Formatter'], function(dejavu, Formatter) {
+define(['dejavu','app/util/formatter/Formatter'], function(dejavu, Formatter) {
     var NumberFormatter = dejavu.Class.declare({
         $name: 'NumberFormatter',
 
         $extends: Formatter,
 
+        /**
+         * @memberof Snautsynth.Util.Formatter.NumberFormatter
+         * @instance
+         * @protected
+         *
+         * @type {string}
+         */
         _pattern: null,
 
+        /**
+         * @constructor
+         * @class   Snautsynth.Util.Formatter.NumberFormatter
+         * @extends Snautsynth.Util.Formatter.Formatter
+         *
+         * @param {string} pattern
+         */
         initialize: function(pattern) {
-                this._pattern = pattern;
-            },
+            this._pattern = pattern;
+        },
 
+        /**
+         * @memberof Snautsynth.Util.NumberFormatter
+         * @instance
+         * @function
+         *
+         * @param {number} numValue
+         *
+         * @return {string}
+         */
         format: function(numValue) {
             var m = this._pattern;
             var v = numValue;

@@ -3,8 +3,8 @@ define(
         'app/control/ui/rangecontrol/Fader',
         'app/control/ui/rangecontrol/SnapOptions',
         'app/datatype/NumberRange',
-        'app/utils/formatter/NumberFormatter',
-        'app/utils/Position',
+        'app/util/formatter/NumberFormatter',
+        'app/util/Position',
         'dejavu'
 
     ]

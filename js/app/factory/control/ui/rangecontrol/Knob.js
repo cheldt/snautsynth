@@ -1,10 +1,14 @@
+/**
+ * @module    app/control/ui/rangecontrol/RangeControl
+ * @namespace Snautsynth.Control.UI.Rangecontrol
+ */
 define(
     [
         'app/control/ui/rangecontrol/Knob',
         'app/control/ui/rangecontrol/SnapOptions',
         'app/datatype/NumberRange',
-        'app/utils/formatter/NumberFormatter',
-        'app/utils/Position',
+        'app/util/formatter/NumberFormatter',
+        'app/util/Position',
         'dejavu',
 
     ]

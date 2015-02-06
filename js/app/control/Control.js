@@ -1,109 +1,173 @@
-define(['dejavu','kinetic'], function(dejavu,Kinetic){
-    var Control = dejavu.Class.declare({
-        $name: 'Control',
+/**
+ * @module    app/control/Control
+ * @namespace Snautsynth.Control
+ */
+define(
+    [
+        'dejavu',
+        'kinetic'
+    ],
+    function(
+        dejavu,
+        Kinetic
+    ) {
+        return dejavu.Class.declare({
+                $name: 'Control',
 
-        /** @type {Object} */
-        _canvasState:  null,
-        /** @type {Object} */
-        _controls:     null,
-        /** @type {Number} */
-        _id:           null,
-        /** @type {Object} */
-        _kineticGroup: null,
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @type {Snautsynth.Canvas.CanvasState}
+                 */
+                _canvasState:  null,
 
-        /**
-         * @return {Object}
-         */
-        getCanvasState: function() {
-            return this._canvasState;
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @type {Array.<Snautsynth.Control.Control>}
+                 */
+                _controls:     null,
 
-        /**
-         * @return {Object}
-         */
-        getControls: function() {
-            return this._controls;
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @type {number}
+                 */
+                _id:           null,
 
-        /**
-         * @return {Number}
-         */
-        getId: function() {
-            return this._id;
-        },
 
-        /**
-         * @param {Number} id
-         */
-        setId: function(id) {
-            this._id = id;
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @type {Kinetic.Group}
+                 */
+                _kineticGroup: null,
 
-        /**
-         * @return {Object}
-         */
-        getKineticGroup: function() {
-            return this._kineticGroup;
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @return {Object}
+                 */
+                getCanvasState: function() {
+                    return this._canvasState;
+                },
 
-        /**
-         * @param {Object} position
-         */
-        setPosition: function(position) {
-            this._kineticGroup.setX(position.getX());
-            this._kineticGroup.setY(position.getY());
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @return {Object}
+                 */
+                getControls: function() {
+                    return this._controls;
+                },
 
-        /**
-         * @return {Number}
-         */
-        getX: function() {
-            return this._kineticGroup.getX();
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @return {number}
+                 */
+                getId: function() {
+                    return this._id;
+                },
 
-        /**
-         * @param {Number} x
-         */
-        setX: function(x) {
-            this._kineticGroup.setX(x);
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @param {number} id
+                 */
+                setId: function(id) {
+                    this._id = id;
+                },
 
-        /**
-         * @return {Number}
-         */
-        getY: function() {
-            return this._kineticGroup.getY();
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @return {Kinetic.Group}
+                 */
+                getKineticGroup: function() {
+                    return this._kineticGroup;
+                },
 
-        /**
-         * @param {Number} x
-         */
-        setY: function(y) {
-            this._kineticGroup.setY(y);
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @param {Snautsynth.Util.Position} position
+                 */
+                setPosition: function(position) {
+                    this._kineticGroup.setX(position.getX());
+                    this._kineticGroup.setY(position.getY());
+                },
 
-        /**
-         *
-         * @param {Number} id
-         * @param {Object} position
-         * @param {Object} canvasState
-         */
-        initialize: function(id, position, canvasState) {
-            this._id           = id;
-            this._canvasState  = canvasState;
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @return {number}
+                 */
+                getX: function() {
+                    return this._kineticGroup.getX();
+                },
 
-            // create layer for control
-            this._kineticGroup = new Kinetic.Group();
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @param {number} x
+                 */
+                setX: function(x) {
+                    this._kineticGroup.setX(x);
+                },
 
-            this._kineticGroup.setX(position.getX());
-            this._kineticGroup.setY(position.getY());
-        },
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @return {number}
+                 */
+                getY: function() {
+                    return this._kineticGroup.getY();
+                },
 
-        addControl: function(control) {
-            this._controls.push(control);
-            this._kineticGroup.add(control.getKineticGroup());
-        }
+                /**
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 * @param {number} y
+                 */
+                setY: function(y) {
+                    this._kineticGroup.setY(y);
+                },
 
-    });
-    return Control;
-});
+                /**
+                 * @constructor
+                 * @class Snautsynth.Control.Control
+                 *
+                 * @param {number}                        id
+                 * @param {Snautsynth.Util.Position}      position
+                 * @param {Snautsynth.Canvas.CanvasState} canvasState
+                 */
+                initialize: function(id, position, canvasState) {
+                    this._id           = id;
+                    this._canvasState  = canvasState;
+
+                    // create layer for control
+                    this._kineticGroup = new Kinetic.Group();
+
+                    this._kineticGroup.setX(position.getX());
+                    this._kineticGroup.setY(position.getY());
+                },
+
+                /**
+                 *
+                 * Adds control to control-list and adds kinetic-group of sub-control
+                 * to controls kinetic-group
+                 *
+                 * @memberof Snautsynth.Control.Control
+                 * @instance
+                 *
+                 * @param {Snautsynth.Control.Control} control
+                 */
+                addControl: function(control) {
+                    this._controls.push(control);
+                    this._kineticGroup.add(control.getKineticGroup());
+                }
+            }
+        );
+    }
+);

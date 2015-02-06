@@ -2,7 +2,7 @@ define(
     [
         'app/control/ui/envelope/Graph',
         'app/factory/control/ui/envelope/Point',
-        'app/utils/Position',
+        'app/util/Position',
         'dejavu'
     ],
     function(

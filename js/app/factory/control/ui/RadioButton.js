@@ -1,7 +1,7 @@
 define(
     [
         'app/control/ui/RadioButton',
-        'app/utils/Position',
+        'app/util/Position',
         'dejavu'
     ],
     function(

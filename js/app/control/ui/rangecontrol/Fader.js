@@ -4,7 +4,7 @@ define(
         'app/control/ui/rangecontrol/RangeControl',
         'app/event/Event',
         'kinetic',
-        'app/utils/Position'
+        'app/util/Position'
     ],
     function(
         dejavu,
@@ -28,19 +28,19 @@ define(
             /** @type {Object} */
             _faderKnob:          null,
 
-            /** @type {Number} */
+            /** @type {number} */
             _length:             null,
 
-            /** @type {Number} */
+            /** @type {number} */
             _orientation:        null,
 
-            /** @type {Number} */
+            /** @type {number} */
             _tmpPosition:        null,
 
-            /** @type {Number} */
+            /** @type {number} */
             _trackLength:        null,
 
-            /** @type {Number} */
+            /** @type {number} */
             _startTrackPosition: null,
 
             /** @type {Object} */
@@ -66,17 +66,17 @@ define(
             /**
              * Constructor for Fader
              *
-             * @param {Number} id
+             * @param {number} id
              * @param {Object} position
-             * @param {Number} value
+             * @param {number} value
              * @param {Object} canvasState
-             * @param {Number} valueDspMult
+             * @param {number} valueDspMult
              * @param {Object} valueRange
-             * @param {Number} length
-             * @param {String} color
+             * @param {number} length
+             * @param {string} color
              * @param {Object} snapOptions
              * @param {Object} formatter
-             * @param {Number} orientation
+             * @param {number} orientation
              */
             initialize: function(
                 id,
@@ -273,7 +273,7 @@ define(
             /**
              * Calculates faderknob-coordinates from position
              *
-             * @param {Number} position
+             * @param {number} position
              *
              * @return {Object}
              */
@@ -302,9 +302,9 @@ define(
             /**
              * Calculates faderknob-position from value
              *
-             * @param {Number} value
+             * @param {number} value
              *
-             * @return {Number}
+             * @return {number}
              */
             calcPositionFromValue: function(value) {
                 // _trackLength => valueRange
@@ -316,9 +316,9 @@ define(
             /**
              * Calculates value from position
              *
-             * @param {Number} position
+             * @param {number} position
              *
-             * @return {Number}
+             * @return {number}
              */
             calcValueFromPosition: function(position) {
                 // valueRange => this._trackLength

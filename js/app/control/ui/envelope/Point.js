@@ -4,9 +4,9 @@ define(
         'kinetic',
         'app/control/ui/UIControl',
         'app/control/ui/envelope/Graph',
-        'app/utils/GlobalConstants',
+        'app/util/GlobalConstants',
         'app/event/Event',
-        'app/utils/Position',
+        'app/util/Position',
         'app/control/ui/envelope/PointValue'
     ],
     function(
@@ -40,10 +40,10 @@ define(
                 },
 
                 /**
-                 * @param {Number} id
+                 * @param {number} id
                  * @param {Object} value
                  * @param {Object} canvasState
-                 * @param {String} color
+                 * @param {string} color
                  * @param {Object} graph
                  */
                 initialize: function(id, value, canvasState, color, graph) {

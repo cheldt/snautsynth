@@ -1,42 +1,77 @@
+/**
+ * @module    app/control/ui/RangeControl/SnapOptions
+ * @namespace Snautsynth.Control.UI.RangeControl
+ */
 define(['dejavu'], function(dejavu){
 
     var SnapOptions = dejavu.Class.declare({
         $name: 'SnapOptions',
 
-        /** @type {Number} */
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @instance
+         * @protected
+         *
+         * @type {null|number}
+         */
         _doubleClickSnapValue: null,
 
-        /** @type {Number} */
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _snapDistance:         0,
 
-        /** @type {Number} */
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _snapStep:             0,
 
         /**
-         * @return {Number}
+         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @instance
+         * @protected
+         *
+         * @return {null|number}
          */
         getDoubleClickSnapValue: function() {
             return this._doubleClickSnapValue;
         },
 
         /**
-         * @return {Number}
+         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @instance
+         *
+         * @return {number}
          */
         getSnapDistance: function() {
             return this._snapDistance;
         },
 
         /**
-         * @return {Number}
+         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @instance
+         *
+         * @return {number}
          */
         getSnapStep: function() {
             return this._snapStep;
         },
 
         /**
-         * @param {Number} doubleClickSnapValue The value to which the controller jumps on double-click
-         * @param {Number} snapDistance         The distance to next/prev step, which triggers snap to step
-         * @param {Number} snapStep             The step-value the controller jumps
+         * @constructor
+         * @class Snautsynth.Control.UI.RangeControl.SnapOptions
+         *
+         * @param {number} doubleClickSnapValue The value to which the controller jumps on double-click
+         * @param {number} snapDistance         The distance to next/prev step, which triggers snap to step-value
+         * @param {number} snapStep             The step-value the controller jumps
          */
         initialize: function(doubleClickSnapValue, snapDistance, snapStep) {
             this._doubleClickSnapValue = doubleClickSnapValue;

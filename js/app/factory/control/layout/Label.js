@@ -1,7 +1,7 @@
 define(
     [
         'app/control/layout/Label',
-        'app/utils/Position',
+        'app/util/Position',
         'dejavu',
     ]
     , function(
