@@ -1,3 +1,6 @@
+/**
+ * @namespace Snautsynth.Factory.Control.UI
+ */
 define(
     [
         'app/factory/control/ui/RadioButton',
@@ -11,35 +14,41 @@ define(
         Position,
         dejavu
     ) {
+        'use strict';
+
+        /** @class Snautsynth.Factory.Control.UI.RadioGroup */
         return dejavu.Class.declare({
-                $name: 'RadioGroup',
+            $name: 'RadioGroup',
 
-                /**
-                 * @param {Object} canvasState
-                 * @param {Object} options
-                 * @return {Object}
-                 */
-                create: function(canvasState, options) {
-                    var position   = new Position(options.position.x, options.position.y);
-                    var radioGroup = new RadioGroup(
-                        options.id,
-                        position,
-                        options.value,
-                        canvasState
-                    );
+            /**
+             * @memberof Snautsynth.Factory.Control.UI.RadioGroup
+             * @instance
+             *
+             * @param  {Snautsynth.Canvas.CanvasState} canvasState
+             * @param  {Object}                        options
+             *
+             * @return {Snautsynth.Control.UI.RadioGroup}
+             */
+            create: function(canvasState, options) {
+                var position   = new Position(options.position.x, options.position.y);
+                var radioGroup = new RadioGroup(
+                    options.id,
+                    position,
+                    options.value,
+                    canvasState
+                );
 
-                    var factory = new RadioButtonFactory();
+                var factory = new RadioButtonFactory();
 
-                    options.radioButtons.forEach(
-                        function(radioButtonOptions) {
-                            var radioButton = factory.create(canvasState, radioButtonOptions);
-                            radioGroup.addControl(radioButton);
-                        }
-                    );
+                options.radioButtons.forEach(
+                    function(radioButtonOptions) {
+                        var radioButton = factory.create(canvasState, radioButtonOptions);
+                        radioGroup.addControl(radioButton);
+                    }
+                );
 
-                    return radioGroup;
-                }
+                return radioGroup;
             }
-        );
+        });
     }
 );

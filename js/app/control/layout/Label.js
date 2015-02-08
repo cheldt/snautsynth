@@ -1,11 +1,10 @@
 /**
- * Label module
- *
- * @module    app/control/layout/Label
  * @namespace Snautsynth.Control.Layout
  */
 define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutControl) {
-    var Label = dejavu.Class.declare({
+    'use strict';
+
+    return dejavu.Class.declare({
         $name: 'Label',
 
         $extends: LayoutControl,
@@ -13,6 +12,7 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
         /**
          * @memberof Snautsynth.Control.Layout.Label
          * @instance
+         *
          * @type {string}
          */
         _color: null,
@@ -20,6 +20,7 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
         /**
          * @memberof Snautsynth.Control.Layout.Label
          * @instance
+         *
          * @type {string}
          */
         _text:  null,
@@ -96,6 +97,4 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
         }
 
     });
-
-    return Label;
 });

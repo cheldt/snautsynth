@@ -76,6 +76,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
         /**
          * @constructor
          * @class Snautsynth.Control.UI.RangeControl.RangeControl
+         * @extends Snautsynth.Control.UI.UIControl
          *
          * @param {number}                                         id
          * @param {Snautsynth.Util.Position}                       position

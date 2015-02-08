@@ -195,7 +195,7 @@ define(['dejavu', 'app/audio/util/Audio', 'app/util/GlobalConstants',  'app/even
 
             // Create master-gainNode
             this._masterGain               = this._audioContext.createGain(); // Create gain node
-            this._masterGain.gain.value    = 0.1; // Set gain to full volume
+            this._masterGain.gain.value    = 0.05; // Set gain to full volume
 
             // Create filterNode
             this._filter                   = this._audioContext.createBiquadFilter();

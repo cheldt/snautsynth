@@ -1,3 +1,6 @@
+/**
+ * @namespace Snautsynth.Control.UI.RangeControl
+ */
 define(
     [
         'dejavu',
@@ -13,70 +16,229 @@ define(
         Kinectic,
         Position
     ) {
+        'use strict';
+
         var Fader = dejavu.Class.declare({
             $name: 'Fader',
 
             $extends: RangeControl,
 
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {string}
+             */
             _borderColor:        null,
 
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {string}
+             */
             _color:              null,
 
-            /** @type {Object} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {Kinetic.Rect}
+             */
             _faderBorder:        null,
 
-            /** @type {Object} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {Kinetic.Rect}
+             */
             _faderKnob:          null,
 
-            /** @type {number} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
             _length:             null,
 
-            /** @type {number} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
             _orientation:        null,
 
-            /** @type {number} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
             _tmpPosition:        null,
 
-            /** @type {number} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
             _trackLength:        null,
 
-            /** @type {number} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
             _startTrackPosition: null,
 
-            /** @type {Object} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {Kinetic.Rect}
+             */
             _valueDisplayArea:   null,
 
-            /** @type {Object} */
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
+             * @type {Kinetic.Text}
+             */
             _valueDisplayText:   null,
 
             $constants: {
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 ORIENTATION_HORIZONTAL :  0,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 ORIENTATION_VERTICAL:     1,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 LABEL_OFFSET:             20,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 FADER_KNOB_HEIGHT:        30,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 FADER_KNOB_WIDTH:         40,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 FADER_TRACK_HEIGHT:       30,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 FADER_TRACK_BORDER_WIDTH: 5,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 BORDER_RADIUS:            3,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 VAL_DISPLAY_AREA_WIDTH:   60,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 VAL_DISPLAY_AREA_HEIGHT:  30,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.RangeControl.Fader
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
                 VAL_DISPLAY_FONT_SIZE:    18
             },
 
             /**
-             * Constructor for Fader
+             * @constructor
+             * @class Snautsynth.Control.UI.RangeControl.Fader
+             * @extends Snautsynth.Control.UI.RangeControl.RangeControl
              *
-             * @param {number} id
-             * @param {Object} position
-             * @param {number} value
-             * @param {Object} canvasState
-             * @param {number} valueDspMult
-             * @param {Object} valueRange
-             * @param {number} length
-             * @param {string} color
-             * @param {Object} snapOptions
-             * @param {Object} formatter
-             * @param {number} orientation
+             * @param {number}                                         id
+             * @param {Snautsynth.Util.Position}                       position
+             * @param {number}                                         value
+             * @param {Snautsynth.Canvas.CanvasState}                  canvasState
+             * @param {number}                                         valueDspMult
+             * @param {Snautsynth.DataType.NumberRange}                valueRange
+             * @param {number}                                         length
+             * @param {string}                                         color
+             * @param {Snautsynth.Control.UI.RangeControl.SnapOptions} snapOptions
+             * @param {Snautsynth.Util.Formatter.NumberFormatter}      formatter
+             * @param {number}                                         orientation
              */
             initialize: function(
                 id,
@@ -109,7 +271,7 @@ define(
                 var height        = this._length;
                 var width         = Fader.FADER_TRACK_HEIGHT;
 
-                if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
+                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
                     height = Fader.FADER_TRACK_HEIGHT;
                     width  = this._length;
                 }
@@ -156,7 +318,7 @@ define(
                 }
 
                 // create track-line
-                trackLine = new Kinetic.Line({
+                var trackLine = new Kinetic.Line({
                     points:      [startTrackX, startTrackY, endPointX, endPointY],
                     strokeWidth: Fader.FADER_TRACK_BORDER_WIDTH,
                     lineCap:     'round',
@@ -170,7 +332,7 @@ define(
                 height = Fader.FADER_KNOB_HEIGHT;
                 width  = Fader.FADER_KNOB_WIDTH;
 
-                if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
+                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
                     height = Fader.FADER_KNOB_WIDTH;
                     width  = Fader.FADER_KNOB_HEIGHT;
                 }
@@ -191,7 +353,7 @@ define(
                 var displayAreaX = startTrackX - (Fader.VAL_DISPLAY_AREA_WIDTH / 2);
                 var displayAreaY = this._trackLength + Fader.VAL_DISPLAY_AREA_HEIGHT;
 
-                if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
+                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
                     displayAreaX = (-1) * Fader.VAL_DISPLAY_AREA_WIDTH - (startTrackX);
                     displayAreaY = 0;
                 }
@@ -239,7 +401,10 @@ define(
                         var baseLayer = myFader.getCanvasState().getBaseLayer();
 
                         myFader.update(mousePos);
-                        baseLayer.setAttr('event', new Event(myFader.getId(), myFader.getValue(), Event.TYPE_VALUE_CHANGED));
+                        baseLayer.setAttr(
+                            'event',
+                            new Event(myFader.getId(), myFader.getValue(), Event.TYPE_VALUE_CHANGED)
+                        );
                     }
                 });
 
@@ -261,7 +426,7 @@ define(
                             return;
                         }
 
-                        if (myFader.getId() == shape.getId()) {
+                        if (myFader.getId() === shape.getId()) {
                             myFader.setValue(snapOptions.getDoubleClickSnapValue());
                             var position = myFader.calcPositionFromValue(myFader.getValue());
                             myFader.updateKnobPosition(position);
@@ -302,6 +467,9 @@ define(
             /**
              * Calculates faderknob-position from value
              *
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             *
              * @param {number} value
              *
              * @return {number}
@@ -315,6 +483,9 @@ define(
 
             /**
              * Calculates value from position
+             *
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
              *
              * @param {number} position
              *
@@ -333,7 +504,10 @@ define(
             /**
              * Updates value and track-knob-position on mouse-move
              *
-             * @param {Object} mousePos
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             *
+             * @param {Snautsynth.Util.Position} mousePos
              */
             update: function(mousePos) {
                 if(this._selected) {
@@ -345,7 +519,7 @@ define(
 
                     var value;
 
-                    if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
+                    if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
                         mouseDelta = mousePos.getX();
                     } else {
                         mouseDelta = (-1) * mousePos.getY();
@@ -357,7 +531,7 @@ define(
                     var mouseMoves  = true;
 
 
-                    if (null === snapOptions || (null !== snapOptions && 0 == snapOptions.getSnapStep())) {
+                    if (null === snapOptions || (null !== snapOptions && 0 === snapOptions.getSnapStep())) {
                         speed = speed * speedup;
                     }
 
@@ -381,14 +555,14 @@ define(
                     value = this.calcValueFromPosition(this._tmpPosition);
 
                     if (mouseMoves) {
-                        if (null !== snapOptions && 0 != snapOptions.getSnapStep()) {
+                        if (null !== snapOptions && 0 !== snapOptions.getSnapStep()) {
                             var step = 0;
 
                             if (Math.abs(value - lastValue) >= this._snapStep - this._snapDistance) {
                                 step = snapOptions.getSnapStep();
                             }
 
-                            if (0 != step) {
+                            if (0 !== step) {
                                 if (!forward) {
                                     if (this._value + step <= this._valueRange.getMax()) {
                                         this._value = this._value + step;
@@ -416,6 +590,12 @@ define(
                 }
             },
 
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             *
+             * @param {number} position
+             */
             updateKnobPosition: function(position) {
                 var knob  = this._faderKnob;
                 var coord = this.calcKnobPosition(position) ;
@@ -424,21 +604,30 @@ define(
                 knob.setY(coord.getY());
             },
 
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             */
             updateValueDisplayText: function() {
                 var text = this._formatter.format(this._value * this._valueDspMult);
+
                 this._valueDisplayText.setText(text);
-                $textWidth  = this._valueDisplayText.getTextWidth();
-                $textHeight = this._valueDisplayText.getTextHeight();
 
-                $displayTextX = this._startTrackPosition.getX() - ($textWidth / 2);
-                $displayTextY = this._valueDisplayArea.getY() + (this._valueDisplayArea.getHeight() / 2) - ($textHeight / 2);
+                var textWidth  = this._valueDisplayText.getTextWidth();
+                var textHeight = this._valueDisplayText.getTextHeight();
 
-                if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
-                    $displayTextX = this._valueDisplayArea.getX() + (Fader.VAL_DISPLAY_AREA_WIDTH / 2) - ($textWidth / 2);
+                var displayTextX = this._startTrackPosition.getX() - (textWidth / 2);
+                var displayTextY =
+                    this._valueDisplayArea.getY() +
+                    (this._valueDisplayArea.getHeight() / 2) -
+                    (textHeight / 2);
+
+                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
+                    displayTextX = this._valueDisplayArea.getX() + (Fader.VAL_DISPLAY_AREA_WIDTH / 2) - (textWidth / 2);
                 }
 
-                this._valueDisplayText.setX($displayTextX);
-                this._valueDisplayText.setY($displayTextY)
+                this._valueDisplayText.setX(displayTextX);
+                this._valueDisplayText.setY(displayTextY);
             }
         });
 

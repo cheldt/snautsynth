@@ -281,7 +281,8 @@ define(
 
             /**
              * @constructor
-             * @class Snautsynth.Control.UI.RangeControl.RangeControl.Knob
+             * @class Snautsynth.Control.UI.RangeControl.Knob
+             * @extends Snautsynth.Control.UI.RangeControl.RangeControl
              *
              * @param {number}                                         id
              * @param {Snautsynth.Util.Position}                       position
@@ -473,6 +474,9 @@ define(
                 /**
                  * Calculates radian from degree
                  *
+                 * @memberof Snautsynth.Control.UI.RangeControl.Knob
+                 * @static
+                 *
                  * @param {number} degree The degree-value
                  *
                  * @return {number} The calculated radian-value
@@ -485,9 +489,12 @@ define(
                  * Calculates radian from controller-value
                  * depending on the min/max values of radian and controller-value
                  *
+                 * @memberof Snautsynth.Control.UI.RangeControl.Knob
+                 * @static
+                 *
                  * @param {number} value       The controller-value
-                 * @param {Object} radianRange The minimum and maximum radian
-                 * @param {Object} valueRange  The minimum and maximum controller-value
+                 * @param {Snautsynth.DataType.NumberRange} radianRange The minimum and maximum radian
+                 * @param {Snautsynth.DataType.NumberRange} valueRange  The minimum and maximum controller-value
                  *
                  * @return {number}  The calculated radian
                  */
@@ -503,9 +510,12 @@ define(
                 /**
                  * Calculates degree from radian
                  *
+                 * @memberof Snautsynth.Control.UI.RangeControl.Knob
+                 * @static
+                 *
                  * @param {number} radian
                  *
-                 * @return {number}  The calculated degree-value
+                 * @return {number} The calculated degree-value
                  */
                 calcRadToDeg: function(radian) {
                     return (radian * 180) / Math.PI;
@@ -515,9 +525,12 @@ define(
                  * Calculates controller-value from radian
                  * depending on the min/max values of radian and controller-value
                  *
+                 * @memberof Snautsynth.Control.UI.RangeControl.Knob
+                 * @static
+                 *
                  * @param {number} radian      The radian
-                 * @param {Object} radianRange The minimum and maximum radian
-                 * @param {Object} valueRange  The minimum and maximum controller-value
+                 * @param {Snautsynth.DataType.NumberRange} radianRange The minimum and maximum radian
+                 * @param {Snautsynth.DataType.NumberRange} valueRange  The minimum and maximum controller-value
                  *
                  * @return {number} The calculated controller-value
                  */
@@ -550,6 +563,13 @@ define(
                 }
             },
 
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             *
+             * @return {Snautsynth.Util.Position}
+             */
             calcPointerPos: function() {
                 var pointerLength = (this._radius / 1.23);
 
@@ -559,6 +579,10 @@ define(
                 );
             },
 
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             */
             update: function(mousePos) {
                 if(this._selected) {
                     var snapOptions    = this.getSnapOptions();
@@ -600,7 +624,7 @@ define(
                     value = Knob.calcValueFromRad(this._tmpPointerRad, this._pointerRadRange, this._valueRange);
 
                     if (mouseMoves) {
-                        if (null !== snapOptions && 0 != snapOptions.getSnapStep()) {
+                        if (null !== snapOptions && 0 !== snapOptions.getSnapStep()) {
                             var step = 0;
 
                             if (
@@ -609,7 +633,7 @@ define(
                                 step = snapOptions.getSnapStep();
                             }
 
-                            if (0 != step) {
+                            if (0 !== step) {
                                 if (forward) {
                                     if (this._value + step <= this._valueRange.getMax()) {
                                         this._value = this._value + step;
@@ -650,6 +674,10 @@ define(
                 }
             },
 
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             */
             updateValueDisplayText: function() {
                 var text = this._formatter.format(this._value * this._valueDspMult);
 
@@ -664,6 +692,10 @@ define(
                 );
             },
 
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             */
             updatePointerPosition: function(newPointerPos) {
                 this._pointer.setPoints(
                     [this._knobPosition.getX(), this._knobPosition.getY(), newPointerPos.getX(), newPointerPos.getY()]

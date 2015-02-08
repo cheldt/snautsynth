@@ -1,3 +1,6 @@
+/**
+ * @namespace Snautsynth.Control.UI.Envelope
+ */
 define(
     [
         'dejavu',
@@ -19,136 +22,191 @@ define(
         Position,
         PointValue
     ) {
+        'use strict';
+
         var Point = dejavu.Class.declare({
-                $name: 'Point',
+            $name: 'Point',
 
-                $extends: UIControl,
+            $extends: UIControl,
 
-                _graph: null,
-                _point: null,
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Point
+             * @instance
+             * @protected
+             *
+             * @type {Snautsynth.Control.UI.Envelope.Graph}
+             */
+            _graph: null,
 
-                getGraph: function() {
-                    return this._graph;
-                },
-                setGraph: function(graph) {
-                    this._graph = graph;
-                    return this;
-                },
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Point
+             * @instance
+             * @protected
+             *
+             * @type {Kinetic.Circle}
+             */
+            _point: null,
 
-                $constants: {
-                    RADIUS: 8
-                },
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Point
+             * @instance
+             *
+             * @returns {Snautsynth.Control.UI.Envelope.Graph}
+             */
+            getGraph: function() {
+                return this._graph;
+            },
 
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Point
+             * @instance
+             *
+             * @param {Snautsynth.Control.UI.Envelope.Graph} graph
+             */
+            setGraph: function(graph) {
+                this._graph = graph;
+            },
+
+            $constants: {
                 /**
-                 * @param {number} id
-                 * @param {Object} value
-                 * @param {Object} canvasState
-                 * @param {string} color
-                 * @param {Object} graph
+                 * @memberof Snautsynth.Control.UI.Envelope.Point
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
                  */
-                initialize: function(id, value, canvasState, color, graph) {
-                    this.$super(id, new Position(0, 0), value, canvasState);
+                RADIUS: 8
+            },
 
-                    this._graph = graph;
+            /**
+             * @constructor
+             * @class Snautsynth.Control.UI.Envelope.Point
+             * @extends Snautsynth.Control.UI.UIControl
+             *
+             * @param {number}                               id
+             * @param {*}                                    value
+             * @param {Snautsynth.Canvas.CanvasState}        canvasState
+             * @param {string}                               color
+             * @param {Snautsynth.Control.UI.Envelope.Graph} graph
+             */
+            initialize: function(id, value, canvasState, color, graph) {
+                this.$super(id, new Position(0, 0), value, canvasState);
 
-                    this._point = new Kinetic.Circle({
-                        fill:   color,
-                        id:     id,
-                        radius: Point.RADIUS
-                    });
+                this._graph = graph;
 
-                    this._kineticGroup.setDraggable(true);
+                this._point = new Kinetic.Circle({
+                    fill:   color,
+                    id:     id,
+                    radius: Point.RADIUS
+                });
 
-                    var myPoint = this;
+                this._kineticGroup.setDraggable(true);
 
-                    this._kineticGroup.setDragBoundFunc(function(pos) {
-                        var scale              = graph.getCanvasState().getScale();
-                        var graphY             = graph.getY() * scale.y;
-                        var graphX             = graph.getX() * scale.x;
-                        var graphBorderBottomY = graphY + graph.getMaxPixelGain() * scale.y;
+                var myPoint = this;
 
-                        var leftBound  = 0;
-                        var rightBound = 0;
+                this._kineticGroup.setDragBoundFunc(function(pos) {
+                    var scale              = graph.getCanvasState().getScale();
+                    var graphY             = graph.getY() * scale.y;
+                    var graphX             = graph.getX() * scale.x;
+                    var graphBorderBottomY = graphY + graph.getMaxPixelGain() * scale.y;
 
-                        switch(myPoint.getId()) {
-                            case GlobalConstants.CTRL_ATTACK_POINT:
-                                var decayPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
+                    var leftBound  = 0;
+                    var rightBound = 0;
 
-                                leftBound  = graphX;
-                                rightBound = graphX + decayPoint.getX() * scale.x;
-                                break;
-                            case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
-                                var attackPoint  = graph.getPointById(GlobalConstants.CTRL_ATTACK_POINT);
-                                var releasePoint = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT);
+                    switch(myPoint.getId()) {
+                        case GlobalConstants.CTRL_ATTACK_POINT:
+                            var decayPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
 
-                                leftBound  = graphX + attackPoint.getX() * scale.x;
-                                rightBound = graphX + releasePoint.getX() * scale.x;
-                                break;
-                            case GlobalConstants.CTRL_RELEASE_POINT:
-                                var decayPointPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
+                            leftBound  = graphX;
+                            rightBound = graphX + decayPoint.getX() * scale.x;
+                            break;
+                        case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
+                            var attackPoint  = graph.getPointById(GlobalConstants.CTRL_ATTACK_POINT);
+                            var releasePoint = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT);
 
-                                leftBound  = graphX + decayPointPoint.getX() * scale.x;
-                                rightBound = graphX + graph.getMaxPixelTime() * scale.x;
-                                break;
-                            default:
-                                return pos;
-                        }
+                            leftBound  = graphX + attackPoint.getX() * scale.x;
+                            rightBound = graphX + releasePoint.getX() * scale.x;
+                            break;
+                        case GlobalConstants.CTRL_RELEASE_POINT:
+                            var decayPointPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
 
-                        if (pos.y >= graphBorderBottomY) {
-                            pos.y = graphBorderBottomY;
-                        }
+                            leftBound  = graphX + decayPointPoint.getX() * scale.x;
+                            rightBound = graphX + graph.getMaxPixelTime() * scale.x;
+                            break;
+                        default:
+                            return pos;
+                    }
 
-                        if (pos.y <= graphY) {
-                            pos.y = graphY;
-                        }
+                    if (pos.y >= graphBorderBottomY) {
+                        pos.y = graphBorderBottomY;
+                    }
 
-                        if (pos.x <= leftBound) {
-                            pos.x = leftBound;
-                        }
+                    if (pos.y <= graphY) {
+                        pos.y = graphY;
+                    }
 
-                        if (pos.x >= rightBound) {
-                            pos.x = rightBound;
-                        }
+                    if (pos.x <= leftBound) {
+                        pos.x = leftBound;
+                    }
 
-                        return pos;
-                    });
+                    if (pos.x >= rightBound) {
+                        pos.x = rightBound;
+                    }
 
-                    this._kineticGroup.on('dragmove',function() {
-                        myPoint.getGraph().connectPoints();
+                    return pos;
+                });
 
-                        myPoint.setValueFromPosition();
+                this._kineticGroup.on('dragmove',function() {
+                    myPoint.getGraph().connectPoints();
 
-                        var eventReturn = myPoint.getValue();
+                    myPoint.setValueFromPosition();
 
-                        myPoint.getCanvasState().getBaseLayer().setAttr(
-                            'event',
-                            new Event(myPoint.getId(), eventReturn, Event.TYPE_VALUE_CHANGED)
-                        );
-                    });
+                    var eventReturn = myPoint.getValue();
 
-                    this._kineticGroup.add(this._point);
-                },
-
-                calcPositionByValues: function() {
-                    return new Position(
-                        this._value.getTime() * Graph.PIXEL_PER_TIME,
-                        Graph.PIXEL_PER_GAIN - this._value.getGain() * Graph.PIXEL_PER_GAIN
+                    myPoint.getCanvasState().getBaseLayer().setAttr(
+                        'event',
+                        new Event(myPoint.getId(), eventReturn, Event.TYPE_VALUE_CHANGED)
                     );
-                },
+                });
 
-                setValueFromPosition: function() {
-                    this._value = new PointValue(
-                        Graph.MAX_GAIN - (this.getY() / Graph.PIXEL_PER_GAIN),
-                        this.getX() / Graph.PIXEL_PER_TIME
-                    );
-                },
+                this._kineticGroup.add(this._point);
+            },
 
-                updatePosition: function(newPosition) {
-                    this._kineticGroup.setX(newPosition.getX());
-                    this._kineticGroup.setY(newPosition.getY());
-                }
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Point
+             * @instance
+             *
+             * @returns {Snautsynth.Util.Position}
+             */
+            calcPositionByValues: function() {
+                return new Position(
+                    this._value.getTime() * Graph.PIXEL_PER_TIME,
+                    Graph.PIXEL_PER_GAIN - this._value.getGain() * Graph.PIXEL_PER_GAIN
+                );
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Point
+             * @instance
+             */
+            setValueFromPosition: function() {
+                this._value = new PointValue(
+                    Graph.MAX_GAIN - (this.getY() / Graph.PIXEL_PER_GAIN),
+                    this.getX() / Graph.PIXEL_PER_TIME
+                );
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Point
+             * @instance
+             *
+             * @param {Snautsynth.Util.Position} newPosition
+             */
+            updatePosition: function(newPosition) {
+                this._kineticGroup.setX(newPosition.getX());
+                this._kineticGroup.setY(newPosition.getY());
             }
-        );
+        });
 
         return Point;
     }

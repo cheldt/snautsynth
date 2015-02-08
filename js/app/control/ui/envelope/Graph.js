@@ -1,32 +1,137 @@
+/**
+ * @namespace Snautsynth.Control.UI.Envelope
+ */
 define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Control){
+    'use strict';
+
     var Graph = dejavu.Class.declare({
         $name: 'Graph',
 
         $extends: Control,
 
+        /**
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _maxGain:         null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _maxTime:         null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _maxPixelGain:    null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
         _maxPixelTime:    null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
+         * @protected
+         *
+         * @type {Kinetic.Line}
+         */
         _pointConnection: null,
 
+        /**
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
+         *
+         * @returns {number}
+         */
         getMaxPixelGain: function() {
             return this._maxPixelGain;
         },
 
+        /**
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
+         *
+         * @returns {number}
+         */
         getMaxPixelTime: function() {
             return this._maxPixelTime;
         },
 
         $constants: {
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @constant
+             * @default
+             *
+             * @type {number}
+             */
             PIXEL_PER_GAIN:       100,
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @constant
+             * @default
+             *
+             * @type {number}
+             */
             PIXEL_PER_TIME:       80,
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @constant
+             * @default
+             *
+             * @type {number}
+             */
             MAX_GAIN:             1,
 
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @constant
+             * @default
+             *
+             * @type {number}
+             */
             X_Y_AXIS_WIDTH:       3,
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @constant
+             * @default
+             *
+             * @type {number}
+             */
             POINTCONNECTOR_WIDTH: 1.5
         },
 
+        /**
+         * @constructor
+         * @class Snautsynth.Control.UI.Envelope.Graph
+         * @extends Snautsynth.Control.UI.UIControl
+         *
+         * @param {number}                        id
+         * @param {Snautsynth.Util.Position}      position
+         * @param {Snautsynth.Canvas.CanvasState} canvasState
+         * @param {string}                        color
+         * @param {number}                        maxTime
+         */
         initialize: function(id, position, canvasState, color, maxTime) {
             this.$super(id, position, canvasState);
 
@@ -69,7 +174,7 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
         /**
          * Adds point to internal array and adds kinectgroup of point to kinectgroup of Graph.
          *
-         * @param point
+         * @param {Snautsynth.Control.UI.Envelope.Point} point
          */
         addControl: function(point) {
             this.$super(point);
@@ -84,6 +189,8 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
         /**
          * Renders connections between points
          *
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
          */
         connectPoints: function() {
             var pointConnectorCoordsList = [0, Graph.PIXEL_PER_GAIN];
@@ -101,13 +208,21 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
             this._pointConnection.setPoints(pointConnectorCoordsList);
         },
 
+        /**
+         * @memberof Snautsynth.Control.UI.Envelope.Graph
+         * @instance
+         *
+         * @param   {number} id
+         *
+         * @returns {Snautsynth.Control.UI.Envelope.Point}
+         */
         getPointById: function(id) {
             var point = null;
 
             for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
                 point = this._controls[pointIndex];
 
-                if (point.getId() == id) {
+                if (point.getId() === id) {
                     return point;
                 }
             }

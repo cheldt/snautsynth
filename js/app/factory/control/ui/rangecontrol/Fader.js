@@ -1,3 +1,6 @@
+/**
+ * @namespace Snautsynth.Factory.Control.UI.RangeControl
+ */
 define(
     [
         'app/control/ui/rangecontrol/Fader',
@@ -6,9 +9,8 @@ define(
         'app/util/formatter/NumberFormatter',
         'app/util/Position',
         'dejavu'
-
-    ]
-    , function(
+    ],
+    function(
         Fader,
         SnapOptions,
         NumberRange,
@@ -16,43 +18,49 @@ define(
         Position,
         dejavu
     ) {
+        'use strict';
+
+        /** @class Snautsynth.Factory.Control.UI.RangeControl.Fader */
         return dejavu.Class.declare({
-                $name: 'Fader',
+            $name: 'Fader',
 
-                /**
-                 * @param {Object} canvasState
-                 * @param {Object} options
-                 * @return {Object}
-                 */
-                create: function(canvasState, options) {
-                    var position    = new Position(options.position.x, options.position.y);
-                    var valueRange  = new NumberRange(options.valueRange.min, options.valueRange.max);
-                    var formatter   = new NumberFormatter(options.numberFormat);
-                    var snapOptions = null;
+            /**
+             * @memberof Snautsynth.Factory.Control.UI.RangeControl.Fader
+             * @instance
+             *
+             * @param  {Snautsynth.Canvas.CanvasState} canvasState
+             * @param  {Object}                        options
+             *
+             * @return {Snautsynth.Control.UI.RangeControl.Fader}
+             */
+            create: function(canvasState, options) {
+                var position    = new Position(options.position.x, options.position.y);
+                var valueRange  = new NumberRange(options.valueRange.min, options.valueRange.max);
+                var formatter   = new NumberFormatter(options.numberFormat);
+                var snapOptions = null;
 
-                    if (null !== options.snapOptions) {
-                        snapOptions = new SnapOptions(
-                            options.snapOptions.doubleClickSnapValue,
-                            options.snapOptions.snapDistance,
-                            options.snapOptions.snapStep
-                        );
-                    }
-
-                    return new Fader(
-                        options.id,
-                        position,
-                        options.value,
-                        canvasState,
-                        options.valueDisplayMultiplier,
-                        valueRange,
-                        options.length,
-                        options.color,
-                        snapOptions,
-                        formatter,
-                        options.orientation
+                if (null !== options.snapOptions) {
+                    snapOptions = new SnapOptions(
+                        options.snapOptions.doubleClickSnapValue,
+                        options.snapOptions.snapDistance,
+                        options.snapOptions.snapStep
                     );
                 }
+
+                return new Fader(
+                    options.id,
+                    position,
+                    options.value,
+                    canvasState,
+                    options.valueDisplayMultiplier,
+                    valueRange,
+                    options.length,
+                    options.color,
+                    snapOptions,
+                    formatter,
+                    options.orientation
+                );
             }
-        );
+        });
     }
 );

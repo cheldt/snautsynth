@@ -45,8 +45,8 @@ define(['dejavu'], function(dejavu){
         },
 
         /**
-         * @constructor
          * @class Snautsynth.DataType.NumberRange
+         * @constructor
          *
          * @param {number} min
          * @param {number} max
