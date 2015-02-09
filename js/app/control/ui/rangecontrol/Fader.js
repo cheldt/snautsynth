@@ -6,7 +6,7 @@ define(
         'dejavu',
         'app/control/ui/rangecontrol/RangeControl',
         'app/event/Event',
-        'kinetic',
+        'konva',
         'app/util/Position'
     ],
     function(
@@ -46,7 +46,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Rect}
+             * @type {Konva.Rect}
              */
             _faderBorder:        null,
 
@@ -55,7 +55,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Rect}
+             * @type {Konva.Rect}
              */
             _faderKnob:          null,
 
@@ -109,7 +109,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Rect}
+             * @type {Konva.Rect}
              */
             _valueDisplayArea:   null,
 
@@ -118,7 +118,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Text}
+             * @type {Konva.Text}
              */
             _valueDisplayText:   null,
 
@@ -318,7 +318,7 @@ define(
                 }
 
                 // create track-line
-                var trackLine = new Kinetic.Line({
+                var trackLine = new Konva.Line({
                     points:      [startTrackX, startTrackY, endPointX, endPointY],
                     strokeWidth: Fader.FADER_TRACK_BORDER_WIDTH,
                     lineCap:     'round',
@@ -338,7 +338,7 @@ define(
                 }
 
                 //create handle
-                this._faderKnob = new Kinetic.Rect({
+                this._faderKnob = new Konva.Rect({
                     cornerRadius: Fader.BORDER_RADIUS,
                     height:       height,
                     width:        width,
@@ -360,7 +360,7 @@ define(
 
 
                 //create value display
-                this._valueDisplayArea = new Kinetic.Rect({
+                this._valueDisplayArea = new Konva.Rect({
                     x:            displayAreaX,
                     y:            displayAreaY,
                     cornerRadius: Fader.BORDER_RADIUS,
@@ -373,7 +373,7 @@ define(
 
                 this._kineticGroup.add(this._valueDisplayArea);
 
-                this._valueDisplayText = new Kinetic.Text({
+                this._valueDisplayText = new Konva.Text({
                     fill:     '#000',
                     fontSize: Fader.VAL_DISPLAY_FONT_SIZE
                 });

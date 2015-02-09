@@ -87,7 +87,7 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
             this._color = color;
             this._text  = text;
 
-            var textContainer = new Kinetic.Text({
+            var textContainer = new Konva.Text({
                 fill:     color,
                 fontSize: 16,
                 text:     text

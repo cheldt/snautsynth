@@ -89,7 +89,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Circle}
+             * @type {Konva.Circle}
              */
             _buttonCircle: null,
 
@@ -98,7 +98,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Circle}
+             * @type {Konva.Circle}
              */
             _checkedCircle: null,
 
@@ -213,7 +213,7 @@ define(
                 this._value        = value;
 
                 // create button
-                this._buttonCircle = new Kinetic.Circle({
+                this._buttonCircle = new Konva.Circle({
                     x:      this.getX() + this._radius + RadioButton.BORDER_WIDTH,
                     y:      this.getY() + this._radius + RadioButton.BORDER_WIDTH,
 
@@ -224,7 +224,7 @@ define(
                 this._kineticGroup.add(this._buttonCircle);
 
                 // create button border
-                var arc = new Kinetic.Arc({
+                var arc = new Konva.Arc({
                     x:           this._buttonCircle.getX(),
                     y:           this._buttonCircle.getY(),
 
@@ -238,7 +238,7 @@ define(
                 this._kineticGroup.add(arc);
 
                 // create label
-                var label = new Kinetic.Text({
+                var label = new Konva.Text({
                    fill:     '#000',
                    fonzSize: RadioButton.LABEL_DISPLAY_FONT_SIZE,
                    text:     this._labelText

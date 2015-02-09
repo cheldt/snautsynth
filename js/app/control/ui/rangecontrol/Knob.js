@@ -6,7 +6,7 @@ define(
         'dejavu',
         'app/control/ui/rangecontrol/RangeControl',
         'app/event/Event',
-        'kinetic',
+        'konva',
         'app/datatype/NumberRange',
         'app/util/Position'
     ],
@@ -14,7 +14,7 @@ define(
         dejavu,
         RangeControl,
         Event,
-        Kinetic,
+        Konva,
         NumberRange,
         Position
     ) {
@@ -57,7 +57,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Circle}
+             * @type {Konva.Circle}
              */
             _knobCircle:       null,
 
@@ -84,7 +84,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Line}
+             * @type {Konva.Line}
              */
             _pointer:          null,
 
@@ -111,7 +111,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Rect}
+             * @type {Konva.Rect}
              */
             _valueDisplayArea: null,
 
@@ -120,7 +120,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Text}
+             * @type {Konva.Text}
              */
             _valueDisplayText: null,
 
@@ -149,7 +149,7 @@ define(
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
              * @instance
              *
-             * @returns {Kinetic.Circle}
+             * @returns {Konva.Circle}
              */
             getKnobCircle: function() {
                 return this._knobCircle;
@@ -339,7 +339,7 @@ define(
                 var knobY = this._knobPosition.getY();
 
                 // create knob circle
-                this._knobCircle = new Kinetic.Circle({
+                this._knobCircle = new Konva.Circle({
                     x:      knobX,
                     y:      knobY,
                     radius: radius,
@@ -352,7 +352,7 @@ define(
                 var radiusScaleMultiplier = (radius * 0.02);
 
                 // create knob border
-                var arc = new Kinetic.Arc({
+                var arc = new Konva.Arc({
                     x:           knobX,
                     y:           knobY,
                     innerRadius: radius - (Knob.BORDER_WIDTH * radiusScaleMultiplier),
@@ -370,7 +370,7 @@ define(
                 // create pointer and set initial position
                 var initialPointerPos = this.calcPointerPos();
 
-                this._pointer = new Kinetic.Line({
+                this._pointer = new Konva.Line({
                     points:     [knobX, knobY, initialPointerPos.getX(), initialPointerPos.getY()],
                     stroke:     '#000',
                     lineJoin:   'round',
@@ -382,7 +382,7 @@ define(
                 var displayMultiplier = radius * 0.018;
 
                 // create knob value-display
-                this._valueDisplayArea = new Kinetic.Rect({
+                this._valueDisplayArea = new Konva.Rect({
                    x:            knobX - (Knob.VAL_DISPLAY_WIDTH * displayMultiplier) / 2,
                    y:            knobY + (Knob.VAL_DISPLAY_Y * radiusScaleMultiplier),
 
@@ -397,7 +397,7 @@ define(
 
                 this._kineticGroup.add(this._valueDisplayArea);
 
-                this._valueDisplayText = new Kinetic.Text({
+                this._valueDisplayText = new Konva.Text({
                    fill:     '#000',
                    fontSize: Knob.VAL_DISPLAY_FONT_SIZE * radiusScaleMultiplier
                 });

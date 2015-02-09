@@ -1,7 +1,7 @@
 /**
  * @namespace Snautsynth.Control
  */
-define(['dejavu', 'kinetic'], function(dejavu, Kinetic) {
+define(['dejavu', 'konva'], function(dejavu, Konva) {
     'use strict';
 
     return dejavu.Class.declare({
@@ -35,7 +35,7 @@ define(['dejavu', 'kinetic'], function(dejavu, Kinetic) {
         /**
          * @memberof Snautsynth.Control.Control
          * @instance
-         * @type {Kinetic.Group}
+         * @type {Konva.Group}
          */
         _kineticGroup: null,
 
@@ -83,9 +83,9 @@ define(['dejavu', 'kinetic'], function(dejavu, Kinetic) {
          * @memberof Snautsynth.Control.Control
          * @instance
          *
-         * @return {Kinetic.Group}
+         * @return {Konva.Group}
          */
-        getKineticGroup: function() {
+        getKonvaGroup: function() {
             return this._kineticGroup;
         },
 
@@ -152,7 +152,7 @@ define(['dejavu', 'kinetic'], function(dejavu, Kinetic) {
             this._id           = id;
             this._canvasState  = canvasState;
 
-            this._kineticGroup = new Kinetic.Group();
+            this._kineticGroup = new Konva.Group();
 
             this._kineticGroup.setX(position.getX());
             this._kineticGroup.setY(position.getY());
@@ -169,7 +169,7 @@ define(['dejavu', 'kinetic'], function(dejavu, Kinetic) {
          */
         addControl: function(control) {
             this._controls.push(control);
-            this._kineticGroup.add(control.getKineticGroup());
+            this._kineticGroup.add(control.getKonvaGroup());
         }
     });
 });

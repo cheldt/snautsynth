@@ -4,7 +4,7 @@
 define(
     [
         'dejavu',
-        'kinetic',
+        'konva',
         'app/control/ui/UIControl',
         'app/control/ui/envelope/Graph',
         'app/util/GlobalConstants',
@@ -14,7 +14,7 @@ define(
     ],
     function(
         dejavu,
-        Kinetic,
+        Konva,
         UIControl,
         Graph,
         GlobalConstants,
@@ -43,7 +43,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Kinetic.Circle}
+             * @type {Konva.Circle}
              */
             _point: null,
 
@@ -94,7 +94,7 @@ define(
 
                 this._graph = graph;
 
-                this._point = new Kinetic.Circle({
+                this._point = new Konva.Circle({
                     fill:   color,
                     id:     id,
                     radius: Point.RADIUS

@@ -33,8 +33,8 @@ require.config({
 		quickcheck: {
 			exports: 'qc'
 		},
-		'kinetic' : {
-			exports: 'Kinetic'
+		'konva' : {
+			exports: 'Konva'
 		}
 	}
 });

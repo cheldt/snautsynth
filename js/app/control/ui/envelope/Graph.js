@@ -1,7 +1,7 @@
 /**
  * @namespace Snautsynth.Control.UI.Envelope
  */
-define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Control){
+define(['dejavu','konva', 'app/control/Control'], function(dejavu, Konva, Control){
     'use strict';
 
     var Graph = dejavu.Class.declare({
@@ -50,7 +50,7 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
          * @instance
          * @protected
          *
-         * @type {Kinetic.Line}
+         * @type {Konva.Line}
          */
         _pointConnection: null,
 
@@ -141,7 +141,7 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
             this._maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
             this._maxPixelTime = maxTime * Graph.PIXEL_PER_TIME;
 
-            var xAxis = new Kinetic.Line({
+            var xAxis = new Konva.Line({
                 points:      [0, this._maxPixelGain , this._maxPixelTime, this._maxPixelGain ],
                 strokeWidth: Graph.X_Y_AXIS_WIDTH,
                 stroke:      color,
@@ -151,7 +151,7 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
 
             this._kineticGroup.add(xAxis);
 
-            var yAxis = new Kinetic.Line({
+            var yAxis = new Konva.Line({
                 points:      [0, 0, 0, this._maxPixelGain],
                 strokeWidth: Graph.X_Y_AXIS_WIDTH,
                 stroke:      color,
@@ -161,7 +161,7 @@ define(['dejavu','kinetic', 'app/control/Control'], function(dejavu, Kinetic, Co
 
             this._kineticGroup.add(yAxis);
 
-            this._pointConnection = new Kinetic.Line({
+            this._pointConnection = new Konva.Line({
                 strokeWidth: Graph.POINTCONNECTOR_WIDTH,
                 stroke:      color,
                 lineCap:     'round',

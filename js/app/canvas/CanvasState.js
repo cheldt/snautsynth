@@ -6,13 +6,13 @@ define(
         'dejavu',
         'app/event/CustomEvent',
         'app/util/Position',
-        'kinetic'
+        'konva'
     ],
     function(
         dejavu,
         CustomEvent,
         Position,
-        Kinetic
+        Konva
     ) {
     var CanvasState = dejavu.Class.declare({
         $name: 'CanvasState',
@@ -20,21 +20,21 @@ define(
         /**
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
-         * @type {Kinetic.Layer}
+         * @type {Konva.Layer}
          */
         _baseLayer: null,
 
         /**
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
-         * @type {Kinetic.Canvas}
+         * @type {Konva.Canvas}
          */
         _canvas: null,
 
         /**
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
-         * @type {Kinetic.Context}
+         * @type {Konva.Context}
          */
         _canvasContext: null,
 
@@ -90,7 +90,7 @@ define(
         /**
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
-         * @type {Kinetic.Stage}
+         * @type {Konva.Stage}
          */
         _stage: null,
 
@@ -105,7 +105,7 @@ define(
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
          *
-         * @return {Kinetic.Layer}
+         * @return {Konva.Layer}
          */
         getBaseLayer: function() {
             return this._baseLayer;
@@ -115,7 +115,7 @@ define(
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
          *
-         * @param {Kinetic.Layer} baseLayer
+         * @param {Konva.Layer} baseLayer
          */
         setBaseLayer: function(baseLayer) {
             this._baseLayer = baseLayer;
@@ -125,7 +125,7 @@ define(
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
          *
-         * @return {Kinetic.Canvas}
+         * @return {Konva.Canvas}
          */
         getCanvas: function() {
             return this._canvas;
@@ -135,7 +135,7 @@ define(
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
          *
-         * @param {Kinetic.Canvas} canvas
+         * @param {Konva.Canvas} canvas
          */
         setCanvas: function(canvas) {
             this._canvas = canvas;
@@ -145,7 +145,7 @@ define(
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
          *
-         * @return {Kinetic.Context}
+         * @return {Konva.Context}
          */
         getCanvasContext: function() {
             return this._canvasContext;
@@ -215,7 +215,7 @@ define(
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
          *
-         * @return {Kinetic.Stage}
+         * @return {Konva.Stage}
          */
         getStage: function() {
             return this._stage;
@@ -230,7 +230,7 @@ define(
          * @param {string} containerId
          */
         initialize: function(width, height, containerId) {
-            this._stage = new Kinetic.Stage({
+            this._stage = new Konva.Stage({
                 container: containerId,
                 width:     width,
                 height:    height,
@@ -240,7 +240,7 @@ define(
             this._container = document.getElementById(containerId);
 
             // create base layer, which holds controls (shapes in layer) and other layers
-            this._baseLayer = new Kinetic.Layer();
+            this._baseLayer = new Konva.Layer();
 
             // add layer to stage
             this._stage.add(this._baseLayer);
@@ -249,7 +249,7 @@ define(
 
             var myState = this;
 
-            var anim = new Kinetic.Animation(function(frame) {
+            var anim = new Konva.Animation(function(frame) {
                 var time = frame.time,
                     timeDiff = frame.timeDiff,
                     frameRate = frame.frameRate;
@@ -279,14 +279,14 @@ define(
         addControl: function(control) {
             // add group to baseLayer of canvasState
             this._controls.push(control);
-            this.addNodeToBaseLayer(control.getKineticGroup());
+            this.addNodeToBaseLayer(control.getKonvaGroup());
         },
 
         /**
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
          *
-         * @param {Kinetic.Node} kineticNode
+         * @param {Konva.Node} kineticNode
          */
         addNodeToBaseLayer: function(kineticNode) {
             this._baseLayer.add(kineticNode);

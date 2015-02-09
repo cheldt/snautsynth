@@ -2,10 +2,10 @@ require.config({
     baseUrl: 'js',
 
     paths: {
-        app:     'app',
-        mout:    'vendor/mout/src',
+        app:   'app',
+        mout:  'vendor/mout/src',
         //libs
-        kinetic: 'vendor/kinetic/kinetic.min'
+        konva: 'vendor/konva/konva.min'
     },
 
     packages: [
@@ -16,8 +16,8 @@ require.config({
     ],
 
     shim: {
-        'kinetic' : {
-            exports: 'Kinetic'
+        'konva' : {
+            exports: 'Konva'
         }
     }
 
