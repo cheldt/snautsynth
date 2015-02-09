@@ -1,6 +1,3 @@
-/**
- * Created by snaut on 1/24/14.
- */
 define(['dejavu'], function(dejavu){
     var CustomEvent = dejavu.Class.declare({
         $name: 'CustomEvent',

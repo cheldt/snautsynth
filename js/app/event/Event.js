@@ -65,16 +65,6 @@ define(['dejavu'], function(dejavu){
          * @memberof Snautsynth.Event.Event
          * @instance
          *
-         * @param {number} controlId
-         */
-        setControlId: function(controlId) {
-            this._controlId = controlId;
-        },
-
-        /**
-         * @memberof Snautsynth.Event.Event
-         * @instance
-         *
          * @returns {*}
          */
         getValue: function() {
@@ -85,31 +75,10 @@ define(['dejavu'], function(dejavu){
          * @memberof Snautsynth.Event.Event
          * @instance
          *
-         * @param {*} value
-         */
-        setValue: function(value) {
-            this._value = value;
-        },
-
-        /**
-         * @memberof Snautsynth.Event.Event
-         * @instance
-         *
          * @return {number}
          */
         getType: function() {
             return this._type;
-        },
-
-        /**
-         * @memberof Snautsynth.Event.Event
-         * @instance
-         *
-         * @param {number} type
-         */
-        setType: function(type) {
-            this._type = type;
-            return this;
         },
 
         /**

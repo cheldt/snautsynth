@@ -57,6 +57,19 @@ requirejs(
         factories[GlobalConstants.CLASS_TYPE_FADER]      = FaderFactory;
         factories[GlobalConstants.CLASS_TYPE_GRAPH]      = GraphFactory;
 
+
+        var audioModules = [
+
+        ];
+
+        var controlConnections = [
+
+        ];
+
+        var nodeConnections = [
+
+        ];
+
         var controlOptions = [
             {
                 id:       -1,
