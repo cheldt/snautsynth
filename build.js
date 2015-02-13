@@ -1,6 +1,6 @@
 ({
     paths: {
-        kinetic    : 'vendor/kinetic/kinetic.min',
+        konva      : 'vendor/konva/konva.min',
         mout       : 'vendor/mout/src',
         requireLib : 'vendor/requirejs/require'
     },
