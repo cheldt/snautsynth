@@ -4,46 +4,9 @@
 define(['dejavu', 'app/audio/module/NodeConnection'], function(dejavu, NodeConnection) {
     'use strict';
 
+    /** @class Snautsynth.Factory.Audio.Module.NodeConnection */
     return dejavu.Class.declare({
         $name: 'NodeConnection',
-
-        /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
-         * @instance
-         * @protected
-         *
-         * @type {number}
-         */
-        _controlId:   null,
-
-        /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
-         * @instance
-         * @protected
-         *
-         * @type {number}
-         */
-        _moduleId:    null,
-
-        /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
-         * @instance
-         *
-         * @returns {number}
-         */
-        getSourceModuleId: function() {
-            return this._controlId;
-        },
-
-        /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
-         * @instance
-         *
-         * @returns {number}
-         */
-        getTargetModuleId: function() {
-            return this._moduleId;
-        },
 
         /**
          * @memberof Snautsynth.Factory.Audio.Module.NodeConnection
@@ -51,10 +14,13 @@ define(['dejavu', 'app/audio/module/NodeConnection'], function(dejavu, NodeConne
          *
          * @param {Object} options
          *
-         * @return {Snautsynth.Audio.Module.NodeConnection}
+         * @return {Snautsynth.Audio.Output.Destination}
          */
-        create: function (options) {
-            return new NodeConnection(options.sourceModuleId, options.targetModuleId);
+        create: function(options) {
+            return new NodeConnection(
+                options.sourceChannelNumber,
+                options.targetChannelNumber
+            );
         }
     });
 });

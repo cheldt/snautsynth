@@ -5,14 +5,16 @@ define(
     [
         'dejavu',
         'app/audio/module/Module',
-        'app/audio/module/IConnectable',
-        'app/audio/module/IControlable'
+        'app/audio/module/IConnecting',
+        'app/audio/module/IControllable',
+        'app/util/GlobalConstants'
     ],
     function(
         dejavu,
         Module,
-        IConnectable,
-        IConrolable
+        IConnecting,
+        IControllable,
+        GlobalConstants
     ) {
         'use strict';
 
@@ -21,7 +23,16 @@ define(
 
             $extends: Module,
 
-            $implements: [IConnectable, IConrolable],
+            $implements: [IConnecting, IControllable],
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @protected
+             *
+             * @type {Object}
+             */
+            _keyCodeNoteMapping:    null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -31,24 +42,6 @@ define(
              * @type {number}
              */
             _tuning:      null,
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             * @protected
-             *
-             * @type {number}
-             */
-            _frequency: null,
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             * @protected
-             *
-             * @type {Oscillator}
-             */
-            _oscillator: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -67,16 +60,6 @@ define(
              */
             setTuning: function(tuning) {
                 this._tuning = tuning;
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             *
-             * @param {number} frequency
-             */
-            setFrequency: function(frequency) {
-              this._frequency = frequency;
             },
 
             /**
@@ -222,20 +205,35 @@ define(
              * @constructor
              * @class      Snautsynth.Audio.Module.Generator.Wave
              * @extends    Snautsynth.Audio.Module.Module
-             * @implements Snautsynth.Audio.Module.IConnectable
+             * @implements Snautsynth.Audio.Module.IConnecting
              * @implements Snautsynth.Audio.Module.IControlable
              *
-             * @param {number}       id
-             * @param {AudioContext} audioContext
-             * @param {number}       tuning
-             * @param {number}       frequency
-             * @param {string}       waveType
+             * @param {number}                                            id
+             * @param {AudioContext}                                      audioContext
+             * @param {number}                                            tuning
+             * @param {string}                                            waveType
+             * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}  moduleConnectionList
              */
-            initialize: function(id, audioContext, tuning, frequency, waveType) {
-                this.$super(id, audioContext);
-                this._tuning    = tuning;
-                this._frequency = frequency;
-                this._waveType  = waveType;
+            initialize: function(id, audioContext, tuning, waveType, moduleConnectionList) {
+                this.$super(id, audioContext, moduleConnectionList);
+                this._tuning   = tuning;
+                this._waveType = waveType;
+
+                this._keyCodeNoteMapping = {};
+
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_A] = GlobalConstants.NOTE_C_5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_W] = GlobalConstants.NOTE_Cis5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_S] = GlobalConstants.NOTE_D_5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_E] = GlobalConstants.NOTE_Dis5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_D] = GlobalConstants.NOTE_E_5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_F] = GlobalConstants.NOTE_F_5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_T] = GlobalConstants.NOTE_Fis5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_G] = GlobalConstants.NOTE_G_5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_Z] = GlobalConstants.NOTE_Gis5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_H] = GlobalConstants.NOTE_A_5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_U] = GlobalConstants.NOTE_Ais5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_J] = GlobalConstants.NOTE_B_5;
+                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_K] = GlobalConstants.NOTE_C_6;
             },
 
             /**
@@ -280,8 +278,17 @@ define(
             changeTune: function(cents, time) {
                 this._tuning = this._tuning + cents;
 
-                if (null !== this._oscillator) {
-                    this._oscillator.detune.setValueAtTime(this._tuning, time);
+                if (null === this._runningOscillatorList) {
+                    return;
+                }
+
+                for (var noteKey in this._runningOscillatorList) {
+                    if (undefined === this._runningOscillatorList[noteKey]) {
+                        return;
+                    }
+
+                    var oscillator = this._runningOscillatorList[noteKey];
+                    oscillator.detune.setValueAtTime(this._tuning, time);
                 }
             },
 
@@ -355,33 +362,95 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {Array.<AudioNode>} nodeList
+             * @param {number} note
              */
-            connectToNodes: function(nodeList) {
-                var oscillator = this._oscillator;
-                nodeList.forEach(
-                    function(node) {
-                        oscillator.connect(node);
+            createOscillator: function(note) {
+                var frequency = AudioContext.calcFreqByKey(note);
+
+                var oscillator             = this._audioContext.createOscillator();
+                oscillator.type            = this._waveType;
+                oscillator.detune.value    = this._tuning;
+                oscillator.frequency.value = frequency;
+
+                this._moduleConnectionList.forEach(function(moduleConnection) {
+                    var nodeConnectionList = moduleConnection.getNodeConnectionList();
+
+                    nodeConnectionList.forEach(function(nodeConnection) {
+                        if (nodeConnection.getIsConnected()) {
+                            return;
+                        }
+
+                        nodeConnection.setId(note);
+                        nodeConnection.setSourceNode(oscillator);
+                        nodeConnection.connectNodes();
+                    });
+                });
+
+                oscillator.start(0);
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param note
+             */
+            destroyOscillator: function(note) {
+                this._moduleConnectionList.forEach(function(moduleConnection) {
+                    var nodeConnection = moduleConnection.getNodeConnectionById(note);
+
+                    if (nodeConnection.getIsConnected()) {
+                        nodeConnection.disconnect();
+                        nodeConnection.getSourceNode().stop(0);
+                        nodeConnection.setSourceNode(undefined);
                     }
-                );
+                });
             },
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
+             *
+             * @param {number} keyCode
              */
-            noteOff: function(value, time) {
+            noteOff: function(keyCode) {
+                var note = this.retrieveNoteByKeyCode(keyCode);
 
+                if (null === note) {
+                    return;
+                }
+
+                this.destroyOscillator(note);
             },
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
+             *
+             * @param {number} keyCode
              */
-            noteOn: function(value, time) {
+            noteOn: function(keyCode) {
+                var note = this.retrieveNoteByKeyCode(keyCode);
 
-                //this._oscillator
+                if (null === note) {
+                    return;
+                }
 
+                this.createOscillator(note);
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {number|null} keyCode
+             */
+            retrieveNoteByKeyCode: function(keyCode) {
+                if (this._keyCodeNoteMapping.hasOwnProperty(keyCode)) {
+                    return this._keyCodeNoteMapping[keyCode];
+                }
+
+                return null;
             }
         });
 

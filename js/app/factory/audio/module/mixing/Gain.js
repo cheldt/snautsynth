@@ -1,29 +1,28 @@
 /**
- * @namespace Snautsynth.Factory.Audio.Module.Generator
+ * @namespace Snautsynth.Factory.Audio.Module.Mixing
  */
-define(['dejavu', 'app/audio/module/generator/Wave'], function(dejavu, Wave) {
+define(['dejavu', 'app/audio/module/mixing/Gain'], function(dejavu, Gain) {
     'use strict';
 
-    /** @class Snautsynth.Factory.Audio.Module.Generator.Wave */
+    /** @class Snautsynth.Factory.Audio.Module.Mixing.Gain */
     return dejavu.Class.declare({
-        $name: 'Wave',
+        $name: 'Gain',
 
         /**
-         * @memberof Snautsynth.Factory.Audio.Module.Generator.Wave
+         * @memberof Snautsynth.Factory.Audio.Module.Mixing.Gain
          * @instance
          *
          * @param {AudioContext}                                     audioContext
          * @param {Object}                                           options
          * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>} moduleConnectionList
          *
-         * @return {Snautsynth.Audio.Module.Generator.Wave}
+         * @return {Snautsynth.Audio.Module.Mixing.Gain}
          */
         create: function(audioContext, options, moduleConnectionList) {
-            return new Wave(
+            return new Gain(
                 options.id,
                 audioContext,
-                options.tuning,
-                options.waveType,
+                options.gain,
                 moduleConnectionList
             );
         }

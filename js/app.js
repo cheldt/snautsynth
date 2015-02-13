@@ -3,8 +3,8 @@ require.config({
 
     paths: {
         app:   'app',
-        mout:  'vendor/mout/src',
         //libs
+        mout:  'vendor/mout/src',
         konva: 'vendor/konva/konva.min'
     },
 

@@ -23,7 +23,16 @@ define(['dejavu'], function(dejavu) {
          *
          * @type {number}
          */
-        _id:           null,
+        _id: null,
+
+        /**
+         * @memberof Snautsynth.Audio.Module.Module
+         * @instance
+         * @protected
+         *
+         * @type {Array.<Snautsynth.Audio.Module.ModuleConnection>}
+         */
+        _moduleConnectionList: null,
 
         /**
          * @memberof Snautsynth.Audio.Module.Module
@@ -36,15 +45,27 @@ define(['dejavu'], function(dejavu) {
         },
 
         /**
-         * @constructor
-         * @class Snautsynth.Audio.Module.Module
+         * @memberof Snautsynth.Audio.Module.Module
+         * @instance
          *
-         * @param {number} id
-         * @param {AudioContext} audioContext
+         * @return {Array.<Snautsynth.Audio.Module.ModuleConnection>}
          */
-        initialize: function(id, audioContext) {
-            this._id           = id;
-            this._audioContext = audioContext;
+        getModuleConnectionList: function() {
+            return this._moduleConnectionList;
+        },
+
+        /**
+         * @constructor
+         * @class Snautsynth.Audio.Module.Mixing.Gain
+         *
+         * @param {number}                                           id
+         * @param {AudioContext}                                     audioContext
+         * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>} moduleConnectionList
+         */
+        initialize: function(id, audioContext, moduleConnectionList) {
+            this._id                   = id;
+            this._audioContext         = audioContext;
+            this._moduleConnectionList = moduleConnectionList;
         }
     });
 });

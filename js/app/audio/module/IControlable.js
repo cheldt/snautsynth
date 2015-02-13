@@ -4,12 +4,12 @@
 define(['dejavu'], function(dejavu) {
     'use strict';
 
-    /** @interface Snautsynth.Audio.Module.IControlable */
-    var IConnectable = dejavu.Interface.declare({
-        $name: 'IControlable',
+    /** @interface Snautsynth.Audio.Module.IControllable */
+    return dejavu.Interface.declare({
+        $name: 'IControllable',
 
         /**
-         * @memberof Snautsynth.Audio.Module.IControlable
+         * @memberof Snautsynth.Audio.Module.IControllable
          * @abstract
          * @instance
          *
@@ -19,7 +19,7 @@ define(['dejavu'], function(dejavu) {
         changeValue: function (valueTarget, value) {},
 
         /**
-         * @memberof Snautsynth.Audio.Module.IControlable
+         * @memberof Snautsynth.Audio.Module.IControllable
          * @abstract
          * @instance
          *
