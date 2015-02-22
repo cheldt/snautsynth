@@ -23,7 +23,7 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
          *
          * @type {string}
          */
-        _text:  null,
+        _text: null,
 
         /**
          * @memberof Snautsynth.Control.Layout.Label

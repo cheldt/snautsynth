@@ -1,7 +1,17 @@
 /**
  * @namespace Snautsynth.Audio.Module
  */
-define(['dejavu'], function(dejavu) {
+define(
+    [
+        'dejavu',
+        'app/audio/module/IConnectable',
+        'app/audio/module/IConnecting'
+    ],
+    function(
+        dejavu,
+        IConnectable,
+        IConnecting
+    ) {
     'use strict';
 
     return dejavu.Class.declare({
@@ -66,6 +76,57 @@ define(['dejavu'], function(dejavu) {
             this._id                   = id;
             this._audioContext         = audioContext;
             this._moduleConnectionList = moduleConnectionList;
+        },
+
+
+        /**
+         * Set reference for source- and target-module
+         * to module-connection
+         *
+         * @memberof Snautsynth.Audio.Module.Module
+         * @instance
+         *
+         * @param {Array.<Snautsynth.Audio.Module.Module>} moduleList
+         */
+        setupModuleConnections: function(moduleList) {
+            if (null === this._moduleConnectionList) {
+                return;
+            }
+
+            this._moduleConnectionList.forEach(function(moduleConnection) {
+                moduleList.forEach(function(module) {
+                    if (module.getId() === moduleConnection.getSourceModuleId()) {
+                        moduleConnection.setSourceModule(module);
+                    }
+
+                    if (module.getId() === moduleConnection.getTargetModuleId()) {
+                        moduleConnection.setTargetModule(module);
+                    }
+                });
+            });
+
+            this.connectChannels();
+        },
+
+        /**
+         * @memberof Snautsynth.Audio.Module.Module
+         * @instance
+         */
+        connectChannels: function () {
+            if (!dejavu.instanceOf(this, IConnecting)) {
+                return;
+            }
+
+            this._moduleConnectionList.forEach(function(moduleConnection) {
+                var sourceNode = moduleConnection.getSourceModule().getSourceNode();
+                var targetNode = moduleConnection.getTargetModule().getTargetNode();
+
+                moduleConnection.getChannelConnectionList().forEach(function (channelConnection) {
+                    channelConnection.setSourceNode(sourceNode);
+                    channelConnection.setTargetNode(targetNode);
+                    channelConnection.connectNodes();
+                });
+            });
         }
     });
 });

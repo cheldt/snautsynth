@@ -5,7 +5,16 @@ define(['dejavu'], function(dejavu) {
     'use strict';
 
     /** @interface Snautsynth.Audio.Module.IConnecting */
-    var IConnectable = dejavu.Interface.declare({
-        $name: 'IConnecting'
+    return dejavu.Interface.declare({
+        $name: 'IConnecting',
+
+        /**
+         * @memberof Snautsynth.Audio.Module.IConnecting
+         * @abstract
+         * @instance
+         *
+         * @return {AudioNode}
+         */
+        getSourceNode: function () {}
     });
 });

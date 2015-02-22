@@ -29,15 +29,6 @@ define(
              * @memberof Snautsynth.Audio.Module.Mixing.Gain
              * @instance
              *
-             * @type {number}
-             */
-            _gain: null,
-
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Mixing.Gain
-             * @instance
-             *
              * @type {AudioGainNode}
              */
             _gainNode: null,
@@ -70,7 +61,7 @@ define(
                 this.$super(id, audioContext, moduleConnectionList);
 
                 this._gainNode = audioContext.createGain();
-                this._gainNode.setValueAtTime(gain, audioContext.currentTime);
+                this._gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
             },
 
             /**
@@ -81,20 +72,27 @@ define(
              */
             connectToControls: function(controlConnectionList) {
                 var module = this;
-
-                controlConnectionList.forEach(
-                    function(controlConnection) {
-                        switch(controlConnection.getControlTarget()) {
-                            case Gain.CTRL_TARGET_VALUE_GAIN:
-                                controlConnection.setCallback(
-                                    function(value, time) {
-                                        module.changeGain(value, time);
-                                    }
-                                );
-                                break;
-                        }
+                for (var controlId in controlConnectionList) {
+                    if (!controlConnectionList.hasOwnProperty(controlId)) {
+                        continue;
                     }
-                );
+
+                    var controlConnection = controlConnectionList[controlId];
+
+                    if (module.getId() !== controlConnection.getModuleId()) {
+                        continue;
+                    }
+
+                    switch(controlConnection.getControlTarget()) {
+                        case Gain.CTRL_TARGET_VALUE_GAIN:
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    module.changeGain(value, time);
+                                }
+                            );
+                            break;
+                    }
+                }
             },
 
             /**
@@ -105,7 +103,7 @@ define(
              * @param {number} time
              */
             changeGain: function (value, time) {
-                this._gainNode.setValueAtTime(gain, time);
+                this._gainNode.setValueAtTime(value, time);
             },
 
             /**
@@ -115,6 +113,16 @@ define(
              * @return {AudioGainNode}
              */
             getTargetNode: function() {
+                return this._gainNode;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             *
+             * @return {AudioGainNode}
+             */
+            getSourceNode: function() {
                 return this._gainNode;
             }
         });

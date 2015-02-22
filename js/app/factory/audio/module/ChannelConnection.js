@@ -1,15 +1,15 @@
 /**
  * @namespace Snautsynth.Factory.Audio.Module
  */
-define(['dejavu', 'app/audio/module/NodeConnection'], function(dejavu, NodeConnection) {
+define(['dejavu', 'app/audio/module/ChannelConnection'], function(dejavu, ChannelConnection) {
     'use strict';
 
-    /** @class Snautsynth.Factory.Audio.Module.NodeConnection */
+    /** @class Snautsynth.Factory.Audio.Module.ChannelConnection */
     return dejavu.Class.declare({
-        $name: 'NodeConnection',
+        $name: 'ChannelConnection',
 
         /**
-         * @memberof Snautsynth.Factory.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Factory.Audio.Module.ChannelConnection
          * @instance
          *
          * @param {Object} options
@@ -17,7 +17,7 @@ define(['dejavu', 'app/audio/module/NodeConnection'], function(dejavu, NodeConne
          * @return {Snautsynth.Audio.Output.Destination}
          */
         create: function(options) {
-            return new NodeConnection(
+            return new ChannelConnection(
                 options.sourceChannelNumber,
                 options.targetChannelNumber
             );

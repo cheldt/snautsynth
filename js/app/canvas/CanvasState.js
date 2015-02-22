@@ -165,6 +165,17 @@ define(
          * @memberof Snautsynth.Canvas.CanvasState
          * @instance
          *
+         * @return {Array.<Snautsynth.Control.Control>}
+         *
+         */
+        getControls: function() {
+            return this._controls;
+        },
+
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
          * @return {*}
          */
         getLastValue: function() {

@@ -16,6 +16,9 @@ define(
                 CLASS_TYPE_RADIOBUTTON: 5,
                 CLASS_TYPE_LABEL:       6,
                 CLASS_TYPE_POINT:       7,
+                CLASS_TYPE_WAVE:        8,
+                CLASS_TYPE_GAIN:        9,
+                CLASS_TYPE_DESTINATION: 10,
 
                 CTRL_MASTERGAIN:                  1,
                 CTRL_OSC1_WAVE:                   2,
@@ -36,6 +39,11 @@ define(
                 CTRL_ATTACK_POINT:                15,
                 CTRL_DECAYTIME_SUSTAINGAIN_POINT: 16,
                 CTRL_RELEASE_POINT:               17,
+
+
+                AMOD_OSC1:        1,
+                AMOD_OSC1_GAIN:   2,
+                AMOD_DESTINATION: 3,
 
                 KEY_CODE_A: 65,
                 KEY_CODE_W: 87,

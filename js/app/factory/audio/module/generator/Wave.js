@@ -1,31 +1,44 @@
 /**
  * @namespace Snautsynth.Factory.Audio.Module.Generator
  */
-define(['dejavu', 'app/audio/module/generator/Wave'], function(dejavu, Wave) {
-    'use strict';
+define(
+    [
+        'dejavu',
+        'app/audio/module/generator/Wave',
+        'app/factory/audio/module/Module'
+    ],
+    function(
+        dejavu,
+        Wave,
+        ModuleFactory
+    ) {
+        'use strict';
 
-    /** @class Snautsynth.Factory.Audio.Module.Generator.Wave */
-    return dejavu.Class.declare({
-        $name: 'Wave',
+        /** @class Snautsynth.Factory.Audio.Module.Generator.Wave */
+        return dejavu.Class.declare({
+            $name: 'Wave',
 
-        /**
-         * @memberof Snautsynth.Factory.Audio.Module.Generator.Wave
-         * @instance
-         *
-         * @param {AudioContext}                                     audioContext
-         * @param {Object}                                           options
-         * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>} moduleConnectionList
-         *
-         * @return {Snautsynth.Audio.Module.Generator.Wave}
-         */
-        create: function(audioContext, options, moduleConnectionList) {
-            return new Wave(
-                options.id,
-                audioContext,
-                options.tuning,
-                options.waveType,
-                moduleConnectionList
-            );
-        }
-    });
-});
+            $extends: ModuleFactory,
+
+            /**
+             * @memberof Snautsynth.Factory.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {AudioContext} audioContext
+             * @param {Object}       options
+             *
+             * @return {Snautsynth.Audio.Module.Generator.Wave}
+             */
+            create: function(audioContext, options) {
+                return new Wave(
+                    options.id,
+                    audioContext,
+                    options.tuning,
+                    options.waveType,
+                    options.gain,
+                    this.createModuleConnectionList(options)
+                );
+            }
+        });
+    }
+);

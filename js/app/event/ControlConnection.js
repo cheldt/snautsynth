@@ -23,7 +23,7 @@ define(['dejavu'], function(dejavu) {
          *
          * @type {number}
          */
-        _controlId:   null,
+        _controlId: null,
 
         /**
          * @memberof Snautsynth.Event.ControlConnection
@@ -32,7 +32,7 @@ define(['dejavu'], function(dejavu) {
          *
          * @type {number}
          */
-        _controlTarget:   null,
+        _controlTarget: null,
 
         /**
          * @memberof Snautsynth.Event.ControlConnection
@@ -41,7 +41,7 @@ define(['dejavu'], function(dejavu) {
          *
          * @type {number}
          */
-        _moduleId:    null,
+        _moduleId: null,
 
         /**
          * @memberof Snautsynth.Event.ControlConnection
@@ -92,7 +92,6 @@ define(['dejavu'], function(dejavu) {
         getModuleId: function() {
             return this._moduleId;
         },
-
 
         /**
          * @constructor

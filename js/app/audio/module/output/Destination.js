@@ -5,16 +5,13 @@ define(
     [
         'dejavu',
         'app/audio/module/Module',
-        'app/audio/module/IConnectable',
-        'app/audio/module/IConnecting'
+        'app/audio/module/IConnectable'
     ],
     function(
         dejavu,
         Module,
-        IConnectable,
-        IConnecting
+        IConnectable
     ) {
-
         'use strict';
 
         return dejavu.Class.declare({
@@ -28,7 +25,7 @@ define(
              * @constructor
              * @class      Snautsynth.Audio.Module.Output.Destination
              * @extends    Snautsynth.Audio.Module.Module
-             * @implements Snautsynth.Audio.Module.IControlable
+             * @implements Snautsynth.Audio.Module.IConnectable
              *
              * @param {number}       id
              * @param {AudioContext} audioContext
@@ -41,27 +38,10 @@ define(
              * @memberof Snautsynth.Audio.Module.Output.Destination
              * @instance
              *
-             * @param {Array.<Snautsynth.Audio.Module.Module>} moduleList
+             * @return {AudioNode}
              */
-            registerInputNodes: function (moduleList) {
-                var currentModuleId = this._id;
-                var audioContext    = this._audioContext;
-
-                moduleList.forEach(function(module) {
-                    if (!dejavu.instanceOf(module, IConnecting)) {
-                        return;
-                    }
-
-                    module.getModuleConnectionList().forEach(function(moduleConnection) {
-                        if (moduleConnection.getTargetModuleId() !== currentModuleId) {
-                            return;
-                        }
-
-                        moduleConnection.getNodeConnectionList().forEach(function(nodeConnection) {
-                            nodeConnection.setTargetNode(audioContext.destination);
-                        });
-                    });
-                });
+            getTargetNode: function() {
+                return this._audioContext.destination;
             }
         });
     }

@@ -16,7 +16,7 @@ define(['dejavu','konva', 'app/control/Control'], function(dejavu, Konva, Contro
          *
          * @type {number}
          */
-        _maxGain:         null,
+        _maxGain: null,
 
         /**
          * @memberof Snautsynth.Control.UI.Envelope.Graph
@@ -25,7 +25,7 @@ define(['dejavu','konva', 'app/control/Control'], function(dejavu, Konva, Contro
          *
          * @type {number}
          */
-        _maxTime:         null,
+        _maxTime: null,
 
         /**
          * @memberof Snautsynth.Control.UI.Envelope.Graph
@@ -34,7 +34,7 @@ define(['dejavu','konva', 'app/control/Control'], function(dejavu, Konva, Contro
          *
          * @type {number}
          */
-        _maxPixelGain:    null,
+        _maxPixelGain: null,
 
         /**
          * @memberof Snautsynth.Control.UI.Envelope.Graph
@@ -43,7 +43,7 @@ define(['dejavu','konva', 'app/control/Control'], function(dejavu, Konva, Contro
          *
          * @type {number}
          */
-        _maxPixelTime:    null,
+        _maxPixelTime: null,
 
         /**
          * @memberof Snautsynth.Control.UI.Envelope.Graph

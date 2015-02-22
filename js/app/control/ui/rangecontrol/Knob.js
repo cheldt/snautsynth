@@ -32,7 +32,7 @@ define(
              *
              * @type {string}
              */
-            _borderColor:      null,
+            _borderColor: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -41,7 +41,7 @@ define(
              *
              * @type {string}
              */
-            _color:            null,
+            _color: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -50,7 +50,16 @@ define(
              *
              * @type {Snautsynth.Util.Position}
              */
-            _knobPosition:     null,
+            _knobPosition: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @protected
+             *
+             * @type {Konva.Arc}
+             */
+            _knobBorder: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -59,7 +68,7 @@ define(
              *
              * @type {Konva.Circle}
              */
-            _knobCircle:       null,
+            _knobCircle: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -68,7 +77,7 @@ define(
              *
              * @type {Snautsynth.DataType.NumberRange}
              */
-            _pointerRadRange:  null,
+            _pointerRadRange: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -77,7 +86,7 @@ define(
              *
              * @type {string}
              */
-            _pointerColor:     null,
+            _pointerColor: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -86,7 +95,7 @@ define(
              *
              * @type {Konva.Line}
              */
-            _pointer:          null,
+            _pointer: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -95,7 +104,7 @@ define(
              *
              * @type {number}
              */
-            _pointerRadian:    null,
+            _pointerRadian: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -104,7 +113,7 @@ define(
              *
              * @type {number}
              */
-            _radius:           null,
+            _radius: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -131,7 +140,7 @@ define(
              *
              * @type {number}
              */
-            _tmpPointerRad:    null,
+            _tmpPointerRad: null,
 
 
             /**
@@ -318,88 +327,42 @@ define(
                     formatter
                 );
 
-                var pointerDeg        = Knob.POINTER_MAX_DEG - Knob.POINTER_MIN_DEG;
-                this._pointerRadRange = new NumberRange(
-                    Knob.calcDegToRad(Knob.POINTER_MIN_DEG),
-                    Knob.calcDegToRad(Knob.POINTER_MAX_DEG)
-                );
-
                 this._radius        = radius;
-                // init pointer radian from value
-                this._pointerRadian = Knob.calcRadFromValue(value, this._pointerRadRange, this._valueRange);
                 this._tmpPointerRad = this._pointerRadian;
-
-                // create components of control
-                this._knobPosition  = new Position(
-                    radius + this.getX() + Knob.BORDER_WIDTH,
-                    radius + this.getY() + Knob.BORDER_WIDTH
-                );
-
-                var knobX = this._knobPosition.getX();
-                var knobY = this._knobPosition.getY();
 
                 // create knob circle
                 this._knobCircle = new Konva.Circle({
-                    x:      knobX,
-                    y:      knobY,
-                    radius: radius,
-                    fill:   color,
-                    id:     id
+                    fill: color,
+                    id:   id
                  });
 
                 this._kineticGroup.add(this._knobCircle);
 
-                var radiusScaleMultiplier = (radius * 0.02);
-
                 // create knob border
-                var arc = new Konva.Arc({
-                    x:           knobX,
-                    y:           knobY,
-                    innerRadius: radius - (Knob.BORDER_WIDTH * radiusScaleMultiplier),
-                    outerRadius: radius,
-
-                    angle:       pointerDeg,
-                    rotation:    Knob.POINTER_MIN_DEG,
-
-                    fill:        '#000',
-                    stroke:      '#000'
+                this._knobBorder = new Konva.Arc({
+                    fill:   '#000',
+                    stroke: '#000'
                 });
 
-                this._kineticGroup.add(arc);
-
-                // create pointer and set initial position
-                var initialPointerPos = this.calcPointerPos();
+                this._kineticGroup.add(this._knobBorder);
 
                 this._pointer = new Konva.Line({
-                    points:     [knobX, knobY, initialPointerPos.getX(), initialPointerPos.getY()],
-                    stroke:     '#000',
-                    lineJoin:   'round',
-                    strokeWidth: Knob.POINTER_WIDTH * radiusScaleMultiplier
+                    stroke:   '#000',
+                    lineJoin: 'round'
                 });
 
                 this._kineticGroup.add(this._pointer);
 
-                var displayMultiplier = radius * 0.018;
-
                 // create knob value-display
                 this._valueDisplayArea = new Konva.Rect({
-                   x:            knobX - (Knob.VAL_DISPLAY_WIDTH * displayMultiplier) / 2,
-                   y:            knobY + (Knob.VAL_DISPLAY_Y * radiusScaleMultiplier),
-
-                   cornerRadius: Knob.VAL_DISPLAY_CORNER_RADIUS * displayMultiplier,
-                   height:       Knob.VAL_DISPLAY_HEIGHT * displayMultiplier,
-                   width:        Knob.VAL_DISPLAY_WIDTH * displayMultiplier,
-                   strokeWidth:  Knob.VAL_DISPLAY_BORDER_WIDTH * radiusScaleMultiplier,
-
-                   fill:          color,
-                   stroke:       '#000'
+                   fill:   color,
+                   stroke: '#000'
                 });
 
                 this._kineticGroup.add(this._valueDisplayArea);
 
                 this._valueDisplayText = new Konva.Text({
-                   fill:     '#000',
-                   fontSize: Knob.VAL_DISPLAY_FONT_SIZE * radiusScaleMultiplier
+                   fill: '#000'
                 });
 
                 this.updateValueDisplayText();
@@ -577,6 +540,67 @@ define(
                     Math.cos(this._pointerRadian) * pointerLength + this._knobPosition.getX(),
                     Math.sin(this._pointerRadian) * pointerLength + this._knobPosition.getY()
                 );
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             */
+            setUp: function() {
+                this._pointerRadRange = new NumberRange(
+                    Knob.calcDegToRad(Knob.POINTER_MIN_DEG),
+                    Knob.calcDegToRad(Knob.POINTER_MAX_DEG)
+                );
+
+                // init pointer radian from value
+                this._pointerRadian = Knob.calcRadFromValue(this._value, this._pointerRadRange, this._valueRange);
+                this._tmpPointerRad = this._pointerRadian;
+                var pointerDeg      = Knob.POINTER_MAX_DEG - Knob.POINTER_MIN_DEG;
+
+
+                // create components of control
+                this._knobPosition  = new Position(
+                    this._radius + this.getX() + Knob.BORDER_WIDTH,
+                    this._radius + this.getY() + Knob.BORDER_WIDTH
+                );
+
+                var knobX = this._knobPosition.getX();
+                var knobY = this._knobPosition.getY();
+
+                // create knob circle
+                this._knobCircle.x(knobX);
+                this._knobCircle.y(knobY);
+                this._knobCircle.radius(this._radius);
+
+                var radiusScaleMultiplier = (this._radius * 0.02);
+
+                this._knobBorder.x(knobX);
+                this._knobBorder.y(knobY);
+                this._knobBorder.innerRadius(this._radius - (Knob.BORDER_WIDTH * radiusScaleMultiplier));
+                this._knobBorder.outerRadius(this._radius);
+                this._knobBorder.angle(pointerDeg);
+                this._knobBorder.rotation(Knob.POINTER_MIN_DEG);
+
+                // create pointer and set initial position
+                var initialPointerPos = this.calcPointerPos();
+
+                this._pointer.points([knobX, knobY, initialPointerPos.getX(), initialPointerPos.getY()]);
+                this._pointer.strokeWidth(Knob.POINTER_WIDTH * radiusScaleMultiplier);
+
+                var displayMultiplier = this._radius * 0.018;
+
+                this._valueDisplayArea.x(knobX - (Knob.VAL_DISPLAY_WIDTH * displayMultiplier) / 2);
+                this._valueDisplayArea.y(knobY + (Knob.VAL_DISPLAY_Y * radiusScaleMultiplier));
+                this._valueDisplayArea.width(Knob.VAL_DISPLAY_WIDTH * displayMultiplier);
+                this._valueDisplayArea.height(Knob.VAL_DISPLAY_HEIGHT * displayMultiplier);
+                this._valueDisplayArea.cornerRadius(Knob.VAL_DISPLAY_CORNER_RADIUS * displayMultiplier);
+                this._valueDisplayArea.strokeWidth(Knob.VAL_DISPLAY_BORDER_WIDTH * radiusScaleMultiplier);
+
+                this._valueDisplayText.fontSize(Knob.VAL_DISPLAY_FONT_SIZE * radiusScaleMultiplier);
+
+                this.updateValueDisplayText();
+
+                this._kineticGroup.add(this._valueDisplayText);
             },
 
             /**

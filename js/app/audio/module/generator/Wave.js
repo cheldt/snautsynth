@@ -7,14 +7,16 @@ define(
         'app/audio/module/Module',
         'app/audio/module/IConnecting',
         'app/audio/module/IControllable',
-        'app/util/GlobalConstants'
+        'app/util/GlobalConstants',
+        'app/audio/util/Audio'
     ],
     function(
         dejavu,
         Module,
         IConnecting,
         IControllable,
-        GlobalConstants
+        GlobalConstants,
+        AudioUtil
     ) {
         'use strict';
 
@@ -30,9 +32,27 @@ define(
              * @instance
              * @protected
              *
+             * @type {AudioGainNode}
+             */
+            _gainNode: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @protected
+             *
              * @type {Object}
              */
-            _keyCodeNoteMapping:    null,
+            _keyCodeNoteMapping: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @protected
+             *
+             * @type {Object}
+             */
+            _runningOscillatorList: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -41,7 +61,16 @@ define(
              *
              * @type {number}
              */
-            _tuning:      null,
+            _runningOscillatorCounter: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
+            _tuning: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -50,29 +79,11 @@ define(
              *
              * @type {string}
              */
-            _waveType:   null,
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             *
-             * @param {number} tuning
-             */
-            setTuning: function(tuning) {
-                this._tuning = tuning;
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             *
-             * @param {string} type
-             */
-            setWaveType: function(type) {
-                this._waveType = type;
-            },
+            _waveType: null,
 
             $constants: {
+                MAX_RUNNING_OSCILLATORS: 4,
+
                 /**
                  * @memberof Snautsynth.Audio.Module.Generator.Wave
                  * @constant
@@ -136,6 +147,14 @@ define(
                  */
                 WAVEFORM_CUSTOM:   'custom',
 
+                /**
+                 * @memberof Snautsynth.Audio.Module.Generator.Wave
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_VALUE_WAVETYPE:       1,
 
                 /**
                  * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -144,7 +163,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_VALUE_FREQUENCY:      1,
+                CTRL_TARGET_VALUE_TUNE_CENTS:     2,
 
                 /**
                  * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -153,7 +172,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_VALUE_WAVETYPE:       2,
+                CTRL_TARGET_VALUE_TUNE_HALFTONES: 3,
 
                 /**
                  * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -162,7 +181,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_VALUE_TUNE_CENTS:     3,
+                CTRL_TARGET_VALUE_TUNE_OCTAVES:   4,
 
                 /**
                  * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -171,7 +190,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_VALUE_TUNE_HALFTONES: 4,
+                CTRL_TARGET_NOTE_ON:              5,
 
                 /**
                  * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -180,7 +199,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_VALUE_TUNE_OCTAVES:   5,
+                CTRL_TARGET_NOTE_OFF:             6,
 
                 /**
                  * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -189,16 +208,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_NOTE_ON:              6,
-
-                /**
-                 * @memberof Snautsynth.Audio.Module.Generator.Wave
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_TARGET_NOTE_OFF:             7
+                CTRL_TARGET_VALUE_GAIN:           7
             },
 
             /**
@@ -212,12 +222,16 @@ define(
              * @param {AudioContext}                                      audioContext
              * @param {number}                                            tuning
              * @param {string}                                            waveType
+             * @param {number}                                            gain
              * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}  moduleConnectionList
              */
-            initialize: function(id, audioContext, tuning, waveType, moduleConnectionList) {
+            initialize: function(id, audioContext, tuning, waveType, gain, moduleConnectionList) {
                 this.$super(id, audioContext, moduleConnectionList);
                 this._tuning   = tuning;
                 this._waveType = waveType;
+
+                this._gainNode = audioContext.createGain();
+                this._gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
 
                 this._keyCodeNoteMapping = {};
 
@@ -234,6 +248,17 @@ define(
                 this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_U] = GlobalConstants.NOTE_Ais5;
                 this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_J] = GlobalConstants.NOTE_B_5;
                 this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_K] = GlobalConstants.NOTE_C_6;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {number} value
+             * @param {number} time
+             */
+            changeGain: function(value, time) {
+                this._gainNode.gain.setValueAtTime(value, time);
             },
 
             /**
@@ -283,8 +308,12 @@ define(
                 }
 
                 for (var noteKey in this._runningOscillatorList) {
+                    if (!this._runningOscillatorList.hasOwnProperty(noteKey)) {
+                        continue;
+                    }
+
                     if (undefined === this._runningOscillatorList[noteKey]) {
-                        return;
+                        continue;
                     }
 
                     var oscillator = this._runningOscillatorList[noteKey];
@@ -296,66 +325,104 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {Array.<Snautsynth.Event.ControlConnection>} controlConnectionList
+             * @param {string} wavetype
+             */
+            changeWaveType: function (waveType) {
+                this._waveType = waveType;
+
+                if (null === this._runningOscillatorList) {
+                    return;
+                }
+
+                for (var noteKey in this._runningOscillatorList) {
+                    if (!this._runningOscillatorList.hasOwnProperty(noteKey)) {
+                        continue;
+                    }
+
+                    if (null === this._runningOscillatorList[noteKey]) {
+                        continue;
+                    }
+
+                    var oscillator  = this._runningOscillatorList[noteKey];
+                    oscillator.type = this._waveType;
+                }
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {Object} controlConnectionList
              */
             connectToControls: function(controlConnectionList) {
                 var module = this;
 
-                controlConnectionList.forEach(
-                    function(controlConnection) {
-                        switch(controlConnection.getControlTarget()) {
-                            case Wave.CTRL_TARGET_VALUE_FREQUENCY:
-                                controlConnection.setCallback(
-                                    function(value, time) {
-                                        module.setFrequency(value);
-                                    }
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
-                                controlConnection.setCallback(
-                                    function(value, time) {
-                                        module.changeTune(value, time);
-                                    }
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
-                                controlConnection.setCallback(
-                                    function(value, time) {
-                                        module.changeHalftone(value, time);
-                                    }
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
-                                controlConnection.setCallback(
-                                    function(value, time) {
-                                        module.changeOctave(value, time);
-                                    }
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_VALUE_WAVETYPE:
-                                controlConnection.setCallback(
-                                    function(value, time) {
-                                        module.setWaveType(value);
-                                    }
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_NOTE_ON:
-                                controlConnection.setCallback(
-                                    function(value, time) {
-                                        module.noteOn(time);
-                                    }
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_NOTE_OFF:
-                                controlConnection.setCallback(
-                                    function(value, time) {
-                                        module.noteOff(time);
-                                    }
-                                );
-                                break;
-                        }
+                for (var controlId in controlConnectionList) {
+                    if (!controlConnectionList.hasOwnProperty(controlId)) {
+                        continue;
                     }
-                );
+
+                    var controlConnection = controlConnectionList[controlId];
+
+                    if (module.getId() !== controlConnection.getModuleId()) {
+                        continue;
+                    }
+
+
+                    switch(controlConnection.getControlTarget()) {
+                        case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    module.changeTune(value, time);
+                                }
+                            );
+                            break;
+                        case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    module.changeHalftone(value, time);
+                                }
+                            );
+                            break;
+                        case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    module.changeOctave(value, time);
+                                }
+                            );
+                            break;
+                        case Wave.CTRL_TARGET_VALUE_WAVETYPE:
+
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    console.log('xx');
+                                    module.changeWaveType(value);
+                                }
+                            );
+                            break;
+                        case Wave.CTRL_TARGET_NOTE_ON:
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    module.noteOn(value);
+                                }
+                            );
+                            break;
+                        case Wave.CTRL_TARGET_NOTE_OFF:
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    module.noteOff(value);
+                                }
+                            );
+                            break;
+                        case Wave.CTRL_TARGET_VALUE_GAIN:
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    module.changeGain(value, time);
+                                }
+                            );
+                            break;
+                    }
+                }
             },
 
             /**
@@ -365,26 +432,26 @@ define(
              * @param {number} note
              */
             createOscillator: function(note) {
-                var frequency = AudioContext.calcFreqByKey(note);
+                if (null === this._runningOscillatorList) {
+                    this._runningOscillatorList    = {};
+                    this._runningOscillatorCounter = 0;
+                }
+
+                if (Wave.MAX_RUNNING_OSCILLATORS === this._runningOscillatorCounter) {
+                    return;
+                }
+
+                var frequency = AudioUtil.calcFreqByKey(note);
 
                 var oscillator             = this._audioContext.createOscillator();
                 oscillator.type            = this._waveType;
                 oscillator.detune.value    = this._tuning;
                 oscillator.frequency.value = frequency;
 
-                this._moduleConnectionList.forEach(function(moduleConnection) {
-                    var nodeConnectionList = moduleConnection.getNodeConnectionList();
+                oscillator.connect(this._gainNode);
 
-                    nodeConnectionList.forEach(function(nodeConnection) {
-                        if (nodeConnection.getIsConnected()) {
-                            return;
-                        }
-
-                        nodeConnection.setId(note);
-                        nodeConnection.setSourceNode(oscillator);
-                        nodeConnection.connectNodes();
-                    });
-                });
+                this._runningOscillatorList[note] = oscillator;
+                this._runningOscillatorCounter ++;
 
                 oscillator.start(0);
             },
@@ -396,15 +463,42 @@ define(
              * @param note
              */
             destroyOscillator: function(note) {
-                this._moduleConnectionList.forEach(function(moduleConnection) {
-                    var nodeConnection = moduleConnection.getNodeConnectionById(note);
+                if (null === this._runningOscillatorList) {
+                    return;
+                }
 
-                    if (nodeConnection.getIsConnected()) {
-                        nodeConnection.disconnect();
-                        nodeConnection.getSourceNode().stop(0);
-                        nodeConnection.setSourceNode(undefined);
-                    }
-                });
+                var oscillator = this._runningOscillatorList[note];
+
+                oscillator.disconnect();
+                oscillator.stop();
+
+                this._runningOscillatorList[note] = null;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @return {AudioNode}
+             */
+            getSourceNode: function() {
+                return this._gainNode;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {number} ctrlTargetId
+             */
+            getValueBoundariesByCtrlTarget: function(ctrlTargetId) {
+
+                switch(controlConnection.getControlTarget()) {
+                    case Wave.CTRL_TARGET_VALUE_WAVETYPE:
+                        //return [Wave.WAVEFORM_]
+                        break;
+                }
+
             },
 
             /**
@@ -451,6 +545,16 @@ define(
                 }
 
                 return null;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {Array.<Snautsynth.Control.Control>} controlList
+             */
+            setupControls: function(controlList) {
+
             }
         });
 

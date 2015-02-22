@@ -26,6 +26,7 @@ require.config({
 // Start the main app logic.
 requirejs(
     [
+        'dejavu',
         'app/canvas/CanvasState',
         'app/control/ui/rangecontrol/Fader',
         'app/audio/Synthesizer',
@@ -34,9 +35,16 @@ requirejs(
         'app/factory/control/ui/RadioGroup',
         'app/factory/control/ui/envelope/Graph',
         'app/factory/control/ui/rangecontrol/Fader',
-        'app/factory/control/ui/rangecontrol/Knob'
+        'app/factory/control/ui/rangecontrol/Knob',
+        'app/factory/audio/module/generator/Wave',
+        'app/factory/audio/module/mixing/Gain',
+        'app/factory/audio/module/output/Destination',
+        'app/factory/event/ControlConnection',
+        'app/audio/module/generator/Wave',
+        'app/audio/module/IControllable'
     ],
     function (
+        dejavu,
         CanvasState,
         Fader,
         Synthesizer,
@@ -45,32 +53,149 @@ requirejs(
         RadioGroupFactory,
         GraphFactory,
         FaderFactory,
-        KnobFactory
+        KnobFactory,
+        WaveFactory,
+        GainFactory,
+        DestinationFactory,
+        ControlConnectionFactory,
+        Wave,
+        IControllable
     ) {
 
         var canvasState = new CanvasState(600, 550, 'syn');
 
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        var audioContext    = new window.AudioContext();
+
         var factories = {};
-        factories[GlobalConstants.CLASS_TYPE_BUTTON]     = KnobFactory;
-        factories[GlobalConstants.CLASS_TYPE_LABEL]      = LabelFactory;
-        factories[GlobalConstants.CLASS_TYPE_RADIOGROUP] = RadioGroupFactory;
-        factories[GlobalConstants.CLASS_TYPE_FADER]      = FaderFactory;
-        factories[GlobalConstants.CLASS_TYPE_GRAPH]      = GraphFactory;
+        factories[GlobalConstants.CLASS_TYPE_BUTTON]      = KnobFactory;
+        factories[GlobalConstants.CLASS_TYPE_LABEL]       = LabelFactory;
+        factories[GlobalConstants.CLASS_TYPE_RADIOGROUP]  = RadioGroupFactory;
+        factories[GlobalConstants.CLASS_TYPE_FADER]       = FaderFactory;
+        factories[GlobalConstants.CLASS_TYPE_GRAPH]       = GraphFactory;
+        factories[GlobalConstants.CLASS_TYPE_WAVE]        = WaveFactory;
+        factories[GlobalConstants.CLASS_TYPE_GAIN]        = GainFactory;
+        factories[GlobalConstants.CLASS_TYPE_DESTINATION] = DestinationFactory;
 
-
-        var audioModules = [
-
+        var audioModuleOptionList = [
+            {
+                id:       GlobalConstants.AMOD_OSC1,
+                type:     GlobalConstants.CLASS_TYPE_WAVE,
+                tuning:   0,
+                gain:     1,
+                waveType: Synthesizer.WAVEFORM_SINE,
+                moduleConnectionList: [
+                    {
+                        sourceModuleId: GlobalConstants.AMOD_OSC1,
+                        targetModuleId: GlobalConstants.AMOD_OSC1_GAIN,
+                        channelConnectionList: [
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            },
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            },
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            },
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id:   GlobalConstants.AMOD_OSC1_GAIN,
+                type: GlobalConstants.CLASS_TYPE_GAIN,
+                gain: 1,
+                moduleConnectionList: [
+                    {
+                        sourceModuleId: GlobalConstants.AMOD_OSC1_GAIN,
+                        targetModuleId: GlobalConstants.AMOD_DESTINATION,
+                        channelConnectionList: [
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id:   GlobalConstants.AMOD_DESTINATION,
+                type: GlobalConstants.CLASS_TYPE_DESTINATION
+            }
         ];
 
-        var controlConnections = [
-
+        var controlConnectionOptionsList = [
+            {
+                controlId:   GlobalConstants.CTRL_OSC1_WAVE,
+                moduleId:    GlobalConstants.AMOD_OSC1,
+                valueTarget: Wave.CTRL_TARGET_VALUE_WAVETYPE
+            }
         ];
 
-        var nodeConnections = [
+        var controlConnectionList    = {};
+        var controlConnectionfactory = new ControlConnectionFactory();
 
-        ];
+        controlConnectionOptionsList.forEach(function(controlConnectionOptions) {
+            controlConnectionList[controlConnectionOptions.controlId] = [];
+            controlConnectionList[controlConnectionOptions.controlId].push(
+                controlConnectionfactory.create(controlConnectionOptions)
+            );
+        });
 
-        var controlOptions = [
+        var audioModuleList = [];
+
+        audioModuleOptionList.forEach(function(audioModuleOptions) {
+            if (factories.hasOwnProperty(audioModuleOptions.type)) {
+                var factory = new factories[audioModuleOptions.type]();
+                audioModuleList.push(factory.create(audioContext, audioModuleOptions));
+            }
+        });
+
+        audioModuleList.forEach(function(audioModule) {
+           audioModule.setupModuleConnections(audioModuleList);
+           if (dejavu.instanceOf(audioModule, IControllable)) {
+               audioModule.connectToControls(controlConnectionList);
+           }
+        });
+
+
+        canvasState.getContainer().addEventListener(
+            "click",
+            function(evt) {
+                var now = audioContext.currentTime;
+                var eventObject = canvasState.getBaseLayer().getAttr('event');
+
+                var eventValue = eventObject.getValue();
+                var controlId  = eventObject.getControlId();
+
+                controlConnectionList[controlId].forEach(function(controlConnection) {
+                    var callBack = controlConnection.getCallback();
+                    callback(eventValue, now);
+                });
+
+            }
+        );
+
+        canvasState.getContainer().addEventListener(
+            "mousemove",
+            function(evt) {
+                if (canvasState.getPointerLocked()) {
+                    var eventObject = canvasState.getBaseLayer().getAttr('event');
+                }
+            }
+        );
+
+        audioModuleList[0].noteOn(GlobalConstants.KEY_CODE_A);
+
+        var controlOptionsList = [
             {
                 id:       -1,
                 type:     GlobalConstants.CLASS_TYPE_LABEL,
@@ -434,15 +559,24 @@ requirejs(
             */
         ];
 
-        controlOptions.forEach(function(controlOption) {
-            if (factories.hasOwnProperty(controlOption.type)) {
-                var factory = new factories[controlOption.type]();
-                canvasState.addControl(factory.create(canvasState, controlOption));
+        controlOptionsList.forEach(function(controlOptions) {
+            if (factories.hasOwnProperty(controlOptions.type)) {
+                var factory = new factories[controlOptions.type]();
+                canvasState.addControl(factory.create(canvasState, controlOptions));
             }
         });
 
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        var audioCtx        = new window.AudioContext();
+        audioModuleList.forEach(function(audioModule) {
+            audioModule.setupModuleConnections(audioModuleList);
+
+            if (dejavu.instanceOf(audioModule, IControllable)) {
+                audioModule.setupControls(canvasState.getControls());
+                audioModule.connectToControls(controlConnectionList);
+            }
+        });
+        
+
+        /*
         var synth           = new Synthesizer(audioCtx, canvasState);
 
         synth.init();
@@ -476,5 +610,6 @@ requirejs(
         window.addEventListener("keyup", function(e) { synth.noteOff(e.keyCode); });
 
         window.addEventListener("keydown", function(e) { synth.noteOn(e.keyCode); });
+        */
     }
 );

@@ -14,7 +14,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          *
          * @type {Snautsynth.Util.Formatter.NumberFormatter}
          */
-        _formatter:            null,
+        _formatter: null,
 
         /**
          * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
@@ -23,7 +23,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          *
          * @type {Snautsynth.DataType.NumberRange}
          */
-        _valueRange:           null,
+        _valueRange: null,
 
         /**
          * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
@@ -32,7 +32,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          *
          * @type {Snautsynth.Control.UI.RangeControl.SnapOptions}
          */
-        _snapOptions:          null,
+        _snapOptions: null,
 
         /**
          * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
@@ -41,7 +41,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          *
          * @type {number}
          */
-        _valueDspMult:         null,
+        _valueDspMult: null,
 
         /**
          * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
@@ -71,6 +71,16 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          */
         getValueRange: function() {
             return this._valueRange;
+        },
+
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         *
+         * @param {Snautsynth.DataType.NumberRange} valueRange
+         */
+        setValueRange: function(valueRange) {
+            this._valueRange = valueRange;
         },
 
         /**

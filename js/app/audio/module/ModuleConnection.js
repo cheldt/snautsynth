@@ -1,7 +1,7 @@
 /**
  * @namespace Snautsynth.Audio.Module
  */
-define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectable) {
+define(['dejavu'], function(dejavu) {
     'use strict';
 
     return dejavu.Class.declare({
@@ -10,9 +10,9 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
          * @instance
          * @protected
          *
-         * @type {Array.<Snautsynth.Audio.Module.NodeConnection>}
+         * @type {Array.<Snautsynth.Audio.Module.ChannelConnection>}
          */
-        _nodeConnectionList: null,
+        _channelConnectionList: null,
 
         /**
          * @memberof Snautsynth.Audio.Module.ModuleConnection
@@ -28,15 +28,33 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
          * @instance
          * @protected
          *
+         * @type {number}
+         */
+        _sourceModuleId: null,
+
+        /**
+         * @memberof Snautsynth.Audio.Module.ModuleConnection
+         * @instance
+         * @protected
+         *
          * @type {Snautsynth.Audio.Module.Module}
          */
         _targetModule: null,
 
         /**
-         * @return {Array.<Snautsynth.Audio.Module.NodeConnection>}
+         * @memberof Snautsynth.Audio.Module.ModuleConnection
+         * @instance
+         * @protected
+         *
+         * @type {number}
          */
-        getNodeConnectionList: function() {
-            return this._nodeConnectionList;
+        _targetModuleId: null,
+
+        /**
+         * @return {Array.<Snautsynth.Audio.Module.ChannelConnection>}
+         */
+        getChannelConnectionList: function() {
+            return this._channelConnectionList;
         },
 
         /**
@@ -53,6 +71,26 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
          * @memberof Snautsynth.Audio.Module.ModuleConnection
          * @instance
          *
+         * @param {Snautsynth.Audio.Module.Module} sourceModule
+         */
+        setSourceModule: function(sourceModule) {
+            this._sourceModule = sourceModule;
+        },
+
+        /**
+         * @memberof Snautsynth.Audio.Module.ModuleConnection
+         * @instance
+         *
+         * @returns {number}
+         */
+        getSourceModuleId: function() {
+            return this._sourceModuleId;
+        },
+
+        /**
+         * @memberof Snautsynth.Audio.Module.ModuleConnection
+         * @instance
+         *
          * @return {Snautsynth.Audio.Module.Module}
          */
         getTargetModule: function() {
@@ -60,39 +98,37 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @constructor
-         * @class Snautsynth.Audio.Module.ModuleConnection
+         * @memberof Snautsynth.Audio.Module.ModuleConnection
+         * @instance
          *
-         * @param {number} sourceModuleId
-         * @param {number} targetModuleId
-         * @param {Object} moduleList
+         * @param {Snautsynth.Audio.Module.Module} targetModule
          */
-        initialize: function(sourceModuleId, targetModuleId, moduleList) {
-            this._sourceModule = moduleList[sourceModuleId];
-            this._targetModule = moduleList[targetModuleId];
+        setTargetModule: function(targetModule) {
+            this._targetModule = targetModule;
         },
 
         /**
          * @memberof Snautsynth.Audio.Module.ModuleConnection
          * @instance
          *
-         * @param {null|number} id
+         * @returns {number}
          */
-        getNodeConnectionById: function(id) {
-            if (null === this._nodeConnectionList) {
-                return;
-            }
+        getTargetModuleId: function() {
+            return this._targetModuleId;
+        },
 
-            var foundNodeConnection = null;
-
-            this._nodeConnectionList.some(function(nodeConnection) {
-                if (id === nodeConnection.getId()) {
-                    foundNodeConnection = nodeConnection;
-                    return true;
-                }
-            });
-
-            return foundNodeConnection;
+        /**
+         * @constructor
+         * @class Snautsynth.Audio.Module.ModuleConnection
+         *
+         * @param {number}                                         sourceModuleId
+         * @param {number}                                         targetModuleId
+         * @param {Array.<Snautsynth.Audio.Module.ChannelConnection>} channelConnectionList
+         */
+        initialize: function(sourceModuleId, targetModuleId, channelConnectionList) {
+            this._sourceModuleId        = sourceModuleId;
+            this._targetModuleId        = targetModuleId;
+            this._channelConnectionList = channelConnectionList;
         }
     });
 });

@@ -1,7 +1,17 @@
 /**
  * @namespace Snautsynth.Factory.Audio.Module
  */
-define(['dejavu', 'app/audio/module/ModuleConnection'], function(dejavu, ModuleConnection) {
+define(
+    [
+        'dejavu',
+        'app/audio/module/ModuleConnection',
+        'app/factory/audio/module/ChannelConnection'
+    ],
+    function(
+        dejavu,
+        ModuleConnection,
+        ChannelConnectionFactory
+    ) {
     'use strict';
 
     /** @class Snautsynth.Factory.Audio.Module.ModuleConnection */
@@ -12,16 +22,24 @@ define(['dejavu', 'app/audio/module/ModuleConnection'], function(dejavu, ModuleC
          * @memberof Snautsynth.Factory.Audio.Module.ModuleConnection
          * @instance
          *
-         * @param {Object}                                 options
-         * @param {Array.<Snautsynth.Audio.Module.Module>} moduleList
+         * @param {Object} options
          *
-         * @return {Snautsynth.Audio.Output.Destination}
+         * @return {Snautsynth.Audio.Module.ModuleConnection}
          */
-        create: function(options, moduleList) {
+        create: function(options) {
+            var channelConnectionList    = [];
+            var channelConnectionFactory = new ChannelConnectionFactory();
+
+            if (null !== options.channelConnectionList) {
+                options.channelConnectionList.forEach(function(channelConnectionOptions) {
+                    channelConnectionList.push(channelConnectionFactory.create(channelConnectionOptions));
+                });
+            }
+
             return new ModuleConnection(
                 options.sourceModuleId,
                 options.targetModuleId,
-                moduleList
+                channelConnectionList
             );
         }
     });

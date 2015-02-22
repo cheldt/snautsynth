@@ -5,10 +5,10 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
     'use strict';
 
     return dejavu.Class.declare({
-        $name: 'NodeConnection',
+        $name: 'ChannelConnection',
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          * @protected
          *
@@ -17,7 +17,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         _id: null,
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          * @protected
          *
@@ -26,7 +26,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         _isConnected: null,
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          * @protected
          *
@@ -35,7 +35,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         _sourceChannelNumber: null,
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          * @protected
          *
@@ -44,7 +44,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         _sourceNode: null,
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          * @protected
          *
@@ -53,7 +53,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         _targetChannelNumber: null,
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          * @protected
          *
@@ -62,7 +62,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         _targetNode: null,
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @return {number}
@@ -72,7 +72,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @param {number} id
@@ -82,7 +82,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @return {boolean}
@@ -92,7 +92,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @param isConnected
@@ -102,7 +102,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @return {number}
@@ -112,7 +112,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @return {AudioNode}
@@ -122,7 +122,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @param {AudioNode} sourceNode
@@ -132,7 +132,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @return {number}
@@ -142,7 +142,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @return {AudioNode}
@@ -152,7 +152,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          *
          * @param {AudioNode} targetNode
@@ -163,7 +163,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
 
         /**
          * @constructor
-         * @class Snautsynth.Audio.Module.NodeConnection
+         * @class Snautsynth.Audio.Module.ChannelConnection
          *
          * @param {number} sourceChannelNumber
          * @param {number} targetChannelNumber
@@ -174,38 +174,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
-         * @instance
-         */
-        connectModules: function() {
-            var sourceModule = null;
-            var targetModule = null;
-
-            for(var moduleIndex = 0; moduleIndex < this._moduleList.length; moduleIndex ++) {
-                var module = this._moduleList[moduleIndex];
-
-                if (!dejavu.instanceOf(module, IConnectable)) {
-                    continue;
-                }
-
-                if (module.getId() === this._sourceModuleId) {
-                    sourceModule = module;
-                }
-
-                if (module.getId() === this._targetModuleId) {
-                    targetModule = module;
-                }
-            }
-
-            if (null === sourceModule || null === targetModule) {
-                return;
-            }
-
-            this.connectNodes(sourceModule, targetModule);
-        },
-
-        /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          */
         connectNodes: function() {
@@ -214,7 +183,7 @@ define(['dejavu', 'app/audio/module/IConnectable'], function(dejavu, IConnectabl
         },
 
         /**
-         * @memberof Snautsynth.Audio.Module.NodeConnection
+         * @memberof Snautsynth.Audio.Module.ChannelConnection
          * @instance
          */
         disconnectNodes:function() {

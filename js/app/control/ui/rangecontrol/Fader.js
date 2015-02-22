@@ -30,7 +30,7 @@ define(
              *
              * @type {string}
              */
-            _borderColor:        null,
+            _borderColor: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -39,7 +39,7 @@ define(
              *
              * @type {string}
              */
-            _color:              null,
+            _color: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -48,7 +48,7 @@ define(
              *
              * @type {Konva.Rect}
              */
-            _faderBorder:        null,
+            _faderBorder: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -57,7 +57,7 @@ define(
              *
              * @type {Konva.Rect}
              */
-            _faderKnob:          null,
+            _faderKnob: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -66,7 +66,7 @@ define(
              *
              * @type {number}
              */
-            _length:             null,
+            _length: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -75,7 +75,7 @@ define(
              *
              * @type {number}
              */
-            _orientation:        null,
+            _orientation: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -84,7 +84,7 @@ define(
              *
              * @type {number}
              */
-            _tmpPosition:        null,
+            _tmpPosition: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -93,7 +93,7 @@ define(
              *
              * @type {number}
              */
-            _trackLength:        null,
+            _trackLength: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -111,7 +111,7 @@ define(
              *
              * @type {Konva.Rect}
              */
-            _valueDisplayArea:   null,
+            _valueDisplayArea: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -120,7 +120,7 @@ define(
              *
              * @type {Konva.Text}
              */
-            _valueDisplayText:   null,
+            _valueDisplayText: null,
 
             $constants: {
                 /**

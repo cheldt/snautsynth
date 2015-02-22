@@ -13,7 +13,7 @@ define(['dejavu', 'konva'], function(dejavu, Konva) {
          *
          * @type {Snautsynth.Canvas.CanvasState}
          */
-        _canvasState:  null,
+        _canvasState: null,
 
         /**
          * @memberof Snautsynth.Control.Control
@@ -21,7 +21,7 @@ define(['dejavu', 'konva'], function(dejavu, Konva) {
          *
          * @type {Array.<Snautsynth.Control.Control>}
          */
-        _controls:     null,
+        _controls: null,
 
         /**
          * @memberof Snautsynth.Control.Control
@@ -29,8 +29,7 @@ define(['dejavu', 'konva'], function(dejavu, Konva) {
          *
          * @type {number}
          */
-        _id:           null,
-
+        _id: null,
 
         /**
          * @memberof Snautsynth.Control.Control
