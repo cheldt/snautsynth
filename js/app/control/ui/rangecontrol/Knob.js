@@ -293,38 +293,29 @@ define(
              * @class Snautsynth.Control.UI.RangeControl.Knob
              * @extends Snautsynth.Control.UI.RangeControl.RangeControl
              *
-             * @param {number}                                         id
-             * @param {Snautsynth.Util.Position}                       position
-             * @param {number}                                         value
-             * @param {Snautsynth.Canvas.CanvasState}                  canvasState
-             * @param {number}                                         valueDspMult
-             * @param {Snautsynth.DataType.NumberRange}                valueRange
-             * @param {number}                                         radius
-             * @param {string}                                         color
-             * @param {Snautsynth.Control.UI.RangeControl.SnapOptions} snapOptions
-             * @param {Snautsynth.Util.Formatter.NumberFormatter}      formatter
+             * @param {number}                                id
+             * @param {Snautsynth.Util.Position}              position
+             * @param {number}                                value
+             * @param {Snautsynth.Canvas.CanvasState}         canvasState
+             * @param {Snautsynth.DataType.RangeValueOptions} rangeValueOptions
+             * @param {number}                                radius
+             * @param {string}                                color
              */
             initialize: function (
                 id,
                 position,
                 value,
                 canvasState,
-                valueDspMult,
-                valueRange,
+                rangeValueOptions,
                 radius,
-                color,
-                snapOptions,
-                formatter
+                color
             ) {
                 this.$super(
                     id,
                     position,
                     value,
                     canvasState,
-                    valueDspMult,
-                    valueRange,
-                    snapOptions,
-                    formatter
+                    rangeValueOptions
                 );
 
                 this._radius        = radius;
@@ -364,8 +355,6 @@ define(
                 this._valueDisplayText = new Konva.Text({
                    fill: '#000'
                 });
-
-                this.updateValueDisplayText();
 
                 this._kineticGroup.add(this._valueDisplayText);
 
@@ -553,10 +542,14 @@ define(
                 );
 
                 // init pointer radian from value
-                this._pointerRadian = Knob.calcRadFromValue(this._value, this._pointerRadRange, this._valueRange);
+                this._pointerRadian = Knob.calcRadFromValue(
+                    this._value,
+                    this._pointerRadRange,
+                    this._rangeValueOptions.getNumberRange()
+                );
+
                 this._tmpPointerRad = this._pointerRadian;
                 var pointerDeg      = Knob.POINTER_MAX_DEG - Knob.POINTER_MIN_DEG;
-
 
                 // create components of control
                 this._knobPosition  = new Position(
@@ -599,8 +592,6 @@ define(
                 this._valueDisplayText.fontSize(Knob.VAL_DISPLAY_FONT_SIZE * radiusScaleMultiplier);
 
                 this.updateValueDisplayText();
-
-                this._kineticGroup.add(this._valueDisplayText);
             },
 
             /**
@@ -645,7 +636,9 @@ define(
                         mouseMoves = false;
                     }
 
-                    value = Knob.calcValueFromRad(this._tmpPointerRad, this._pointerRadRange, this._valueRange);
+                    var valueRange = this._rangeValueOptions.getNumberRange();
+
+                    value = Knob.calcValueFromRad(this._tmpPointerRad, this._pointerRadRange, valueRange);
 
                     if (mouseMoves) {
                         if (null !== snapOptions && 0 !== snapOptions.getSnapStep()) {
@@ -659,17 +652,17 @@ define(
 
                             if (0 !== step) {
                                 if (forward) {
-                                    if (this._value + step <= this._valueRange.getMax()) {
+                                    if (this._value + step <= valueRange.getMax()) {
                                         this._value = this._value + step;
                                     } else {
-                                        this._value = this._valueRange.getMax();
+                                        this._value = valueRange.getMax();
                                     }
                                 }
                                 else {
-                                    if (this._value - step >= this._valueRange.getMin()) {
+                                    if (this._value - step >= valueRange.getMin()) {
                                         this._value = this._value - step;
                                     } else {
-                                        this._value = this._valueRange.getMin();
+                                        this._value = valueRange.getMin();
                                     }
                                 }
 
@@ -678,7 +671,7 @@ define(
                                 this._pointerRadian = Knob.calcRadFromValue(
                                     this._value,
                                     this._pointerRadRange,
-                                    this._valueRange
+                                    valueRange
                                 );
 
                                 var newPointerPos = this.calcPointerPos();
@@ -703,7 +696,7 @@ define(
              * @instance
              */
             updateValueDisplayText: function() {
-                var text = this._formatter.format(this._value * this._valueDspMult);
+                var text = this._formatter.format(this._value * this._rangeValueOptions.getValueDisplayMultiplier());
 
                 this._valueDisplayText.setText(text);
 

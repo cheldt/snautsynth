@@ -167,8 +167,29 @@ define(['dejavu', 'konva'], function(dejavu, Konva) {
          * @param {Snautsynth.Control.Control} control
          */
         addControl: function(control) {
+            if (null === this._controls) {
+                this._controls = [];
+            }
+
             this._controls.push(control);
             this._kineticGroup.add(control.getKonvaGroup());
+        },
+
+        /**
+         * Checks if subcontrols exist
+         *
+         * @return {boolean}
+         */
+        hasControls: function() {
+            if (null === this._controls) {
+                return false;
+            }
+
+            if (0 < this._controls.length) {
+                return true;
+            }
+
+            return false;
         }
     });
 });

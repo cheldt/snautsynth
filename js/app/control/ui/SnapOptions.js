@@ -1,5 +1,5 @@
 /**
- * @namespace Snautsynth.Control.UI.RangeControl
+ * @namespace Snautsynth.Control.UI
  */
 define(['dejavu'], function(dejavu){
 
@@ -7,7 +7,7 @@ define(['dejavu'], function(dejavu){
         $name: 'SnapOptions',
 
         /**
-         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @memberof Snautsynth.Control.UI.SnapOptions
          * @instance
          * @protected
          *
@@ -16,7 +16,7 @@ define(['dejavu'], function(dejavu){
         _doubleClickSnapValue: null,
 
         /**
-         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @memberof Snautsynth.Control.UI.SnapOptions
          * @instance
          * @protected
          *
@@ -25,7 +25,7 @@ define(['dejavu'], function(dejavu){
         _snapDistance:         0,
 
         /**
-         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @memberof Snautsynth.Control.UI.SnapOptions
          * @instance
          * @protected
          *
@@ -34,7 +34,7 @@ define(['dejavu'], function(dejavu){
         _snapStep:             0,
 
         /**
-         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @memberof Snautsynth.Control.UI.SnapOptions
          * @instance
          * @protected
          *
@@ -45,7 +45,7 @@ define(['dejavu'], function(dejavu){
         },
 
         /**
-         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @memberof Snautsynth.Control.UI.SnapOptions
          * @instance
          *
          * @return {number}
@@ -55,7 +55,7 @@ define(['dejavu'], function(dejavu){
         },
 
         /**
-         * @memberof Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @memberof Snautsynth.Control.UI.SnapOptions
          * @instance
          *
          * @return {number}
@@ -66,7 +66,7 @@ define(['dejavu'], function(dejavu){
 
         /**
          * @constructor
-         * @class Snautsynth.Control.UI.RangeControl.SnapOptions
+         * @class Snautsynth.Control.UI.SnapOptions
          *
          * @param {number} doubleClickSnapValue The value to which the controller jumps on double-click
          * @param {number} snapDistance         The distance to next/prev step, which triggers snap to step-value

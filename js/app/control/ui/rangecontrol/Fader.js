@@ -64,6 +64,15 @@ define(
              * @instance
              * @protected
              *
+             * @type {Konva.Line}
+             */
+            _faderTrack: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             * @protected
+             *
              * @type {number}
              */
             _length: null,
@@ -228,29 +237,23 @@ define(
              * @class Snautsynth.Control.UI.RangeControl.Fader
              * @extends Snautsynth.Control.UI.RangeControl.RangeControl
              *
-             * @param {number}                                         id
-             * @param {Snautsynth.Util.Position}                       position
-             * @param {number}                                         value
-             * @param {Snautsynth.Canvas.CanvasState}                  canvasState
-             * @param {number}                                         valueDspMult
-             * @param {Snautsynth.DataType.NumberRange}                valueRange
-             * @param {number}                                         length
-             * @param {string}                                         color
-             * @param {Snautsynth.Control.UI.RangeControl.SnapOptions} snapOptions
-             * @param {Snautsynth.Util.Formatter.NumberFormatter}      formatter
-             * @param {number}                                         orientation
+             * @param {number}                                id
+             * @param {Snautsynth.Util.Position}              position
+             * @param {number}                                value
+             * @param {Snautsynth.Canvas.CanvasState}         canvasState
+             * @param {Snautsynth.DataType.RangeValueOptions} rangeValueOptions
+             * @param {number}                                length
+             * @param {string}                                color
+             * @param {number}                                orientation
              */
             initialize: function(
                 id,
                 position,
                 value,
                 canvasState,
-                valueDspMult,
-                valueRange,
+                rangeValueOptions,
                 length,
                 color,
-                snapOptions,
-                formatter,
                 orientation
             ) {
                 this.$super(
@@ -258,111 +261,41 @@ define(
                     position,
                     value,
                     canvasState,
-                    valueDspMult,
-                    valueRange,
-                    snapOptions,
-                    formatter
+                    rangeValueOptions
                 );
-
                 this._length      = length;
                 this._color       = color;
                 this._orientation = orientation;
 
-                var height        = this._length;
-                var width         = Fader.FADER_TRACK_HEIGHT;
-
-                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
-                    height = Fader.FADER_TRACK_HEIGHT;
-                    width  = this._length;
-                }
-
                 //create border
                 this._faderBorder = new Kinectic.Rect({
                     cornerRadius: Fader.BORDER_RADIUS,
-                    height:       height,
-                    width:        width,
                     strokeWidth:  Fader.FADER_TRACK_BORDER_WIDTH,
-
                     fill:         color,
                     stroke:       '#000',
-
                     id:           id
                 });
 
                 this._kineticGroup.add(this._faderBorder);
 
-                this._trackLength = this._length * 0.9;
-                this._tmpPosition = this.calcPositionFromValue(value);
-
-                this._startTrackPosition = new Position(
-                    Fader.FADER_TRACK_HEIGHT / 2,
-                    (this._length - this._trackLength) / 2
-                );
-
-                if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
-                    this._startTrackPosition = new Position(
-                        (this._length - this._trackLength) / 2,
-                        Fader.FADER_TRACK_HEIGHT / 2
-                    );
-                }
-
-                var startTrackX = this._startTrackPosition.getX();
-                var startTrackY = this._startTrackPosition.getY();
-
-                var endPointX = startTrackX;
-                var endPointY = startTrackY + this._trackLength;
-
-                if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
-                    endPointX = startTrackX + this._trackLength;
-                    endPointY = startTrackY;
-                }
-
                 // create track-line
-                var trackLine = new Konva.Line({
-                    points:      [startTrackX, startTrackY, endPointX, endPointY],
+                this._faderTrack = new Konva.Line({
                     strokeWidth: Fader.FADER_TRACK_BORDER_WIDTH,
                     lineCap:     'round',
                     lineJoin:    'round',
-
                     stroke:      '#000'
                 });
-
-                this._kineticGroup.add(trackLine);
-
-                height = Fader.FADER_KNOB_HEIGHT;
-                width  = Fader.FADER_KNOB_WIDTH;
-
-                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
-                    height = Fader.FADER_KNOB_WIDTH;
-                    width  = Fader.FADER_KNOB_HEIGHT;
-                }
 
                 //create handle
                 this._faderKnob = new Konva.Rect({
                     cornerRadius: Fader.BORDER_RADIUS,
-                    height:       height,
-                    width:        width,
                     strokeWidth:  Fader.FADER_TRACK_BORDER_WIDTH,
-
                     fill:         color,
                     stroke:       '#000'
                 });
 
-                this._kineticGroup.add(this._faderKnob);
-
-                var displayAreaX = startTrackX - (Fader.VAL_DISPLAY_AREA_WIDTH / 2);
-                var displayAreaY = this._trackLength + Fader.VAL_DISPLAY_AREA_HEIGHT;
-
-                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
-                    displayAreaX = (-1) * Fader.VAL_DISPLAY_AREA_WIDTH - (startTrackX);
-                    displayAreaY = 0;
-                }
-
-
                 //create value display
                 this._valueDisplayArea = new Konva.Rect({
-                    x:            displayAreaX,
-                    y:            displayAreaY,
                     cornerRadius: Fader.BORDER_RADIUS,
                     height:       Fader.VAL_DISPLAY_AREA_HEIGHT,
                     width:        Fader.VAL_DISPLAY_AREA_WIDTH,
@@ -379,10 +312,6 @@ define(
                 });
 
                 this._kineticGroup.add(this._valueDisplayText);
-
-                this.updateValueDisplayText();
-
-                this.updateKnobPosition(this._tmpPosition);
 
                 var myFader = this;
 
@@ -477,7 +406,7 @@ define(
             calcPositionFromValue: function(value) {
                 // _trackLength => valueRange
                 // position => value
-                return (this._trackLength * value) / this._valueRange.calcRange();
+                return (this._trackLength * value) / this._rangeValueOptions.getNumberRange().calcRange();
             },
 
 
@@ -492,13 +421,90 @@ define(
              * @return {number}
              */
             calcValueFromPosition: function(position) {
+                var valueRange = this._rangeValueOptions.getNumberRange();
+
                 // valueRange => this._trackLength
                 // value => position
                 if (0 == position) {
-                    return this._valueRange.getMin();
+                    return valueRange.getMin();
                 } else {
-                    return this._valueRange.getMin() + (this._valueRange.calcRange() * position) / this._trackLength;
+                    return valueRange.getMin() + (valueRange.calcRange() * position) / this._trackLength;
                 }
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             */
+            setUp: function() {
+                var height = this._length;
+                var width  = Fader.FADER_TRACK_HEIGHT;
+
+                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
+                    height = Fader.FADER_TRACK_HEIGHT;
+                    width  = this._length;
+                }
+
+                // setup border
+                this._faderBorder.height(height);
+                this._faderBorder.width(width);
+
+                this._trackLength = this._length * 0.9;
+                this._tmpPosition = this.calcPositionFromValue(value);
+
+                this._startTrackPosition = new Position(
+                    Fader.FADER_TRACK_HEIGHT / 2,
+                    (this._length - this._trackLength) / 2
+                );
+
+                if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
+                    this._startTrackPosition = new Position(
+                        (this._length - this._trackLength) / 2,
+                        Fader.FADER_TRACK_HEIGHT / 2
+                    );
+                }
+
+                var startTrackX = this._startTrackPosition.getX();
+                var startTrackY = this._startTrackPosition.getY();
+
+                var endPointX = startTrackX;
+                var endPointY = startTrackY + this._trackLength;
+
+                if (Fader.ORIENTATION_HORIZONTAL == this._orientation) {
+                    endPointX = startTrackX + this._trackLength;
+                    endPointY = startTrackY;
+                }
+
+                // setup fader-track
+                this._faderTrack.points([startTrackX, startTrackY, endPointX, endPointY]);
+
+                height = Fader.FADER_KNOB_HEIGHT;
+                width  = Fader.FADER_KNOB_WIDTH;
+
+                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
+                    height = Fader.FADER_KNOB_WIDTH;
+                    width  = Fader.FADER_KNOB_HEIGHT;
+                }
+
+                // setup fader-knob
+                this._faderKnob.height(height);
+                this._faderKnob.width(width);
+
+                var displayAreaX = startTrackX - (Fader.VAL_DISPLAY_AREA_WIDTH / 2);
+                var displayAreaY = this._trackLength + Fader.VAL_DISPLAY_AREA_HEIGHT;
+
+                if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
+                    displayAreaX = (-1) * Fader.VAL_DISPLAY_AREA_WIDTH - (startTrackX);
+                    displayAreaY = 0;
+                }
+
+                // setup value-display
+                this._valueDisplayArea.x(displayAreaX);
+                this._valueDisplayArea.y(displayAreaY);
+
+                this.updateValueDisplayText();
+
+                this.updateKnobPosition(this._tmpPosition);
             },
 
             /**
@@ -525,11 +531,10 @@ define(
                         mouseDelta = (-1) * mousePos.getY();
                     }
 
-                    var snapOptions = this.getSnapOptions();
+                    var snapOptions = this._rangeValueOptions.getSnapOptions();
                     var speedup     = Math.abs((10 * mouseDelta) / maxMouseDelta);
                     var speed       = 2.05;
                     var mouseMoves  = true;
-
 
                     if (null === snapOptions || (null !== snapOptions && 0 === snapOptions.getSnapStep())) {
                         speed = speed * speedup;
@@ -554,6 +559,8 @@ define(
 
                     value = this.calcValueFromPosition(this._tmpPosition);
 
+                    var valueRange = this._rangeValueOptions.getNumberRange();
+
                     if (mouseMoves) {
                         if (null !== snapOptions && 0 !== snapOptions.getSnapStep()) {
                             var step = 0;
@@ -564,16 +571,16 @@ define(
 
                             if (0 !== step) {
                                 if (!forward) {
-                                    if (this._value + step <= this._valueRange.getMax()) {
+                                    if (this._value + step <= valueRange.getMax()) {
                                         this._value = this._value + step;
                                     } else {
-                                        this._value = this._valueRange.getMax();
+                                        this._value = valueRange.getMax();
                                     }
                                 } else {
-                                    if (this._value - step >= this._valueRange.getMin()) {
+                                    if (this._value - step >= valueRange.getMin()) {
                                         this._value = this._value - step;
                                     } else {
-                                        this._value = this._valueRange.getMin();
+                                        this._value = valueRange.getMin();
                                     }
                                 }
                                 this._canvasState.setLastValue(this._value);
@@ -609,7 +616,9 @@ define(
              * @instance
              */
             updateValueDisplayText: function() {
-                var text = this._formatter.format(this._value * this._valueDspMult);
+                var text = this._rangeValueOptions
+                    .getNumberFormatter()
+                    .format(this._value * this._rangeValueOptions.getValueDisplayMultiplier());
 
                 this._valueDisplayText.setText(text);
 

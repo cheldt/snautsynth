@@ -2,7 +2,7 @@
  * @namespace Snautsynth.DataType
  */
 define(['dejavu'], function(dejavu){
-    var NumberRange = dejavu.Class.declare({
+    return dejavu.Class.declare({
         $name: 'NumberRange',
 
         /**
@@ -68,6 +68,4 @@ define(['dejavu'], function(dejavu){
             return this._max - this._min;
         }
     });
-
-    return NumberRange;
 });

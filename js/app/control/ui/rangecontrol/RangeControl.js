@@ -12,75 +12,28 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          * @instance
          * @protected
          *
-         * @type {Snautsynth.Util.Formatter.NumberFormatter}
+         * @type {Snautsynth.DataType.RangeValueOptions}
          */
-        _formatter: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
-         * @instance
-         * @protected
-         *
-         * @type {Snautsynth.DataType.NumberRange}
-         */
-        _valueRange: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
-         * @instance
-         * @protected
-         *
-         * @type {Snautsynth.Control.UI.RangeControl.SnapOptions}
-         */
-        _snapOptions: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
-         * @instance
-         * @protected
-         *
-         * @type {number}
-         */
-        _valueDspMult: null,
+        _rangeValueOptions: null,
 
         /**
          * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
          * @instance
          *
-         * @return {Snautsynth.Util.Formatter.NumberFormatter}
+         * @return {Snautsynth.DataType.RangeValueOptions}
          */
-        getFormatter: function() {
-            return this._formatter;
+        getRangeValueOptions: function() {
+            return this._rangeValueOptions;
         },
 
         /**
          * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
          * @instance
          *
-         * @return {Snautsynth.Control.UI.RangeControl.SnapOptions}
+         * @param {Snautsynth.DataType.RangeValueOptions} rangeValueOptions
          */
-        getSnapOptions: function() {
-            return this._snapOptions;
-        },
-
-        /**
-         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
-         * @instance
-         *
-         * @return {Snautsynth.DataType.NumberRange}
-         */
-        getValueRange: function() {
-            return this._valueRange;
-        },
-
-        /**
-         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
-         * @instance
-         *
-         * @param {Snautsynth.DataType.NumberRange} valueRange
-         */
-        setValueRange: function(valueRange) {
-            this._valueRange = valueRange;
+        setRangeValueOptions: function(rangeValueOptions) {
+            this._rangeValueOptions = rangeValueOptions;
         },
 
         /**
@@ -92,20 +45,13 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          * @param {Snautsynth.Util.Position}                       position
          * @param {*}                                              value
          * @param {Snautsynth.Canvas.CanvasState}                  canvasState
-         * @param {number}                                         valueDspMult
-         * @param {Snautsynth.DataType.NumberRange}                valueRange
-         * @param {Snautsynth.Control.UI.RangeControl.SnapOptions} snapOptions
-         * @param {Snautsynth.Util.Formatter.NumberFormatter}      formatter
+         * @param {Snautsynth.DataType.RangeValueOptions}          rangeValueOptions
          */
-        initialize: function (id, position, value, canvasState, valueDspMult, valueRange, snapOptions, formatter) {
+        initialize: function (id, position, value, canvasState, rangeValueOptions) {
             this.$super(id, position, value, canvasState);
 
-            this._valueDspMult = valueDspMult;
-            this._valueRange   = valueRange;
-            this._snapOptions  = snapOptions;
-            this._formatter    = formatter;
+            this._rangeValueOptions = rangeValueOptions;
         }
-
     });
 
     return RangeControl;

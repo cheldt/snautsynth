@@ -33,7 +33,9 @@ define(['dejavu'], function(dejavu) {
          * @instance
          *
          * @param {number} ctrlTargetId
+         *
+         * @return {null|Snautsynth.DataType.ValueOption}
          */
-        getValueBoundariesByCtrlTarget: function(ctrlTargetId) {}
+        getValueOptionsByCtrlTarget: function(ctrlTargetId) {}
     });
 });

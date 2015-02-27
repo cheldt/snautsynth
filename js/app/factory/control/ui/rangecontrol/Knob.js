@@ -4,17 +4,13 @@
 define(
     [
         'app/control/ui/rangecontrol/Knob',
-        'app/control/ui/rangecontrol/SnapOptions',
-        'app/datatype/NumberRange',
-        'app/util/formatter/NumberFormatter',
+        'app/factory/datatype/RangeValueOptions',
         'app/util/Position',
         'dejavu'
     ],
     function(
         Knob,
-        SnapOptions,
-        NumberRange,
-        NumberFormatter,
+        RangeValueOptionsFactory,
         Position,
         dejavu
     ) {
@@ -34,30 +30,18 @@ define(
              * @return {Snautsynth.Control.UI.RangeControl.Knob}
              */
             create: function(canvasState, options) {
-                var position    = new Position(options.position.x, options.position.y);
-                var valueRange  = new NumberRange(options.valueRange.min, options.valueRange.max);
-                var formatter   = new NumberFormatter(options.numberFormat);
-                var snapOptions = null;
-
-                if (null !== options.snapOptions) {
-                    snapOptions = new SnapOptions(
-                        options.snapOptions.doubleClickSnapValue,
-                        options.snapOptions.snapDistance,
-                        options.snapOptions.snapStep
-                    );
-                }
+                var position                 = new Position(options.position.x, options.position.y);
+                var rangeValueOptionsFactory = new RangeValueOptionsFactory();
+                var rangeValueOptions        = rangeValueOptionsFactory.create(options.rangeValueOptions);
 
                 return new Knob(
                     options.id,
                     position,
                     options.value,
                     canvasState,
-                    options.valueDisplayMultiplier,
-                    valueRange,
+                    rangeValueOptions,
                     options.radius,
-                    options.color,
-                    snapOptions,
-                    formatter
+                    options.color
                 );
             }
         });

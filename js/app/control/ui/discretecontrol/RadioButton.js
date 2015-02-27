@@ -1,17 +1,19 @@
 /**
- * @namespace Snautsynth.Control.UI
+ * @namespace Snautsynth.Control.UI.DiscreteControl
  */
 define(
     [
-        'dejavu',
         'app/event/Event',
         'app/control/ui/UIControl',
+        'app/util/Position',
+        'dejavu',
         'mout/lang/defaults'
     ],
     function(
-        dejavu,
         Event,
         UIControl,
+        Position,
+        dejavu,
         defaults
     ) {
         'use strict';
@@ -22,7 +24,7 @@ define(
             $extends: UIControl,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -31,7 +33,7 @@ define(
             _checked: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -40,7 +42,7 @@ define(
             _checkedColor: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -49,7 +51,7 @@ define(
             _color: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -58,7 +60,7 @@ define(
             _fontFormatStr: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -67,7 +69,7 @@ define(
             _fontSize: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -76,7 +78,7 @@ define(
             _labelText: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -85,7 +87,7 @@ define(
             _radius: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -94,7 +96,7 @@ define(
             _buttonCircle: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -103,7 +105,7 @@ define(
             _checkedCircle: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              * @protected
              *
@@ -112,7 +114,7 @@ define(
             _value: null,
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              *
              * @return {boolean}
@@ -122,7 +124,7 @@ define(
             },
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              *
              * @param {boolean} checked
@@ -132,7 +134,7 @@ define(
             },
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              *
              * @return {*}
@@ -142,7 +144,7 @@ define(
             },
 
             /**
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              *
              * @return {number}
@@ -153,7 +155,7 @@ define(
 
             $constants: {
                 /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
+                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
                  * @constant
                  * @default
                  *
@@ -161,7 +163,7 @@ define(
                  */
                 BUTTON_RADIUS:           10,
                 /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
+                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
                  * @constant
                  * @default
                  *
@@ -169,7 +171,7 @@ define(
                  */
                 LABEL_DISPLAY_FONT_SIZE: 18,
                 /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
+                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
                  * @constant
                  * @default
                  *
@@ -177,7 +179,7 @@ define(
                  */
                 LABEL_BUTTON_SPACE:      2,
                 /**
-                 * @memberof Snautsynth.Control.UI.RadioButton
+                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
                  * @constant
                  * @default
                  *
@@ -188,11 +190,10 @@ define(
 
             /**
              * @constructor
-             * @class   Snautsynth.Control.UI.RadioButton
+             * @class   Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @extends Snautsynth.Control.UI.UIControl
              *
              * @param {number}                        id
-             * @param {Snautsynth.Util.Position}      position
              * @param {Snautsynth.Canvas.CanvasState} canvasState
              * @param {string}                        labelText
              * @param {*}                             value
@@ -200,8 +201,8 @@ define(
              * @param {string}                        checkedColor
              * @param {number}                        radius
              */
-            initialize: function(id, position, canvasState, labelText, value, color, checkedColor, radius) {
-                this.$super(id, position, value, canvasState);
+            initialize: function(id, canvasState, labelText, value, color, checkedColor, radius) {
+                this.$super(id, new Position(0, 0), value, canvasState);
 
                 this._radius = defaults(radius, RadioButton.BUTTON_RADIUS);
 
@@ -253,18 +254,21 @@ define(
 
                 var myRadioButton = this;
                 this._kineticGroup.on('click', function(evt) {
-                        myRadioButton.getCanvasState().getBaseLayer().setAttr('event', new Event(
-                        myRadioButton.getId(),
-                        myRadioButton.getValue(),
-                        Event.TYPE_CHECKED_CHANGED
-                    ));
+                        myRadioButton.getCanvasState().getBaseLayer().setAttr(
+                            'event',
+                            new Event(
+                                myRadioButton.getId(),
+                                myRadioButton.getValue(),
+                                Event.TYPE_CHECKED_CHANGED
+                            )
+                        );
                 });
             },
 
             /**
              * Change state and mark as selected
              *
-             * @memberof Snautsynth.Control.UI.RadioButton
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @instance
              *
              * @param {boolean} checked
