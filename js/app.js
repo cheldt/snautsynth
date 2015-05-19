@@ -32,7 +32,7 @@ requirejs(
         'app/audio/Synthesizer',
         'app/util/GlobalConstants',
         'app/factory/control/layout/Label',
-        'app/factory/control/ui/RadioGroup',
+        'app/factory/control/ui/discretecontrol/RadioGroup',
         'app/factory/control/ui/envelope/Graph',
         'app/factory/control/ui/rangecontrol/Fader',
         'app/factory/control/ui/rangecontrol/Knob',
@@ -68,7 +68,7 @@ requirejs(
         var audioContext    = new window.AudioContext();
 
         var factories = {};
-        factories[GlobalConstants.CLASS_TYPE_BUTTON]      = KnobFactory;
+        factories[GlobalConstants.CLASS_TYPE_KNOB]        = KnobFactory;
         factories[GlobalConstants.CLASS_TYPE_LABEL]       = LabelFactory;
         factories[GlobalConstants.CLASS_TYPE_RADIOGROUP]  = RadioGroupFactory;
         factories[GlobalConstants.CLASS_TYPE_FADER]       = FaderFactory;
@@ -137,17 +137,20 @@ requirejs(
                 controlId:   GlobalConstants.CTRL_OSC1_WAVE,
                 moduleId:    GlobalConstants.AMOD_OSC1,
                 valueTarget: Wave.CTRL_TARGET_VALUE_WAVETYPE
+            },
+            {
+                controlId:   GlobalConstants.CTRL_KEYBOARD,
+                moduleId:    GlobalConstants.AMOD_OSC1,
+                valueTarget: Wave.CTRL_TARGET_TRIGGER_NOTE
             }
         ];
 
         var controlConnectionList    = {};
-        var controlConnectionfactory = new ControlConnectionFactory();
+        var controlConnectionFactory = new ControlConnectionFactory();
 
         controlConnectionOptionsList.forEach(function(controlConnectionOptions) {
-            controlConnectionList[controlConnectionOptions.controlId] = [];
-            controlConnectionList[controlConnectionOptions.controlId].push(
-                controlConnectionfactory.create(controlConnectionOptions)
-            );
+            controlConnectionList[controlConnectionOptions.controlId]
+                = controlConnectionFactory.create(controlConnectionOptions);
         });
 
         var audioModuleList = [];
@@ -159,13 +162,6 @@ requirejs(
             }
         });
 
-        audioModuleList.forEach(function(audioModule) {
-           audioModule.setupModuleConnections(audioModuleList);
-           if (dejavu.instanceOf(audioModule, IControllable)) {
-               audioModule.connectToControls(controlConnectionList);
-           }
-        });
-
 
         canvasState.getContainer().addEventListener(
             "click",
@@ -173,14 +169,18 @@ requirejs(
                 var now = audioContext.currentTime;
                 var eventObject = canvasState.getBaseLayer().getAttr('event');
 
+                if (typeof eventObject === 'undefined') {
+                    return;
+                }
+
                 var eventValue = eventObject.getValue();
                 var controlId  = eventObject.getControlId();
 
-                controlConnectionList[controlId].forEach(function(controlConnection) {
-                    var callBack = controlConnection.getCallback();
-                    callback(eventValue, now);
-                });
+                controlConnection = controlConnectionList[controlId];
 
+                var callBackFunction = controlConnection.getCallback();
+
+                callBackFunction(eventValue, now);
             }
         );
 
@@ -208,38 +208,30 @@ requirejs(
                 type:         GlobalConstants.CLASS_TYPE_RADIOGROUP,
                 position:     {x: 0, y: 20},
                 value:        Synthesizer.WAVEFORM_SINE,
-                radioButtons: [
+                radioButtonOptions: [
                     {
-                        id:           0,
-                        type:         GlobalConstants.CLASS_TYPE_RADIOBUTTON,
-                        position:     {x: 0, y: 0},
+                        position:     null,
                         label:        'Sine',
                         value:        Synthesizer.WAVEFORM_SINE,
                         color:        '#000',
                         checkedColor: '#FFF'
                     },
                     {
-                        id:           0,
-                        type:         GlobalConstants.CLASS_TYPE_RADIOBUTTON,
-                        position:     {x: 0, y: 0},
+                        position:     null,
                         label:        'Square',
                         value:        Synthesizer.WAVEFORM_SQUARE,
                         color:        '#000',
                         checkedColor: '#FFF'
                     },
                     {
-                        id:           0,
-                        type:         GlobalConstants.CLASS_TYPE_RADIOBUTTON,
-                        position:     {x: 0, y: 0},
+                        position:     null,
                         label:        'Saw',
                         value:        Synthesizer.WAVEFORM_SAWTOOTH,
                         color:        '#000',
                         checkedColor: '#FFF'
                     },
                     {
-                        id:           0,
-                        type:         GlobalConstants.CLASS_TYPE_RADIOBUTTON,
-                        position:     {x: 0, y: 0},
+                        position:     null,
                         label:        'Triangle',
                         value:        Synthesizer.WAVEFORM_TRIANGLE,
                         color:        '#000',
@@ -254,9 +246,10 @@ requirejs(
                 color:    '#000',
                 text:     'OSC1-Tune'
             },
+            /*
             {
                 id:                     GlobalConstants.CTRL_OSC1_TUNE,
-                type:                   GlobalConstants.CLASS_TYPE_BUTTON,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
                 position:               {x: 60, y: 20},
                 value:                  0,
                 valueDisplayMultiplier: 1,
@@ -275,7 +268,7 @@ requirejs(
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_OCT,
-                type:                   GlobalConstants.CLASS_TYPE_BUTTON,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
                 position:               {x: 120, y: 20},
                 value:                  0,
                 valueDisplayMultiplier: 1,
@@ -294,7 +287,7 @@ requirejs(
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_GAIN,
-                type:                   GlobalConstants.CLASS_TYPE_BUTTON,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
                 position:               {x: 180, y: 20},
                 value:                  1,
                 valueDisplayMultiplier: 100,
@@ -364,7 +357,7 @@ requirejs(
             },
             {
                 id:                     GlobalConstants.CTRL_OSC2_TUNE,
-                type:                   GlobalConstants.CLASS_TYPE_BUTTON,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
                 position:               {x: 60, y: 100},
                 value:                  0,
                 valueDisplayMultiplier: 1,
@@ -383,7 +376,7 @@ requirejs(
             },
             {
                 id:                     GlobalConstants.CTRL_OSC2_OCT,
-                type:                   GlobalConstants.CLASS_TYPE_BUTTON,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
                 position:               {x: 120, y: 100},
                 value:                  0,
                 valueDisplayMultiplier: 1,
@@ -402,7 +395,7 @@ requirejs(
             },
             {
                 id:                     GlobalConstants.CTRL_OSC2_GAIN,
-                type:                   GlobalConstants.CLASS_TYPE_BUTTON,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
                 position:               {x: 180, y: 100},
                 value:                  1,
                 valueDisplayMultiplier: 100,
@@ -421,7 +414,7 @@ requirejs(
             },
             {
                 id:                     GlobalConstants.CTRL_MASTERGAIN,
-                type:                   GlobalConstants.CLASS_TYPE_BUTTON,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
                 position:               {x: 240, y: 60},
                 value:                  0.05,
                 valueDisplayMultiplier: 2000,
@@ -489,17 +482,21 @@ requirejs(
                 text:     'Freq'
             },
             {
-                id:                     GlobalConstants.CTRL_FLT_FREQUENCY,
-                type:                   GlobalConstants.CLASS_TYPE_FADER,
-                position:               {x: 450, y: 370},
-                value:                  22050,
-                valueDisplayMultiplier: 1,
-                valueRange:             {min: 60, max: 22050},
-                length:                 100,
-                color:                  '#AABBCC',
-                snapOptions:            null,
-                numberFormat:           '#0',
-                orientation:            Fader.ORIENTATION_VERTICAL
+                id:         GlobalConstants.CTRL_FLT_FREQUENCY,
+                type:       GlobalConstants.CLASS_TYPE_FADER,
+                position:   {x: 450, y: 370},
+                value:      22050,
+                rangeValueOptions:
+                {
+                    valueRange:             {min: 60, max: 22050},
+                    numberFormat:           '#0',
+                    valueDisplayMultiplier: 1,
+                    snapOptions :           null
+                },
+                length:      100,
+                color:       '#AABBCC',
+                snapOptions: null,
+                orientation: Fader.ORIENTATION_VERTICAL
             },
             {
                 id:       -1,
@@ -521,7 +518,7 @@ requirejs(
                 numberFormat:           '#0',
                 orientation:            Fader.ORIENTATION_VERTICAL
             }
-            /*
+
             {
                 id:       -1,
                 type:     GlobalConstants.CLASS_TYPE_LABEL,
@@ -566,11 +563,18 @@ requirejs(
             }
         });
 
+        var controlConnectionKeys = Object.keys(controlConnectionList);
+        var keyLength             = controlConnectionKeys.length;
+
+        for (var index = 0; index < keyLength; index++) {
+            controlConnectionList[controlConnectionKeys[index]]
+                .setupControl(audioModuleList, canvasState.getControls());
+        }
+
         audioModuleList.forEach(function(audioModule) {
             audioModule.setupModuleConnections(audioModuleList);
 
             if (dejavu.instanceOf(audioModule, IControllable)) {
-                audioModule.setupControls(canvasState.getControls());
                 audioModule.connectToControls(controlConnectionList);
             }
         });

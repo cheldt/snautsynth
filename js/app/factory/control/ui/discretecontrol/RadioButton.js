@@ -1,9 +1,9 @@
 /**
- * @namespace Snautsynth.Factory.Control.UI
+ * @namespace Snautsynth.Factory.Control.UI.DiscreteControl
  */
 define(
     [
-        'app/control/ui/RadioButton',
+        '../../../../control/ui/discretecontrol/RadioButton',
         'app/util/Position',
         'dejavu'
     ],
@@ -14,25 +14,22 @@ define(
     ) {
         'use strict';
 
-        /** @class Snautsynth.Factory.Control.UI.RadioButton */
+        /** @class Snautsynth.Factory.Control.UI.DiscreteControl.RadioButton */
         return dejavu.Class.declare({
             $name: 'RadioButton',
 
             /**
-             * @memberof Snautsynth.Factory.Control.UI.RadioButton
+             * @memberof Snautsynth.Factory.Control.UI.DiscreteControl.RadioButton
              * @instance
              *
              * @param  {Snautsynth.Canvas.CanvasState} canvasState
              * @param  {Object}                        options
              *
-             * @return {Snautsynth.Control.UI.RadioButton}
+             * @return {Snautsynth.Control.UI.DiscreteControl.RadioButton}
              */
             create: function(canvasState, options) {
-                var position = new Position(options.position.x, options.position.y);
-
                 return new RadioButton(
                     options.id,
-                    position,
                     canvasState,
                     options.label,
                     options.value,
@@ -40,7 +37,6 @@ define(
                     options.checkedColor,
                     options.radius
                 );
-
             }
         });
     }

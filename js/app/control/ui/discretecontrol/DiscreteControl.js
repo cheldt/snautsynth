@@ -22,7 +22,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          *
          * @return {Snautsynth.DataType.DiscreteValueOptions}
          */
-        getDiscreteValueOptions: function() {
+        getValueOptions: function() {
             return this._discreteValueOptions;
         },
 
@@ -32,7 +32,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          *
          * @param {Snautsynth.DataType.DiscreteValueOptions} discreteValueOptions
          */
-        setDiscreteValueOptions: function(discreteValueOptions) {
+        setValueOptions: function(discreteValueOptions) {
             this._discreteValueOptions = discreteValueOptions;
         },
 

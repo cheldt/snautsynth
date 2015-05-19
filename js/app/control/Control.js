@@ -1,7 +1,7 @@
 /**
  * @namespace Snautsynth.Control
  */
-define(['dejavu', 'konva'], function(dejavu, Konva) {
+define(['dejavu', 'konva', 'app/util/Position'], function(dejavu, Konva, Position) {
     'use strict';
 
     return dejavu.Class.declare({
@@ -86,6 +86,19 @@ define(['dejavu', 'konva'], function(dejavu, Konva) {
          */
         getKonvaGroup: function() {
             return this._kineticGroup;
+        },
+
+        /**
+         * @memberof Snautsynth.Control.Control
+         * @instance
+         *
+         * @return {Snautsynth.Util.Position}
+         */
+        getPosition: function() {
+            return new Position(
+                this._kineticGroup.getX(),
+                this._kineticGroup.getY()
+            );
         },
 
         /**

@@ -1,7 +1,7 @@
 /**
  * @namespace Snautsynth.Event
  */
-define(['dejavu'], function(dejavu) {
+define(['dejavu', 'app/audio/module/IConnecting'], function(dejavu, IConnecting) {
     'use strict';
 
     return dejavu.Class.declare({
@@ -105,6 +105,55 @@ define(['dejavu'], function(dejavu) {
             this._controlId     = controlId;
             this._moduleId      = moduleId;
             this._controlTarget = controlTarget;
+        },
+
+        /**
+         * @memberof Snautsynth.Event.ControlConnection
+         * @instance
+         *
+         * @param {Array.<Snautsynth.Audio.Module.Module>} moduleList
+         * @param {Array.<Snautsynth.Control.Control>}     controlList
+         */
+        setupControl: function(moduleList, controlList) {
+            var connectionModule,
+                connectionControl;
+
+            var controlConnection = this;
+
+            moduleList.some(function(module) {
+                if (module.getId() === controlConnection.getModuleId()) {
+                    connectionModule = module;
+                    return true;
+                }
+            });
+
+            controlList.some(function(control) {
+               if (control.getId() === controlConnection.getControlId()) {
+                   connectionControl = control;
+                   return true;
+               }
+            });
+
+            var controlTargetId = this.getControlTarget();
+
+            if (!dejavu.instanceOf(this, IConnecting)) {
+                var valueOptions = connectionModule.getValueOptionsByCtrlTarget(controlTargetId);
+                var defaultValue = connectionModule.getDefaultValueByCtrlTarget(controlTargetId);
+
+                if (null === valueOptions) {
+                    return;
+                }
+
+                if (null !== defaultValue) {
+                    connectionControl.setValue(defaultValue);
+                }
+
+                if (null !== valueOptions) {
+                    connectionControl.setValueOptions(valueOptions);
+                }
+            }
+
+            connectionControl.setUp();
         }
     });
 });

@@ -6,13 +6,17 @@ define(
         'app/control/ui/discretecontrol/DiscreteControl',
         'app/control/ui/discretecontrol/RadioButton',
         'app/event/Event',
-        'dejavu'
+        'dejavu',
+        'mout/lang/defaults',
+        'app/control/ui/discretecontrol/RadioButtonOptions'
     ],
     function (
         DiscreteControl,
         RadioButton,
         Event,
-        dejavu
+        dejavu,
+        defaults,
+        RadioButtonOptions
     ) {
         'use strict';
 
@@ -33,53 +37,41 @@ define(
                  * @memberof Snautsynth.Control.UI.DiscreteControl.RadioGroup
                  * @protected
                  *
-                 * @type {string}
+                 * @param {number} lastRadioY
                  */
-                _radioButtonColor: null,
+                setLastRadioY: function(lastRadioY) {
+                    this._lastRadioY = lastRadioY;
+                },
 
                 /**
                  * @memberof Snautsynth.Control.UI.DiscreteControl.RadioGroup
                  * @protected
                  *
-                 * @type {string}
+                 * @return {number}
                  */
-                _radioButtonCheckedColor: null,
-
-
-
-                /**
-                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioGroup
-                 * @instance
-                 *
-                 * @return {string}
-                 */
-                 getRadioButtonColor: function() {
-                     return this._radioButtonColor;
-                 },
-
-                /**
-                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioGroup
-                 * @instance
-                 *
-                 * @return {string}
-                 */
-                getRadioButtonCheckedColor: function() {
-                    return this._radioButtonCheckedColor;
+                getLastRadioY: function() {
+                    return this._lastRadioY;
                 },
+
+                /**
+                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioGroup
+                 * @protected
+                 *
+                 * @type {Array.<Snautsynth.Control.UI.DiscreteControl.RadioButtonOptions>}
+                 */
+                _radioButtonOptionsList: null,
 
                 /**
                  * @constructor
                  * @class    Snautsynth.Control.UI.DiscreteControl.RadioGroup
                  * @extends  Snautsynth.Control.UI.UIControl
                  *
-                 * @param {number}                                   id
-                 * @param {Snautsynth.Util.Position}                 position
-                 * @param {*}                                        value
-                 * @param {Snautsynth.Canvas.CanvasState}            canvasState
-                 * @param {Snautsynth.DataType.DiscreteValueOptions} discreteValueOptions
-                 * @param {string}                                   radioButtonColor
-                 * @param {string}                                   radioButtonCheckedColor
-                 * @param {number}                                   radioButtonRadius
+                 * @param {number}                                                           id
+                 * @param {Snautsynth.Util.Position}                                         position
+                 * @param {*}                                                                value
+                 * @param {Snautsynth.Canvas.CanvasState}                                    canvasState
+                 * @param {Snautsynth.DataType.DiscreteValueOptions}                         discreteValueOptions
+                 * @param {Array.<Snautsynth.Control.UI.DiscreteControl.RadioButtonOptions>} radioButtonOptionsList
                  */
                 initialize: function (
                     id,
@@ -87,16 +79,13 @@ define(
                     value,
                     canvasState,
                     discreteValueOptions,
-                    radioButtonColor,
-                    radioButtonCheckedColor,
-                    radioButtonRadius
+                    radioButtonOptionsList
                 ) {
                     this.$super(id, position, value, canvasState, discreteValueOptions);
 
-                    this._lastRadioY              = position.getY();
-                    this._controls                = [];
-                    this._radioButtonColor        = radioButtonColor;
-                    this._radioButtonCheckedColor = radioButtonCheckedColor;
+                    this._lastRadioY             = position.getY();
+                    this._controls               = [];
+                    this._radioButtonOptionsList = radioButtonOptionsList;
 
                     var myRadioGroup = this;
 
@@ -112,18 +101,14 @@ define(
                         }
 
                         var radioButtonList = myRadioGroup.getControls();
-                        var ctrCount = radioButtonList.length;
 
-                        for (var ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
-                            var radioButton = radioButtonList[ctrIndex];
+                        radioButtonList.forEach(function(radioButton) {
                             radioButton.changeCheckedState(false);
-                        }
+                        });
 
-                        for (ctrIndex = 0; ctrIndex < ctrCount; ctrIndex++) {
-                            var radioButton = radioButtonList[ctrIndex];
-
+                        radioButtonList.forEach(function(radioButton) {
                             if (radioButton.getValue() !== eventObject.getValue()) {
-                                continue;
+                                return;
                             }
 
                             radioButton.changeCheckedState(true);
@@ -138,27 +123,8 @@ define(
                                     Event.TYPE_VALUE_CHANGED
                                 )
                             );
-                        }
+                        });
                     });
-                },
-
-                /**
-                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioGroup
-                 * @instance
-                 *
-                 * @param {Snautsynth.Control.UI.RadioButton} radioButton
-                 */
-                addControl: function (radioButton) {
-                    radioButton.setX(this.getPosition().getX());
-                    radioButton.setY(this._lastRadioY);
-
-                    this.$super(radioButton);
-
-                    if (radioButton.getValue() === this._value) {
-                        radioButton.changeCheckedState(true);
-                    }
-
-                    this._lastRadioY += radioButton.getRadius() * 2 + 5;
                 },
 
                 /**
@@ -166,19 +132,53 @@ define(
                  * @instance
                  */
                 setUp: function() {
-                    var radioGroup = this;
+                    var radioGroup             = this;
+                    var radioButtonOptionsList = this._radioButtonOptionsList;
 
-                    this.getDiscreteValueList().forEach(function(discreteValue) {
-                        radioGroup.addControl(
-                            new RadioButton(
-                                radioGroup.getId() + discreteValue.getValue(),
-                                radioGroup.getCanvasState(),
-                                discreteValue.getName(),
+                    this._discreteValueOptions.getDiscreteValueList().forEach(function(discreteValue) {
+                        var radioButtonOptions = null;
+
+                        if (null !== radioButtonOptionsList) {
+                            radioButtonOptionsList.some(function(rbOptions) {
+                                if (rbOptions.getValue() == discreteValue.getValue()) {
+                                    radioButtonOptions = rbOptions;
+                                    return true;
+                                }
+                            })
+                        }
+
+                        if (null === radioButtonOptions) {
+                            radioButtonOptions = new RadioButtonOptions(
                                 discreteValue.getValue(),
-                                radioGroup.getRadioButtonColor(),
-                                radioGroup.getRadioButtonCheckedColor()
+                                null,
+                                null,
+                                null,
+                                discreteValue.getName(),
+                                null
                             )
+                        }
+
+                        var radioButton = new RadioButton(
+                            radioGroup.getId() + discreteValue.getValue(),
+                            radioGroup.getCanvasState(),
+                            radioButtonOptions
                         );
+
+                        if (null === radioButtonOptions.getPosition()) {
+                            radioButton.setX(radioGroup.getX());
+                            radioButton.setY(radioGroup.getLastRadioY());
+                        }
+
+                        if (radioButton.getValue() === radioGroup.getValue()) {
+                            radioButton.changeCheckedState(true);
+                        }
+
+                        radioGroup.setLastRadioY(
+                            radioGroup.getLastRadioY() + radioButtonOptions.getRadius() * 2 + 5
+                        );
+
+                        radioGroup.addControl(radioButton);
+                        radioButton.setUp();
                     });
                 }
             }

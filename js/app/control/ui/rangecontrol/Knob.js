@@ -113,7 +113,7 @@ define(
              *
              * @type {number}
              */
-            _radius: null,
+            radius: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -318,7 +318,7 @@ define(
                     rangeValueOptions
                 );
 
-                this._radius        = radius;
+                this.radius        = radius;
                 this._tmpPointerRad = this._pointerRadian;
 
                 // create knob circle
@@ -523,7 +523,7 @@ define(
              * @return {Snautsynth.Util.Position}
              */
             calcPointerPos: function() {
-                var pointerLength = (this._radius / 1.23);
+                var pointerLength = (this.radius / 1.23);
 
                 return new Position(
                     Math.cos(this._pointerRadian) * pointerLength + this._knobPosition.getX(),
@@ -553,8 +553,8 @@ define(
 
                 // create components of control
                 this._knobPosition  = new Position(
-                    this._radius + this.getX() + Knob.BORDER_WIDTH,
-                    this._radius + this.getY() + Knob.BORDER_WIDTH
+                    this.radius + this.getX() + Knob.BORDER_WIDTH,
+                    this.radius + this.getY() + Knob.BORDER_WIDTH
                 );
 
                 var knobX = this._knobPosition.getX();
@@ -563,14 +563,14 @@ define(
                 // create knob circle
                 this._knobCircle.x(knobX);
                 this._knobCircle.y(knobY);
-                this._knobCircle.radius(this._radius);
+                this._knobCircle.radius(this.radius);
 
-                var radiusScaleMultiplier = (this._radius * 0.02);
+                var radiusScaleMultiplier = (this.radius * 0.02);
 
                 this._knobBorder.x(knobX);
                 this._knobBorder.y(knobY);
-                this._knobBorder.innerRadius(this._radius - (Knob.BORDER_WIDTH * radiusScaleMultiplier));
-                this._knobBorder.outerRadius(this._radius);
+                this._knobBorder.innerRadius(this.radius - (Knob.BORDER_WIDTH * radiusScaleMultiplier));
+                this._knobBorder.outerRadius(this.radius);
                 this._knobBorder.angle(pointerDeg);
                 this._knobBorder.rotation(Knob.POINTER_MIN_DEG);
 
@@ -580,7 +580,7 @@ define(
                 this._pointer.points([knobX, knobY, initialPointerPos.getX(), initialPointerPos.getY()]);
                 this._pointer.strokeWidth(Knob.POINTER_WIDTH * radiusScaleMultiplier);
 
-                var displayMultiplier = this._radius * 0.018;
+                var displayMultiplier = this.radius * 0.018;
 
                 this._valueDisplayArea.x(knobX - (Knob.VAL_DISPLAY_WIDTH * displayMultiplier) / 2);
                 this._valueDisplayArea.y(knobY + (Knob.VAL_DISPLAY_Y * radiusScaleMultiplier));

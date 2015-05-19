@@ -11,8 +11,10 @@ define(
         'app/audio/util/Audio',
         'app/datatype/DiscreteValue',
         'app/datatype/NumberRange',
-        'app/datatype/ValueOption',
-        'app/control/ui/ragecontrol/SnapOptions'
+        'app/datatype/ValueOptions',
+        'app/control/ui/SnapOptions',
+        'app/control/ui/discretecontrol/KeyValue',
+        'app/datatype/DiscreteValueOptions'
     ],
     function(
         dejavu,
@@ -24,7 +26,9 @@ define(
         DiscreteValue,
         NumberRange,
         ValueOption,
-        SnapOptions
+        SnapOptions,
+        KeyValue,
+        DiscreteValueOptions
     ) {
         'use strict';
 
@@ -216,7 +220,16 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_VALUE_GAIN:           7
+                CTRL_TARGET_VALUE_GAIN:           7,
+
+                /**
+                 * @memberof Snautsynth.Audio.Module.Generator.Wave
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_TRIGGER_NOTE:           8
             },
 
             /**
@@ -365,12 +378,11 @@ define(
             connectToControls: function(controlConnectionList) {
                 var module = this;
 
-                for (var controlId in controlConnectionList) {
-                    if (!controlConnectionList.hasOwnProperty(controlId)) {
-                        continue;
-                    }
+                var keys   = Object.keys(controlConnectionList);
+                var length = keys.length;
 
-                    var controlConnection = controlConnectionList[controlId];
+                for (var i = 0; i < length; i++) {
+                    var controlConnection = controlConnectionList[keys[i]];
 
                     if (this.getId() !== controlConnection.getModuleId()) {
                         continue;
@@ -403,6 +415,20 @@ define(
                             controlConnection.setCallback(
                                 function(value, time) {
                                     module.changeWaveType(value);
+                                }
+                            );
+                            break;
+                        case Wave.CTRL_TARGET_TRIGGER_NOTE:
+                            controlConnection.setCallback(
+                                function(value, time) {
+                                    var keyState = value.getKeyState();
+                                    var keyCode  = value.getKeyCode();
+
+                                    if (KeyValue.KEY_STATE_DOWN === keyState) {
+                                        module.noteOn(keyCode);
+                                    } else {
+                                        module.noteOff(keyCode);
+                                    }
                                 }
                             );
                             break;
@@ -497,7 +523,34 @@ define(
              *
              * @param {number} ctrlTargetId
              *
-             * @return {null|Snautsynth.DataType.ValueOption}
+             * @return {null|*}
+             */
+            getDefaultValueByCtrlTarget: function(ctrTargetId) {
+                switch(ctrTargetId) {
+                    case Wave.CTRL_TARGET_VALUE_WAVETYPE:
+                        return Wave.WAVEFORM_SINE;
+                    break;
+                    case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
+                        return 0;
+                        break;
+                    case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
+                        return 0;
+                        break;
+                    case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
+                        return 0;
+                        break;
+                    default:
+                        return null;
+                }
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {number} ctrlTargetId
+             *
+             * @return {null|Snautsynth.DataType.ValueOptions|Snautsynth.DataType.DiscreteValueOptions}
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
                 switch(ctrlTargetId) {
@@ -509,7 +562,7 @@ define(
                         discreteValueList.push(new DiscreteValue('Square', Wave.WAVEFORM_SQUARE));
                         discreteValueList.push(new DiscreteValue('Triangle', Wave.WAVEFORM_TRIANGLE));
 
-                        return new ValueOption(null, discreteValueList);
+                        return new DiscreteValueOptions(discreteValueList, null, null);
                         break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
                         return new ValueOption(
@@ -580,42 +633,6 @@ define(
                 }
 
                 return null;
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             *
-             * @param {Object} controlConnectionList
-             * @param {Array.<Snautsynth.Control.Control>} controlList
-             */
-            setupControls: function(controlConnectionList, controlList) {
-                for (var controlId in controlConnectionList) {
-                    if (!controlConnectionList.hasOwnProperty(controlId)) {
-                        continue;
-                    }
-
-                    var controlConnection = controlConnectionList[controlId];
-
-                    if (this.getId() !== controlConnection.getModuleId()) {
-                        continue;
-                    }
-
-                    var valueOptions = this.getValueOptionsByCtrlTarget(controlConnection.getControlTarget());
-
-                    if (null === valueOptions) {
-                        continue;
-                    }
-
-                    var targetControl = null;
-
-                    controlList.some(function(control) {
-                        if (control.getId() === controlConnection.getControlId()) {
-                            targetControl = control;
-                            return true;
-                        }
-                    });
-                }
             }
         });
 

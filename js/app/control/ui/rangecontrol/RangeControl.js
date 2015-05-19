@@ -22,7 +22,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          *
          * @return {Snautsynth.DataType.RangeValueOptions}
          */
-        getRangeValueOptions: function() {
+        getValueOptions: function() {
             return this._rangeValueOptions;
         },
 
@@ -32,7 +32,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          *
          * @param {Snautsynth.DataType.RangeValueOptions} rangeValueOptions
          */
-        setRangeValueOptions: function(rangeValueOptions) {
+        setValueOptions: function(rangeValueOptions) {
             this._rangeValueOptions = rangeValueOptions;
         },
 

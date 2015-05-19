@@ -124,6 +124,39 @@ define(
              */
             getSourceNode: function() {
                 return this._gainNode;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             *
+             * @param {number} ctrlTargetId
+             *
+             * @return {number}
+             */
+            getDefaultValueByCtrlTarget: function(ctrlTargetId) {
+              return 1;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             *
+             * @param {number} ctrlTargetId
+             *
+             * @return {null|Snautsynth.DataType.ValueOption}
+             */
+            getValueOptionsByCtrlTarget: function(ctrlTargetId) {
+                switch(ctrlTargetId) {
+                    case Wave.CTRL_TARGET_VALUE_GAIN:
+                        return new ValueOption(
+                            new SnapOptions(1, 0, 0),
+                            new NumberRange(0, 1)
+                        );
+                        break;
+                    default:
+                        return null;
+                }
             }
         });
 

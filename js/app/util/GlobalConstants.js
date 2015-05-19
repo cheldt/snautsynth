@@ -9,7 +9,7 @@ define(
             $name: 'GlobalConstants',
 
             $constants: {
-                CLASS_TYPE_BUTTON:      1,
+                CLASS_TYPE_KNOB:        1,
                 CLASS_TYPE_FADER:       2,
                 CLASS_TYPE_GRAPH:       3,
                 CLASS_TYPE_RADIOGROUP:  4,
@@ -39,6 +39,7 @@ define(
                 CTRL_ATTACK_POINT:                15,
                 CTRL_DECAYTIME_SUSTAINGAIN_POINT: 16,
                 CTRL_RELEASE_POINT:               17,
+                CTRL_KEYBOARD:                    18,
 
 
                 AMOD_OSC1:        1,

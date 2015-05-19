@@ -84,7 +84,7 @@ define(
              *
              * @type {number}
              */
-            _radius: null,
+            radius: null,
 
             /**
              * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
@@ -100,9 +100,36 @@ define(
              * @instance
              * @protected
              *
+             * @type {Konva.Arc}
+             */
+            _buttonBorder: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+             * @instance
+             * @protected
+             *
              * @type {Konva.Circle}
              */
             _checkedCircle: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {Konva.Text}
+             */
+            _label: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {Snautsynth.Control.UI.DiscreteControl.RadioButtonOptions}
+             */
+            _radioButtonOptions: null,
 
             /**
              * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
@@ -150,7 +177,7 @@ define(
              * @return {number}
              */
             getRadius: function() {
-                return this._radius;
+                return this.radius;
             },
 
             $constants: {
@@ -185,7 +212,23 @@ define(
                  *
                  * @type {number}
                  */
-                BORDER_WIDTH:            3
+                BORDER_WIDTH:            3,
+                /**
+                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+                 * @constant
+                 * @default
+                 *
+                 * @type {string}
+                 */
+                DEFAULT_COLOR:           '#000',
+                /**
+                 * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+                 * @constant
+                 * @default
+                 *
+                 * @type {string}
+                 */
+                DEFAULT_CHECKED_COLOR:   '#FFF'
             },
 
             /**
@@ -193,64 +236,47 @@ define(
              * @class   Snautsynth.Control.UI.DiscreteControl.RadioButton
              * @extends Snautsynth.Control.UI.UIControl
              *
-             * @param {number}                        id
-             * @param {Snautsynth.Canvas.CanvasState} canvasState
-             * @param {string}                        labelText
-             * @param {*}                             value
-             * @param {string}                        color
-             * @param {string}                        checkedColor
-             * @param {number}                        radius
+             * @param {number}                                                   id
+             * @param {Snautsynth.Canvas.CanvasState}                            canvasState
+             * @param {Snautsynth.Control.UI.DiscreteControl.RadioButtonOptions} radioButtonOptions
              */
-            initialize: function(id, canvasState, labelText, value, color, checkedColor, radius) {
-                this.$super(id, new Position(0, 0), value, canvasState);
+            initialize: function(id, canvasState, radioButtonOptions) {
+                this.$super(
+                    id,
+                    defaults(radioButtonOptions.getPosition(), new Position(0,0)),
+                    radioButtonOptions.getValue(),
+                    canvasState
+                );
 
-                this._radius = defaults(radius, RadioButton.BUTTON_RADIUS);
+                this._radioButtonOptions = radioButtonOptions;
 
                 this._canvasState  = canvasState;
-                this._checkedColor = checkedColor;
-                this._color        = color;
-
-                this._labelText    = labelText;
-                this._value        = value;
 
                 // create button
                 this._buttonCircle = new Konva.Circle({
-                    x:      this.getX() + this._radius + RadioButton.BORDER_WIDTH,
-                    y:      this.getY() + this._radius + RadioButton.BORDER_WIDTH,
-
-                    radius: this._radius,
-                    fill:   color
+                    radius: radioButtonOptions.getRadius(),
+                    fill:   radioButtonOptions.getColor()
                 });
 
                 this._kineticGroup.add(this._buttonCircle);
 
                 // create button border
-                var arc = new Konva.Arc({
-                    x:           this._buttonCircle.getX(),
-                    y:           this._buttonCircle.getY(),
-
+                this._buttonBorder = new Konva.Arc({
                     angle:       360,
-                    fill:        color,
-                    innerRadius: this._radius - RadioButton.BORDER_WIDTH,
-                    outerRadius: this._radius,
-                    stroke:      color
+                    fill:        radioButtonOptions.getColor(),
+                    stroke:      radioButtonOptions.getColor()
                 });
 
-                this._kineticGroup.add(arc);
+                this._kineticGroup.add(this._buttonBorder);
 
                 // create label
-                var label = new Konva.Text({
+                this._label = new Konva.Text({
                    fill:     '#000',
                    fonzSize: RadioButton.LABEL_DISPLAY_FONT_SIZE,
-                   text:     this._labelText
+                   text:     radioButtonOptions.getLabel()
                 });
 
-                var textHeight = label.getTextHeight();
-
-                label.setX(this._buttonCircle.getX() + this._radius + RadioButton.LABEL_BUTTON_SPACE);
-                label.setY(this._buttonCircle.getY() - textHeight / 2);
-
-                this._kineticGroup.add(label);
+                this._kineticGroup.add(this._label);
 
                 var myRadioButton = this;
                 this._kineticGroup.on('click', function(evt) {
@@ -277,10 +303,32 @@ define(
                 this._checked = checked;
 
                 if(this._checked) {
-                    this._buttonCircle.setFill(this._checkedColor);
+                    this._buttonCircle.setFill(this._radioButtonOptions.getCheckedColor());
                 } else {
-                    this._buttonCircle.setFill(this._color);
+                    this._buttonCircle.setFill(this._radioButtonOptions.getColor());
                 }
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+             * @instance
+             */
+            setUp: function() {
+                var radius         = this._radioButtonOptions.getRadius();
+                var positionOffset = radius + RadioButton.BORDER_WIDTH;
+
+                this._buttonCircle.x(this.getX() + positionOffset);
+                this._buttonCircle.y(this.getY() + positionOffset);
+
+                this._buttonBorder.x(this._buttonCircle.getX());
+                this._buttonBorder.y(this._buttonCircle.getY());
+                this._buttonBorder.innerRadius(radius - RadioButton.BORDER_WIDTH);
+                this._buttonBorder.outerRadius(radius);
+
+                var textHeight = this._label.getTextHeight();
+
+                this._label.setX(this._buttonCircle.getX() + radius + RadioButton.LABEL_BUTTON_SPACE);
+                this._label.setY(this._buttonCircle.getY() - textHeight / 2);
             }
         });
 

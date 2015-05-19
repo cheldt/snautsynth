@@ -22,10 +22,11 @@ define(['dejavu'], function(dejavu) {
          * @abstract
          * @instance
          *
-         * @param {Object} controlConnectionList
-         * @param {Array.<Snautsynth.Control.Control>} controlList
+         * @param {number} ctrlTargetId
+         *
+         * @return {null|*}
          */
-        setupControls: function(controlConnectionList, controlList) {},
+        getDefaultValueByCtrlTarget: function(ctrlTargetId) {},
 
         /**
          * @memberof Snautsynth.Audio.Module.IControllable
