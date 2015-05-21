@@ -41,7 +41,8 @@ requirejs(
         'app/factory/audio/module/output/Destination',
         'app/factory/event/ControlConnection',
         'app/audio/module/generator/Wave',
-        'app/audio/module/IControllable'
+        'app/audio/module/IControllable',
+        'app/factory/control/ui/discretecontrol/Keyboard'
     ],
     function (
         dejavu,
@@ -59,7 +60,8 @@ requirejs(
         DestinationFactory,
         ControlConnectionFactory,
         Wave,
-        IControllable
+        IControllable,
+        KeyboardFactory
     ) {
 
         var canvasState = new CanvasState(600, 550, 'syn');
@@ -76,6 +78,7 @@ requirejs(
         factories[GlobalConstants.CLASS_TYPE_WAVE]        = WaveFactory;
         factories[GlobalConstants.CLASS_TYPE_GAIN]        = GainFactory;
         factories[GlobalConstants.CLASS_TYPE_DESTINATION] = DestinationFactory;
+        factories[GlobalConstants.CLASS_TYPE_KEYBOARD]    = KeyboardFactory;
 
         var audioModuleOptionList = [
             {
@@ -149,8 +152,9 @@ requirejs(
         var controlConnectionFactory = new ControlConnectionFactory();
 
         controlConnectionOptionsList.forEach(function(controlConnectionOptions) {
-            controlConnectionList[controlConnectionOptions.controlId]
-                = controlConnectionFactory.create(controlConnectionOptions);
+            controlConnectionList[controlConnectionOptions.controlId] = controlConnectionFactory.create(
+                controlConnectionOptions
+            );
         });
 
         var audioModuleList = [];
@@ -162,25 +166,30 @@ requirejs(
             }
         });
 
+        function executeCallback() {
+            var now = audioContext.currentTime;
+            var eventObject = canvasState.getBaseLayer().getAttr('event');
+
+            canvasState.getBaseLayer().setAttr('event', null);
+
+            if (eventObject === null) {
+                return;
+            }
+
+            var eventValue = eventObject.getValue();
+            var controlId  = eventObject.getControlId();
+
+            var controlConnection = controlConnectionList[controlId];
+
+            var callBackFunction = controlConnection.getCallback();
+
+            callBackFunction(eventValue, now);
+        }
 
         canvasState.getContainer().addEventListener(
             "click",
             function(evt) {
-                var now = audioContext.currentTime;
-                var eventObject = canvasState.getBaseLayer().getAttr('event');
-
-                if (typeof eventObject === 'undefined') {
-                    return;
-                }
-
-                var eventValue = eventObject.getValue();
-                var controlId  = eventObject.getControlId();
-
-                controlConnection = controlConnectionList[controlId];
-
-                var callBackFunction = controlConnection.getCallback();
-
-                callBackFunction(eventValue, now);
+                executeCallback();
             }
         );
 
@@ -193,7 +202,9 @@ requirejs(
             }
         );
 
-        audioModuleList[0].noteOn(GlobalConstants.KEY_CODE_A);
+
+
+        //audioModuleList[0].noteOn(GlobalConstants.KEY_CODE_A);
 
         var controlOptionsList = [
             {
@@ -246,6 +257,11 @@ requirejs(
                 color:    '#000',
                 text:     'OSC1-Tune'
             },
+            {
+                id:       GlobalConstants.CTRL_KEYBOARD,
+                type:     GlobalConstants.CLASS_TYPE_KEYBOARD,
+                position: {x: 130, y: 80}
+            }
             /*
             {
                 id:                     GlobalConstants.CTRL_OSC1_TUNE,
@@ -615,5 +631,13 @@ requirejs(
 
         window.addEventListener("keydown", function(e) { synth.noteOn(e.keyCode); });
         */
+
+        window.addEventListener("keyup", function (e) {
+            executeCallback();
+        });
+
+        window.addEventListener("keydown", function (e) {
+            executeCallback();
+        });
     }
 );

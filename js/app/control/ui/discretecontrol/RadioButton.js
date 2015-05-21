@@ -28,9 +28,36 @@ define(
              * @instance
              * @protected
              *
+             * @type {Konva.Circle}
+             */
+            _buttonCircle: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {Konva.Arc}
+             */
+            _buttonBorder: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+             * @instance
+             * @protected
+             *
              * @type {boolean}
              */
             _checked: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+             * @instance
+             * @protected
+             *
+             * @type {Konva.Circle}
+             */
+            _checkedCircle: null,
 
             /**
              * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
@@ -73,6 +100,15 @@ define(
              * @instance
              * @protected
              *
+             * @type {Konva.Text}
+             */
+            _label: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
+             * @instance
+             * @protected
+             *
              * @type {string}
              */
             _labelText: null,
@@ -85,42 +121,6 @@ define(
              * @type {number}
              */
             radius: null,
-
-            /**
-             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
-             * @instance
-             * @protected
-             *
-             * @type {Konva.Circle}
-             */
-            _buttonCircle: null,
-
-            /**
-             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
-             * @instance
-             * @protected
-             *
-             * @type {Konva.Arc}
-             */
-            _buttonBorder: null,
-
-            /**
-             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
-             * @instance
-             * @protected
-             *
-             * @type {Konva.Circle}
-             */
-            _checkedCircle: null,
-
-            /**
-             * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
-             * @instance
-             * @protected
-             *
-             * @type {Konva.Text}
-             */
-            _label: null,
 
             /**
              * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton
@@ -272,7 +272,7 @@ define(
                 // create label
                 this._label = new Konva.Text({
                    fill:     '#000',
-                   fonzSize: RadioButton.LABEL_DISPLAY_FONT_SIZE,
+                   fontSize: RadioButton.LABEL_DISPLAY_FONT_SIZE,
                    text:     radioButtonOptions.getLabel()
                 });
 

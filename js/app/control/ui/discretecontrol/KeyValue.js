@@ -14,7 +14,16 @@ define(['dejavu'], function(dejavu) {
          *
          * @type {number}
          */
-        _keyCode: null,
+        _note: null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.DiscreteControl.KeyValue
+         * @instance
+         * @protected
+         *
+         * @type {string}
+         */
+        _noteName: null,
 
         /**
          * @memberof Snautsynth.Control.UI.DiscreteControl.KeyValue
@@ -31,8 +40,18 @@ define(['dejavu'], function(dejavu) {
          *
          * @return {number}
          */
-        getKeyCode: function() {
-            return this._keyCode;
+        getNote: function() {
+            return this._note;
+        },
+
+        /**
+         * @memberof Snautsynth.Control.UI.DiscreteControl.KeyValue
+         * @instance
+         *
+         * @return {string}
+         */
+        getNoteName: function() {
+            return this._noteName;
         },
 
         /**
@@ -174,12 +193,14 @@ define(['dejavu'], function(dejavu) {
          * @constructor
          * @class Snautsynth.Control.UI.DiscreteControl.KeyValue
          *
-         * @param {number} keyCode
+         * @param {number} note
          * @param {number} keyState
+         * @param {string} noteName
          */
-        initialize: function(keyCode, keyState) {
-            this._keyCode  = keyCode;
+        initialize: function(note, keyState, noteName) {
+            this._note     = note;
             this._keyState = keyState;
+            this._noteName = noteName;
         }
     });
 });

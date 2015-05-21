@@ -7,7 +7,6 @@ define(
         'app/audio/module/Module',
         'app/audio/module/IConnecting',
         'app/audio/module/IControllable',
-        'app/util/GlobalConstants',
         'app/audio/util/Audio',
         'app/datatype/DiscreteValue',
         'app/datatype/NumberRange',
@@ -21,7 +20,6 @@ define(
         Module,
         IConnecting,
         IControllable,
-        GlobalConstants,
         AudioUtil,
         DiscreteValue,
         NumberRange,
@@ -55,25 +53,7 @@ define(
              *
              * @type {Object}
              */
-            _keyCodeNoteMapping: null,
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             * @protected
-             *
-             * @type {Object}
-             */
             _runningOscillatorList: null,
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             * @protected
-             *
-             * @type {number}
-             */
-            _runningOscillatorCounter: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -237,7 +217,7 @@ define(
              * @class      Snautsynth.Audio.Module.Generator.Wave
              * @extends    Snautsynth.Audio.Module.Module
              * @implements Snautsynth.Audio.Module.IConnecting
-             * @implements Snautsynth.Audio.Module.IControlable
+             * @implements Snautsynth.Audio.Module.IControllable
              *
              * @param {number}                                            id
              * @param {AudioContext}                                      audioContext
@@ -253,22 +233,6 @@ define(
 
                 this._gainNode = audioContext.createGain();
                 this._gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
-
-                this._keyCodeNoteMapping = {};
-
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_A] = GlobalConstants.NOTE_C_5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_W] = GlobalConstants.NOTE_Cis5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_S] = GlobalConstants.NOTE_D_5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_E] = GlobalConstants.NOTE_Dis5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_D] = GlobalConstants.NOTE_E_5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_F] = GlobalConstants.NOTE_F_5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_T] = GlobalConstants.NOTE_Fis5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_G] = GlobalConstants.NOTE_G_5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_Z] = GlobalConstants.NOTE_Gis5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_H] = GlobalConstants.NOTE_A_5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_U] = GlobalConstants.NOTE_Ais5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_J] = GlobalConstants.NOTE_B_5;
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_K] = GlobalConstants.NOTE_C_6;
             },
 
             /**
@@ -422,12 +386,12 @@ define(
                             controlConnection.setCallback(
                                 function(value, time) {
                                     var keyState = value.getKeyState();
-                                    var keyCode  = value.getKeyCode();
+                                    var note     = value.getNote();
 
                                     if (KeyValue.KEY_STATE_DOWN === keyState) {
-                                        module.noteOn(keyCode);
+                                        module.noteOn(note);
                                     } else {
-                                        module.noteOff(keyCode);
+                                        module.noteOff(note);
                                     }
                                 }
                             );
@@ -466,10 +430,15 @@ define(
             createOscillator: function(note) {
                 if (null === this._runningOscillatorList) {
                     this._runningOscillatorList    = {};
-                    this._runningOscillatorCounter = 0;
                 }
 
-                if (Wave.MAX_RUNNING_OSCILLATORS === this._runningOscillatorCounter) {
+                var runningOscillatorCounter = Object.keys(this._runningOscillatorList);
+
+                if (Wave.MAX_RUNNING_OSCILLATORS === runningOscillatorCounter) {
+                    return;
+                }
+
+                if (typeof this._runningOscillatorList[note] !== 'undefined') {
                     return;
                 }
 
@@ -483,7 +452,6 @@ define(
                 oscillator.connect(this._gainNode);
 
                 this._runningOscillatorList[note] = oscillator;
-                this._runningOscillatorCounter ++;
 
                 oscillator.start(0);
             },
@@ -504,7 +472,7 @@ define(
                 oscillator.disconnect();
                 oscillator.stop();
 
-                this._runningOscillatorList[note] = null;
+                delete this._runningOscillatorList[note];
             },
 
             /**
@@ -582,8 +550,6 @@ define(
                             new NumberRange(-4, 4)
                         );
                         break;
-                    case Wave.CTRL_TARGET_NOTE_ON:
-                        break;
                     default:
                         return null;
                 }
@@ -593,15 +559,9 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {number} keyCode
+             * @param {number} note
              */
-            noteOff: function(keyCode) {
-                var note = this.retrieveNoteByKeyCode(keyCode);
-
-                if (null === note) {
-                    return;
-                }
-
+            noteOff: function(note) {
                 this.destroyOscillator(note);
             },
 
@@ -609,30 +569,10 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {number} keyCode
+             * @param {number} note
              */
-            noteOn: function(keyCode) {
-                var note = this.retrieveNoteByKeyCode(keyCode);
-
-                if (null === note) {
-                    return;
-                }
-
+            noteOn: function(note) {
                 this.createOscillator(note);
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             *
-             * @param {number|null} keyCode
-             */
-            retrieveNoteByKeyCode: function(keyCode) {
-                if (this._keyCodeNoteMapping.hasOwnProperty(keyCode)) {
-                    return this._keyCodeNoteMapping[keyCode];
-                }
-
-                return null;
             }
         });
 

@@ -19,6 +19,7 @@ define(
                 CLASS_TYPE_WAVE:        8,
                 CLASS_TYPE_GAIN:        9,
                 CLASS_TYPE_DESTINATION: 10,
+                CLASS_TYPE_KEYBOARD:    11,
 
                 CTRL_MASTERGAIN:                  1,
                 CTRL_OSC1_WAVE:                   2,

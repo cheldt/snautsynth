@@ -131,10 +131,10 @@ require(
             initialize: function(id, audioContext, type, frequency, resonance, moduleConnectionList) {
                 this.$super(id, audioContext, moduleConnectionList);
 
-                this._filterNode                   = audioContext.createBiquadFilter();
-                this._filterNode.type              = type;
-                this._filterNode.frequency.value   = frequency;
-                this._filterNode.Q.value           = resonance;
+                this._filterNode                  = audioContext.createBiquadFilter();
+                this._filterNode.type             = type;
+                this._filterNode.frequency.value  = frequency;
+                this._filterNode.Q.value          = resonance;
             },
 
 

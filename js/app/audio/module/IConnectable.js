@@ -4,7 +4,10 @@
 define(['dejavu'], function(dejavu) {
     'use strict';
 
-    /** @interface Snautsynth.Audio.Module.IConnectable */
+    /**
+     * @class Snautsynth.Audio.Module.IConnectable
+     * @interface
+     */
     return dejavu.Interface.declare({
         $name: 'IConnectable',
 
