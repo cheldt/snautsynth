@@ -83,7 +83,7 @@ define(
                 ) {
                     this.$super(id, position, value, canvasState, discreteValueOptions);
 
-                    this._lastRadioY             = position.getY();
+                    this._lastRadioY             = 0;
                     this._controls               = [];
                     this._radioButtonOptionsList = radioButtonOptionsList;
 
@@ -174,7 +174,7 @@ define(
                         }
 
                         radioGroup.setLastRadioY(
-                            radioGroup.getLastRadioY() + radioButtonOptions.getRadius() * 2 + 5
+                            radioGroup.getLastRadioY() + radioButtonOptions.getRadius() * 2
                         );
 
                         radioGroup.addControl(radioButton);

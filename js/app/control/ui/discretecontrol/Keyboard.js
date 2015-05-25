@@ -160,10 +160,22 @@ define(
             },
 
             /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
              * @param {string} noteName
              */
             updateNoteDisplay: function(noteName) {
                 this._noteDisplay.setText(noteName);
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             */
+            setUp: function() {
+
             }
         });
 

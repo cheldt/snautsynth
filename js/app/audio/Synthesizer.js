@@ -281,7 +281,7 @@ define(['dejavu', 'app/audio/util/Audio', 'app/util/GlobalConstants',  'app/even
                 var oscillators = this._runningOscillators[noteKey];
 
                 for (var oscillatorKey in oscillators) {
-                    if (oscillatorId != oscillatorKey) {
+                    if (oscillatorId !== oscillatorKey) {
                         continue;
                     }
 

@@ -145,6 +145,21 @@ requirejs(
                 controlId:   GlobalConstants.CTRL_KEYBOARD,
                 moduleId:    GlobalConstants.AMOD_OSC1,
                 valueTarget: Wave.CTRL_TARGET_TRIGGER_NOTE
+            },
+            {
+                controlId:   GlobalConstants.CTRL_OSC1_TUNE_OCT,
+                moduleId:    GlobalConstants.AMOD_OSC1,
+                valueTarget: Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES
+            },
+            {
+                controlId:   GlobalConstants.CTRL_OSC1_TUNE_HALF,
+                moduleId:    GlobalConstants.AMOD_OSC1,
+                valueTarget: Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES
+            },
+            {
+                controlId:   GlobalConstants.CTRL_OSC1_TUNE_CENTS,
+                moduleId:    GlobalConstants.AMOD_OSC1,
+                valueTarget: Wave.CTRL_TARGET_VALUE_TUNE_CENTS
             }
         ];
 
@@ -172,7 +187,7 @@ requirejs(
 
             canvasState.getBaseLayer().setAttr('event', null);
 
-            if (eventObject === null) {
+            if (typeof eventObject === 'undefined' || eventObject === null) {
                 return;
             }
 
@@ -186,25 +201,7 @@ requirejs(
             callBackFunction(eventValue, now);
         }
 
-        canvasState.getContainer().addEventListener(
-            "click",
-            function(evt) {
-                executeCallback();
-            }
-        );
 
-        canvasState.getContainer().addEventListener(
-            "mousemove",
-            function(evt) {
-                if (canvasState.getPointerLocked()) {
-                    var eventObject = canvasState.getBaseLayer().getAttr('event');
-                }
-            }
-        );
-
-
-
-        //audioModuleList[0].noteOn(GlobalConstants.KEY_CODE_A);
 
         var controlOptionsList = [
             {
@@ -217,34 +214,34 @@ requirejs(
             {
                 id:           GlobalConstants.CTRL_OSC1_WAVE,
                 type:         GlobalConstants.CLASS_TYPE_RADIOGROUP,
-                position:     {x: 0, y: 20},
-                value:        Synthesizer.WAVEFORM_SINE,
+                position:     {x: 0, y: 40},
+                value:        Wave.WAVEFORM_SINE,
                 radioButtonOptions: [
                     {
                         position:     null,
                         label:        'Sine',
-                        value:        Synthesizer.WAVEFORM_SINE,
+                        value:        Wave.WAVEFORM_SINE,
                         color:        '#000',
                         checkedColor: '#FFF'
                     },
                     {
                         position:     null,
                         label:        'Square',
-                        value:        Synthesizer.WAVEFORM_SQUARE,
+                        value:        Wave.WAVEFORM_SQUARE,
                         color:        '#000',
                         checkedColor: '#FFF'
                     },
                     {
                         position:     null,
                         label:        'Saw',
-                        value:        Synthesizer.WAVEFORM_SAWTOOTH,
+                        value:        Wave.WAVEFORM_SAWTOOTH,
                         color:        '#000',
                         checkedColor: '#FFF'
                     },
                     {
                         position:     null,
                         label:        'Triangle',
-                        value:        Synthesizer.WAVEFORM_TRIANGLE,
+                        value:        Wave.WAVEFORM_TRIANGLE,
                         color:        '#000',
                         checkedColor: '#FFF'
                     }
@@ -255,12 +252,68 @@ requirejs(
                 type:     GlobalConstants.CLASS_TYPE_LABEL,
                 position: {x: 130, y: 20},
                 color:    '#000',
+                text:     'OSC1-Octave'
+            },
+            {
+                id:                     GlobalConstants.CTRL_OSC1_TUNE_OCT,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
+                position:               {x: 130, y: 40},
+                rangeValueOptions:      {
+                    valueDisplayMultiplier: 1,
+                    valueRange:             {min: -4, max: 4},
+                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0.5, snapStep: 1},
+                    numberFormat:           '#0.0'
+                },
+                value:                  0,
+                radius:                 50,
+                color:                  '#AABBCC'
+            },
+            {
+                id:       -1,
+                type:     GlobalConstants.CLASS_TYPE_LABEL,
+                position: {x: 250, y: 20},
+                color:    '#000',
                 text:     'OSC1-Tune'
+            },
+            {
+                id:                     GlobalConstants.CTRL_OSC1_TUNE_HALF,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
+                position:               {x: 250, y: 40},
+                rangeValueOptions:      {
+                    valueDisplayMultiplier: 1,
+                    valueRange:             {min: -12, max: 12},
+                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
+                    numberFormat:           '#0.0'
+                },
+                value:                  0,
+                radius:                 50,
+                color:                  '#AABBCC'
+            },
+            {
+                id:       -1,
+                type:     GlobalConstants.CLASS_TYPE_LABEL,
+                position: {x: 370, y: 20},
+                color:    '#000',
+                text:     'OSC1-Cents'
+            },
+            {
+                id:                     GlobalConstants.CTRL_OSC1_TUNE_CENTS,
+                type:                   GlobalConstants.CLASS_TYPE_KNOB,
+                position:               {x: 370, y: 40},
+                rangeValueOptions:      {
+                    valueDisplayMultiplier: 1,
+                    valueRange:             {min: Wave.CENTS_HALFTONE * -1, max: Wave.CENTS_HALFTONE},
+                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
+                    numberFormat:           '#0.0'
+                },
+                value:                  0,
+                radius:                 50,
+                color:                  '#AABBCC'
             },
             {
                 id:       GlobalConstants.CTRL_KEYBOARD,
                 type:     GlobalConstants.CLASS_TYPE_KEYBOARD,
-                position: {x: 130, y: 80}
+                position: {x: 0, y: 300}
             }
             /*
             {
@@ -609,15 +662,7 @@ requirejs(
             }
         );
 
-        canvasState.getContainer().addEventListener(
-            "mousemove",
-            function(evt) {
-                if (canvasState.getPointerLocked()) {
-                    var eventObject = canvasState.getBaseLayer().getAttr('event');
-                    synth.processEventObject(eventObject, canvasState);
-                }
-            }
-        );
+
 
         canvasState.getStage().on(
             "dragmove",
@@ -632,12 +677,34 @@ requirejs(
         window.addEventListener("keydown", function(e) { synth.noteOn(e.keyCode); });
         */
 
-        window.addEventListener("keyup", function (e) {
-            executeCallback();
-        });
+        canvasState.getStage().on(
+            "dragmove",
+            function() {executeCallback();}
+        );
 
-        window.addEventListener("keydown", function (e) {
-            executeCallback();
-        });
+
+        canvasState.getContainer().addEventListener(
+            "dblclick",
+            function() {executeCallback();}
+        );
+
+        canvasState.getContainer().addEventListener(
+            "mousemove",
+            function() {executeCallback();}
+        );
+
+        canvasState.getContainer().addEventListener(
+            "click",
+            function() {executeCallback();}
+        );
+
+
+        window.addEventListener("keyup",
+            function() {executeCallback();}
+        );
+
+        window.addEventListener("keydown",
+            function() {executeCallback();}
+        );
     }
 );

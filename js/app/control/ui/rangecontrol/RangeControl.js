@@ -27,7 +27,7 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
         },
 
         /**
-         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @memberof Snautsynth.Control.I.RangeControl.RangeControl
          * @instance
          *
          * @param {Snautsynth.DataType.RangeValueOptions} rangeValueOptions

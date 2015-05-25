@@ -10,10 +10,11 @@ define(
         'app/audio/util/Audio',
         'app/datatype/DiscreteValue',
         'app/datatype/NumberRange',
-        'app/datatype/ValueOptions',
+        'app/datatype/RangeValueOptions',
         'app/control/ui/SnapOptions',
         'app/control/ui/discretecontrol/KeyValue',
-        'app/datatype/DiscreteValueOptions'
+        'app/datatype/DiscreteValueOptions',
+        'app/util/formatter/NumberFormatter'
     ],
     function(
         dejavu,
@@ -23,10 +24,11 @@ define(
         AudioUtil,
         DiscreteValue,
         NumberRange,
-        ValueOption,
+        RangeValueOptions,
         SnapOptions,
         KeyValue,
-        DiscreteValueOptions
+        DiscreteValueOptions,
+        NumberFormatter
     ) {
         'use strict';
 
@@ -42,9 +44,27 @@ define(
              * @instance
              * @protected
              *
-             * @type {AudioGainNode}
+             * @type {number}
+             */
+            _cents: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @protected
+             *
+             * @type {GainNode}
              */
             _gainNode: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
+            _halftones: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -62,7 +82,7 @@ define(
              *
              * @type {number}
              */
-            _tuning: null,
+            _octaves: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -228,11 +248,40 @@ define(
              */
             initialize: function(id, audioContext, tuning, waveType, gain, moduleConnectionList) {
                 this.$super(id, audioContext, moduleConnectionList);
-                this._tuning   = tuning;
+
+                this._octaves   = 0;
+                this._halftones = 0;
+
+                if (tuning / Wave.CENTS_OCTAVE >= 1) {
+                    this._octaves = parseInt(tuning / Wave.CENTS_OCTAVE);
+                    tuning = tuning - this._octaves * Wave.CENTS_OCTAVE;
+                }
+
+                if (tuning / Wave.CENTS_HALFTONE >= 1) {
+                    this._halftones = parseInt(tuning / Wave.CENTS_HALFTONE);
+                    tuning = tuning - this._halftones * Wave.CENTS_HALFTONE;
+                }
+
+                this._cents = tuning;
+
                 this._waveType = waveType;
 
                 this._gainNode = audioContext.createGain();
                 this._gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {number} cents
+             * @param {number} time
+             */
+            changeCents: function(cents, time) {
+                this._cents = cents;
+                cents       = cents + this._halftones * Wave.CENTS_HALFTONE + this._octaves * Wave.CENTS_OCTAVE;
+
+                this.changeTune(cents, time);
             },
 
             /**
@@ -255,8 +304,9 @@ define(
              * @param {number} halftones
              * @param {number} time
              */
-            changeHalftone: function(halftones, time) {
-                var cents = halftones * Wave.CENTS_HALFTONE;
+            changeHalftones: function(halftones, time) {
+                this._halftones = halftones;
+                var cents       = this._cents + halftones * Wave.CENTS_HALFTONE + this._octaves * Wave.CENTS_OCTAVE;
 
                 this.changeTune(cents, time);
             },
@@ -270,8 +320,9 @@ define(
              * @param {number} octaves
              * @param {number} time
              */
-            changeOctave: function(octaves, time) {
-                var cents = octaves * Wave.CENTS_OCTAVE;
+            changeOctaves: function(octaves, time) {
+                this._octaves = octaves;
+                var cents     = this._cents + this._halftones * Wave.CENTS_HALFTONE + octaves * Wave.CENTS_OCTAVE;
 
                 this.changeTune(cents, time);
             },
@@ -286,8 +337,6 @@ define(
              * @param {number} time
              */
             changeTune: function(cents, time) {
-                this._tuning = this._tuning + cents;
-
                 if (null === this._runningOscillatorList) {
                     return;
                 }
@@ -302,7 +351,7 @@ define(
                     }
 
                     var oscillator = this._runningOscillatorList[noteKey];
-                    oscillator.detune.setValueAtTime(this._tuning, time);
+                    oscillator.detune.setValueAtTime(cents, time);
                 }
             },
 
@@ -310,7 +359,7 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {string} wavetype
+             * @param {string} waveType
              */
             changeWaveType: function (waveType) {
                 this._waveType = waveType;
@@ -355,66 +404,32 @@ define(
                     switch(controlConnection.getControlTarget()) {
                         case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
                             controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeTune(value, time);
-                                }
+                                this.bindCallback(module,'changeCents')
                             );
                             break;
                         case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
                             controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeHalftone(value, time);
-                                }
+                                this.bindCallback(module,'changeHalftones')
                             );
                             break;
                         case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
                             controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeOctave(value, time);
-                                }
+                                this.bindCallback(module,'changeOctaves')
                             );
                             break;
                         case Wave.CTRL_TARGET_VALUE_WAVETYPE:
-
                             controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeWaveType(value);
-                                }
+                                this.bindCallback(module,'changeWaveType')
                             );
                             break;
                         case Wave.CTRL_TARGET_TRIGGER_NOTE:
                             controlConnection.setCallback(
-                                function(value, time) {
-                                    var keyState = value.getKeyState();
-                                    var note     = value.getNote();
-
-                                    if (KeyValue.KEY_STATE_DOWN === keyState) {
-                                        module.noteOn(note);
-                                    } else {
-                                        module.noteOff(note);
-                                    }
-                                }
-                            );
-                            break;
-                        case Wave.CTRL_TARGET_NOTE_ON:
-                            controlConnection.setCallback(
-                                function(value, time) {
-                                    module.noteOn(value);
-                                }
-                            );
-                            break;
-                        case Wave.CTRL_TARGET_NOTE_OFF:
-                            controlConnection.setCallback(
-                                function(value, time) {
-                                    module.noteOff(value);
-                                }
+                                this.bindCallback(module,'triggerNote')
                             );
                             break;
                         case Wave.CTRL_TARGET_VALUE_GAIN:
                             controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeGain(value, time);
-                                }
+                                this.bindCallback(module,'changeGain')
                             );
                             break;
                     }
@@ -446,7 +461,7 @@ define(
 
                 var oscillator             = this._audioContext.createOscillator();
                 oscillator.type            = this._waveType;
-                oscillator.detune.value    = this._tuning;
+                oscillator.detune.value    = this._octaves * Wave.CENTS_OCTAVE + this._halftones * Wave.CENTS_HALFTONE;
                 oscillator.frequency.value = frequency;
 
                 oscillator.connect(this._gainNode);
@@ -493,20 +508,18 @@ define(
              *
              * @return {null|*}
              */
-            getDefaultValueByCtrlTarget: function(ctrTargetId) {
-                switch(ctrTargetId) {
+            getDefaultValueByCtrlTarget: function(ctrlTargetId) {
+                switch(ctrlTargetId) {
+                    case Wave.CTRL_TARGET_VALUE_GAIN:
+                        return 1;
                     case Wave.CTRL_TARGET_VALUE_WAVETYPE:
                         return Wave.WAVEFORM_SINE;
-                    break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
-                        return 0;
-                        break;
+                        return this._cents;
                     case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
-                        return 0;
-                        break;
+                        return this._halftones;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
-                        return 0;
-                        break;
+                        return this._octaves;
                     default:
                         return null;
                 }
@@ -531,25 +544,27 @@ define(
                         discreteValueList.push(new DiscreteValue('Triangle', Wave.WAVEFORM_TRIANGLE));
 
                         return new DiscreteValueOptions(discreteValueList, null, null);
-                        break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
-                        return new ValueOption(
+                        return new RangeValueOptions(
+                            new NumberRange(Wave.CENTS_HALFTONE * -1, Wave.CENTS_HALFTONE),
                             new SnapOptions(0, 0, 0),
-                            new NumberRange(-12, 12)
+                            1,
+                            new NumberFormatter('#0')
                         );
-                        break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
-                        return new ValueOption(
-                            new SnapOptions(0, 0, 0),
-                            new NumberRange(-12, 12)
+                        return new RangeValueOptions(
+                            new NumberRange(-12, 12),
+                            new SnapOptions(0, 0.5, 1),
+                            1,
+                            new NumberFormatter('#0')
                         );
-                        break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
-                        return new ValueOption(
-                            new SnapOptions(0, 0, 0),
-                            new NumberRange(-4, 4)
+                        return new RangeValueOptions(
+                            new NumberRange(-4, 4),
+                            new SnapOptions(0, 0.5, 1),
+                            1,
+                            new NumberFormatter('#0')
                         );
-                        break;
                     default:
                         return null;
                 }
@@ -573,7 +588,25 @@ define(
              */
             noteOn: function(note) {
                 this.createOscillator(note);
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {Snautsynth.Control.UI.DiscreteControl.KeyValue} value
+             */
+            triggerNote: function(value) {
+                var keyState = value.getKeyState();
+                var note     = value.getNote();
+
+                if (KeyValue.KEY_STATE_DOWN === keyState) {
+                    this.noteOn(note);
+                } else {
+                    this.noteOff(note);
+                }
             }
+
         });
 
         return Wave;

@@ -8,7 +8,8 @@ define(
         'app/event/Event',
         'konva',
         'app/datatype/NumberRange',
-        'app/util/Position'
+        'app/util/Position',
+        'app/util/MouseMovement'
     ],
     function(
         dejavu,
@@ -16,7 +17,8 @@ define(
         Event,
         Konva,
         NumberRange,
-        Position
+        Position,
+        MouseMovement
     ) {
         'use strict';
 
@@ -113,7 +115,16 @@ define(
              *
              * @type {number}
              */
-            radius: null,
+            _radius: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @protected
+             *
+             * @type {number}
+             */
+            _tmpPointerRad: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -132,15 +143,6 @@ define(
              * @type {Konva.Text}
              */
             _valueDisplayText: null,
-
-            /**
-             * @memberof Snautsynth.Control.UI.RangeControl.Knob
-             * @instance
-             * @protected
-             *
-             * @type {number}
-             */
-            _tmpPointerRad: null,
 
 
             /**
@@ -318,8 +320,9 @@ define(
                     rangeValueOptions
                 );
 
-                this.radius        = radius;
+                this._radius        = radius;
                 this._tmpPointerRad = this._pointerRadian;
+                var snapOptions     = rangeValueOptions.getSnapOptions();
 
                 // create knob circle
                 this._knobCircle = new Konva.Circle({
@@ -370,8 +373,9 @@ define(
                 });
 
                 container.addEventListener('mousemove', function(evt) {
+
                     if (myKnob.getSelected()) {
-                        var mousePos  = myKnob.getCanvasState().getMousePosition(evt);
+                        var mousePos  = myKnob.getCanvasState().getMouseMovement(evt);
                         var baseLayer = myKnob.getCanvasState().getBaseLayer();
 
                         myKnob.update(mousePos);
@@ -396,28 +400,30 @@ define(
                             return;
                         }
 
-                        if (myKnob.getId() == shape.getId()) {
-                            myKnob.setValue(snapOptions.getDoubleClickSnapValue());
-
-                            myKnob.setPointerRadian(
-                                Knob.calcRadFromValue(
-                                    snapOptions.getDoubleClickSnapValue(),
-                                    myKnob.getPointerRadRange(),
-                                    myKnob.getValueRange()
-                                )
-                            );
-
-                            var newPointerPos = myKnob.calcPointerPos();
-
-                            myKnob.updatePointerPosition(newPointerPos);
-                            myKnob.setTmpPointerRad(myKnob.getPointerRadian());
-                            myKnob.updateValueDisplayText();
-
-                            myKnob.getCanvasState().getBaseLayer().setAttr(
-                                'event',
-                                new Event(myKnob.getId(), myKnob.getValue(), Event.TYPE_VALUE_CHANGED)
-                            );
+                        if (myKnob.getId() !== shape.getId()) {
+                            return;
                         }
+
+                        myKnob.setValue(snapOptions.getDoubleClickSnapValue());
+
+                        myKnob.setPointerRadian(
+                            Knob.calcRadFromValue(
+                                snapOptions.getDoubleClickSnapValue(),
+                                myKnob.getPointerRadRange(),
+                                myKnob.getValueOptions().getNumberRange()
+                            )
+                        );
+
+                        var newPointerPos = myKnob.calcPointerPos();
+
+                        myKnob.updatePointerPosition(newPointerPos);
+                        myKnob.setTmpPointerRad(myKnob.getPointerRadian());
+                        myKnob.updateValueDisplayText();
+
+                        myKnob.getCanvasState().getBaseLayer().setAttr(
+                            'event',
+                            new Event(myKnob.getId(), myKnob.getValue(), Event.TYPE_VALUE_CHANGED)
+                        );
                     });
                 }
             },
@@ -451,6 +457,7 @@ define(
                  * @return {number}  The calculated radian
                  */
                 calcRadFromValue: function(value, radianRange, valueRange) {
+                    //debug(valueRange);
                     var totalRad   = radianRange.calcRange();
                     var totalValue = valueRange.calcRange();
 
@@ -523,7 +530,7 @@ define(
              * @return {Snautsynth.Util.Position}
              */
             calcPointerPos: function() {
-                var pointerLength = (this.radius / 1.23);
+                var pointerLength = (this._radius / 1.23);
 
                 return new Position(
                     Math.cos(this._pointerRadian) * pointerLength + this._knobPosition.getX(),
@@ -553,8 +560,8 @@ define(
 
                 // create components of control
                 this._knobPosition  = new Position(
-                    this.radius + this.getX() + Knob.BORDER_WIDTH,
-                    this.radius + this.getY() + Knob.BORDER_WIDTH
+                    this._radius + Knob.BORDER_WIDTH / 2,
+                    this._radius + Knob.BORDER_WIDTH / 2
                 );
 
                 var knobX = this._knobPosition.getX();
@@ -563,14 +570,14 @@ define(
                 // create knob circle
                 this._knobCircle.x(knobX);
                 this._knobCircle.y(knobY);
-                this._knobCircle.radius(this.radius);
+                this._knobCircle.radius(this._radius);
 
-                var radiusScaleMultiplier = (this.radius * 0.02);
+                var radiusScaleMultiplier = (this._radius * 0.02);
 
                 this._knobBorder.x(knobX);
                 this._knobBorder.y(knobY);
-                this._knobBorder.innerRadius(this.radius - (Knob.BORDER_WIDTH * radiusScaleMultiplier));
-                this._knobBorder.outerRadius(this.radius);
+                this._knobBorder.innerRadius(this._radius - (Knob.BORDER_WIDTH * radiusScaleMultiplier));
+                this._knobBorder.outerRadius(this._radius);
                 this._knobBorder.angle(pointerDeg);
                 this._knobBorder.rotation(Knob.POINTER_MIN_DEG);
 
@@ -580,7 +587,7 @@ define(
                 this._pointer.points([knobX, knobY, initialPointerPos.getX(), initialPointerPos.getY()]);
                 this._pointer.strokeWidth(Knob.POINTER_WIDTH * radiusScaleMultiplier);
 
-                var displayMultiplier = this.radius * 0.018;
+                var displayMultiplier = this._radius * 0.018;
 
                 this._valueDisplayArea.x(knobX - (Knob.VAL_DISPLAY_WIDTH * displayMultiplier) / 2);
                 this._valueDisplayArea.y(knobY + (Knob.VAL_DISPLAY_Y * radiusScaleMultiplier));
@@ -597,24 +604,29 @@ define(
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
              * @instance
+             *
+             * @param {Snautsynth.Util.MouseMovement} mouseMovement
              */
-            update: function(mousePos) {
+            update: function(mouseMovement) {
                 if(this._selected) {
-                    var snapOptions    = this.getSnapOptions();
+                    var snapOptions    = this._rangeValueOptions.getSnapOptions();
                     var maxMouseDelta  = 200;
-                    var mouseY         = mousePos.getY();
-                    var speedup        = Math.abs((10 * mouseY) / maxMouseDelta);
+                    var mouseY         = mouseMovement.getDeltaY();
+                    var speedup        = 1 / 2; //Math.abs((10 * mouseY) / maxMouseDelta);
                     var value;
                     var forward        = false;
                     var mouseMoves     = true;
                     var lastValue      = this._canvasState.getLastValue();
                     var speed          = 0.05;
+                    var moveDirection  = mouseMovement.getDirection();
 
-                    if (null === snapOptions || (null !== snapOptions && snapOptions.getSnapStep() == 0)) {
+                    if (null === snapOptions || (null !== snapOptions && snapOptions.getSnapStep() === 0)) {
                        speed = speed * speedup;
                     }
 
-                    if (mouseY < 0) {
+                    if (
+                        MouseMovement.DIRECTION_UP === moveDirection
+                    ) {
                         //check if knob was turned to far clockwise
                         if ((this._tmpPointerRad + speed) <= this._pointerRadRange.getMax()) {
                             this._tmpPointerRad += speed;
@@ -623,8 +635,9 @@ define(
                         }
 
                         forward = true;
-                    } else if (mouseY > 0) {
-
+                    } else if (
+                        MouseMovement.DIRECTION_DOWN === moveDirection
+                    ) {
                         //check if knob was turned to far counter clockwise
                         if ((this._tmpPointerRad - speed) >= this._pointerRadRange.getMin()) {
                             this._tmpPointerRad -= speed;
@@ -696,7 +709,8 @@ define(
              * @instance
              */
             updateValueDisplayText: function() {
-                var text = this._formatter.format(this._value * this._rangeValueOptions.getValueDisplayMultiplier());
+                var formatter = this._rangeValueOptions.getNumberFormatter();
+                var text      = formatter.format(this._value * this._rangeValueOptions.getValueDisplayMultiplier());
 
                 this._valueDisplayText.setText(text);
 

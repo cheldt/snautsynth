@@ -1,7 +1,7 @@
 /**
  * @namespace Snautsynth.Event
  */
-define(['dejavu', 'app/audio/module/IConnecting'], function(dejavu, IConnecting) {
+define(['dejavu', 'app/audio/module/IControllable'], function(dejavu, IControllable) {
     'use strict';
 
     return dejavu.Class.declare({
@@ -136,7 +136,7 @@ define(['dejavu', 'app/audio/module/IConnecting'], function(dejavu, IConnecting)
 
             var controlTargetId = this.getControlTarget();
 
-            if (!dejavu.instanceOf(this, IConnecting)) {
+            if (dejavu.instanceOf(connectionModule, IControllable)) {
                 var valueOptions = connectionModule.getValueOptionsByCtrlTarget(controlTargetId);
                 var defaultValue = connectionModule.getDefaultValueByCtrlTarget(controlTargetId);
 

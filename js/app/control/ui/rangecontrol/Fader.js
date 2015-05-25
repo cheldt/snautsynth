@@ -326,7 +326,7 @@ define(
 
                 container.addEventListener('mousemove', function(evt) {
                     if (myFader.getSelected()) {
-                        var mousePos  = myFader.getCanvasState().getMousePosition(evt);
+                        var mousePos  = myFader.getCanvasState().getMouseMovement(evt);
                         var baseLayer = myFader.getCanvasState().getBaseLayer();
 
                         myFader.update(mousePos);

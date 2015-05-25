@@ -127,6 +127,12 @@ define(
                     channelConnection.connectNodes();
                 });
             });
+        },
+
+        bindCallback: function(toObject, methodName) {
+            return function(value, time) {
+                toObject[methodName](value, time);
+            };
         }
     });
 });

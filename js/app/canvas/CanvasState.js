@@ -6,13 +6,15 @@ define(
         'dejavu',
         'app/event/CustomEvent',
         'app/util/Position',
-        'konva'
+        'konva',
+        'app/util/MouseMovement'
     ],
     function(
         dejavu,
         CustomEvent,
         Position,
-        Konva
+        Konva,
+        MouseMovement
     ) {
     var CanvasState = dejavu.Class.declare({
         $name: 'CanvasState',
@@ -72,6 +74,14 @@ define(
          * @type {*}
          */
         _lastValue: null,
+
+        /**
+         * @memberof Snautsynth.Canvas.CanvasState
+         * @instance
+         *
+         * @type {Snautsynth.Util.MouseMovement}
+         */
+        _mouseMovement: null,
 
         /**
          * @memberof Snautsynth.Canvas.CanvasState
@@ -260,19 +270,25 @@ define(
 
             var myState = this;
 
-            var anim = new Konva.Animation(function(frame) {
-                var time = frame.time,
-                    timeDiff = frame.timeDiff,
-                    frameRate = frame.frameRate;
-            }, this._baseLayer);
+            var anim = new Konva.Animation(
+                function(frame) {
+
+                    var time = frame.time,
+                        timeDiff = frame.timeDiff,
+                        frameRate = frame.frameRate;
+                },
+                this._baseLayer
+            );
 
             anim.start();
 
             window.onresize = function () {
                 myState.resize();
-            }
+            };
 
             this._canvas = this._baseLayer.getCanvas()._canvas;
+
+            this._mouseMovement = new MouseMovement();
 
             document.addEventListener('pointerlockchange', function() { myState.lockChangeCallback() }, false);
             document.addEventListener('mozpointerlockchange', function() { myState.lockChangeCallback() }, false);
@@ -329,6 +345,7 @@ define(
         findPosition: function() {
             var obj     = this._canvas;
             var curleft = 0, curtop = 0;
+
             if (obj.offsetParent) {
                 do {
                     curleft += obj.offsetLeft;
@@ -371,27 +388,11 @@ define(
          *
          * @param {Object} e
          *
-         * @return {Snautsynth.Util.Position}
+         * @return {Snautsynth.Util.MouseMovement}
          */
-        getMousePosition: function(e) {
-            var mx, my;
-            if(this._pointerLocked) {
-                mx = e.movementX
-                  || e.mozMovementX
-                  || e.webkitMovementX
-                  || 0;
-
-                my = e.movementY
-                  || e.mozMovementY
-                  || e.webkitMovementY
-                  || 0;
-            } else {
-                var pos = this.findPosition();
-                mx = (e.pageX - pos.x) / this._stage.getScale();
-                my = (e.pageY - pos.y) / this._stage.getScale();
-            }
-
-            return new Position(mx, my);
+        getMouseMovement: function(e) {
+            this._mouseMovement.calcMovement(e, this._pointerLocked);
+            return this._mouseMovement;
         },
 
         /**
@@ -407,7 +408,7 @@ define(
                 document.webkitPointerLockElement === this._container) {
                 this._pointerLocked = true;
             } else {
-                this._pointerLocked = false
+                this._pointerLocked = false;
             }
         },
 
@@ -423,7 +424,8 @@ define(
                 this._container.mozRequestPointerLock ||
                 this._container.webkitRequestPointerLock;
             // Ask the browser to lock the pointer
-            this._container.requestPointerLock();
+            //this._container.requestPointerLock();
+            this._lastY = 0;
         },
 
         /**
@@ -465,7 +467,7 @@ define(
                     document.mozExitPointerLock ||
                     document.webkitExitPointerLock;
 
-                document.exitPointerLock();
+                //document.exitPointerLock();
             }
         }
 

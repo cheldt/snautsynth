@@ -22,10 +22,17 @@ define(
                 CLASS_TYPE_KEYBOARD:    11,
 
                 CTRL_MASTERGAIN:                  1,
-                CTRL_OSC1_WAVE:                   2,
-                CTRL_OSC1_TUNE:                   3,
-                CTRL_OSC1_GAIN:                   4,
-                CTRL_OSC1_OCT:                    5,
+
+                CTRL_OSC1_GAIN:                   2,
+                CTRL_OSC1_WAVE:                   3,
+                CTRL_OSC1_TUNE_CENTS:             4,
+                CTRL_OSC1_TUNE_HALF:              5,
+                CTRL_OSC1_TUNE_OCT:               6,
+
+                CTRL_KEYBOARD:                    7,
+
+
+                /*
 
                 CTRL_OSC2_WAVE:                   6,
                 CTRL_OSC2_TUNE:                   7,
@@ -41,7 +48,7 @@ define(
                 CTRL_DECAYTIME_SUSTAINGAIN_POINT: 16,
                 CTRL_RELEASE_POINT:               17,
                 CTRL_KEYBOARD:                    18,
-
+                */
 
                 AMOD_OSC1:        1,
                 AMOD_OSC1_GAIN:   2,
