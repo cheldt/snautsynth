@@ -27,63 +27,32 @@ require.config({
 requirejs(
     [
         'dejavu',
-        'app/canvas/CanvasState',
-        'app/control/ui/rangecontrol/Fader',
-        'app/audio/Synthesizer',
-        'app/util/GlobalConstants',
-        'app/factory/control/layout/Label',
-        'app/factory/control/ui/discretecontrol/RadioGroup',
-        'app/factory/control/ui/envelope/Graph',
-        'app/factory/control/ui/rangecontrol/Fader',
-        'app/factory/control/ui/rangecontrol/Knob',
-        'app/factory/audio/module/generator/Wave',
-        'app/factory/audio/module/mixing/Gain',
-        'app/factory/audio/module/output/Destination',
-        'app/factory/event/ControlConnection',
         'app/audio/module/generator/Wave',
-        'app/audio/module/IControllable',
-        'app/factory/control/ui/discretecontrol/Keyboard'
+        'app/canvas/CanvasState',
+        'app/factory/control/ControlList',
+        'app/factory/audio/module/ModuleList',
+        'app/Synthesizer',
+        'app/util/GlobalConstants'
+
     ],
     function (
         dejavu,
         CanvasState,
-        Fader,
-        Synthesizer,
-        GlobalConstants,
-        LabelFactory,
-        RadioGroupFactory,
-        GraphFactory,
-        FaderFactory,
-        KnobFactory,
-        WaveFactory,
-        GainFactory,
-        DestinationFactory,
-        ControlConnectionFactory,
         Wave,
-        IControllable,
-        KeyboardFactory
+        ControlListFactory,
+        AudioModuleListFactory,
+        Synthesizer,
+        GlobalConstants
     ) {
-
         var canvasState = new CanvasState(600, 550, 'syn');
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         var audioContext    = new window.AudioContext();
 
-        var factories = {};
-        factories[GlobalConstants.CLASS_TYPE_KNOB]        = KnobFactory;
-        factories[GlobalConstants.CLASS_TYPE_LABEL]       = LabelFactory;
-        factories[GlobalConstants.CLASS_TYPE_RADIOGROUP]  = RadioGroupFactory;
-        factories[GlobalConstants.CLASS_TYPE_FADER]       = FaderFactory;
-        factories[GlobalConstants.CLASS_TYPE_GRAPH]       = GraphFactory;
-        factories[GlobalConstants.CLASS_TYPE_WAVE]        = WaveFactory;
-        factories[GlobalConstants.CLASS_TYPE_GAIN]        = GainFactory;
-        factories[GlobalConstants.CLASS_TYPE_DESTINATION] = DestinationFactory;
-        factories[GlobalConstants.CLASS_TYPE_KEYBOARD]    = KeyboardFactory;
-
-        var audioModuleOptionList = [
+        var audioModuleOptionsList = [
             {
                 id:       GlobalConstants.AMOD_OSC1,
-                type:     GlobalConstants.CLASS_TYPE_WAVE,
+                type:     AudioModuleListFactory.CLASS_TYPE_WAVE,
                 tuning:   0,
                 gain:     1,
                 waveType: Synthesizer.WAVEFORM_SINE,
@@ -114,7 +83,7 @@ requirejs(
             },
             {
                 id:   GlobalConstants.AMOD_OSC1_GAIN,
-                type: GlobalConstants.CLASS_TYPE_GAIN,
+                type: AudioModuleListFactory.CLASS_TYPE_GAIN,
                 gain: 1,
                 moduleConnectionList: [
                     {
@@ -131,7 +100,7 @@ requirejs(
             },
             {
                 id:   GlobalConstants.AMOD_DESTINATION,
-                type: GlobalConstants.CLASS_TYPE_DESTINATION
+                type: AudioModuleListFactory.CLASS_TYPE_DESTINATION
             }
         ];
 
@@ -163,57 +132,17 @@ requirejs(
             }
         ];
 
-        var controlConnectionList    = {};
-        var controlConnectionFactory = new ControlConnectionFactory();
-
-        controlConnectionOptionsList.forEach(function(controlConnectionOptions) {
-            controlConnectionList[controlConnectionOptions.controlId] = controlConnectionFactory.create(
-                controlConnectionOptions
-            );
-        });
-
-        var audioModuleList = [];
-
-        audioModuleOptionList.forEach(function(audioModuleOptions) {
-            if (factories.hasOwnProperty(audioModuleOptions.type)) {
-                var factory = new factories[audioModuleOptions.type]();
-                audioModuleList.push(factory.create(audioContext, audioModuleOptions));
-            }
-        });
-
-        function executeCallback() {
-            var now = audioContext.currentTime;
-            var eventObject = canvasState.getBaseLayer().getAttr('event');
-
-            canvasState.getBaseLayer().setAttr('event', null);
-
-            if (typeof eventObject === 'undefined' || eventObject === null) {
-                return;
-            }
-
-            var eventValue = eventObject.getValue();
-            var controlId  = eventObject.getControlId();
-
-            var controlConnection = controlConnectionList[controlId];
-
-            var callBackFunction = controlConnection.getCallback();
-
-            callBackFunction(eventValue, now);
-        }
-
-
-
         var controlOptionsList = [
             {
                 id:       -1,
-                type:     GlobalConstants.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_LABEL,
                 position: {x: 0, y: 20},
                 color:    '#000',
                 text:     'OSC1-Waveform'
             },
             {
                 id:           GlobalConstants.CTRL_OSC1_WAVE,
-                type:         GlobalConstants.CLASS_TYPE_RADIOGROUP,
+                type:         ControlListFactory.CLASS_TYPE_RADIOGROUP,
                 position:     {x: 0, y: 40},
                 value:        Wave.WAVEFORM_SINE,
                 radioButtonOptions: [
@@ -249,14 +178,14 @@ requirejs(
             },
             {
                 id:       -1,
-                type:     GlobalConstants.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_LABEL,
                 position: {x: 130, y: 20},
                 color:    '#000',
                 text:     'OSC1-Octave'
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_TUNE_OCT,
-                type:                   GlobalConstants.CLASS_TYPE_KNOB,
+                type:                   ControlListFactory.CLASS_TYPE_KNOB,
                 position:               {x: 130, y: 40},
                 rangeValueOptions:      {
                     valueDisplayMultiplier: 1,
@@ -270,14 +199,14 @@ requirejs(
             },
             {
                 id:       -1,
-                type:     GlobalConstants.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_LABEL,
                 position: {x: 250, y: 20},
                 color:    '#000',
                 text:     'OSC1-Tune'
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_TUNE_HALF,
-                type:                   GlobalConstants.CLASS_TYPE_KNOB,
+                type:                   ControlListFactory.CLASS_TYPE_KNOB,
                 position:               {x: 250, y: 40},
                 rangeValueOptions:      {
                     valueDisplayMultiplier: 1,
@@ -291,14 +220,14 @@ requirejs(
             },
             {
                 id:       -1,
-                type:     GlobalConstants.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_LABEL,
                 position: {x: 370, y: 20},
                 color:    '#000',
                 text:     'OSC1-Cents'
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_TUNE_CENTS,
-                type:                   GlobalConstants.CLASS_TYPE_KNOB,
+                type:                   ControlListFactory.CLASS_TYPE_KNOB,
                 position:               {x: 370, y: 40},
                 rangeValueOptions:      {
                     valueDisplayMultiplier: 1,
@@ -312,7 +241,7 @@ requirejs(
             },
             {
                 id:       GlobalConstants.CTRL_KEYBOARD,
-                type:     GlobalConstants.CLASS_TYPE_KEYBOARD,
+                type:     ControlListFactory.CLASS_TYPE_KEYBOARD,
                 position: {x: 0, y: 300}
             }
             /*
@@ -625,86 +554,12 @@ requirejs(
             */
         ];
 
-        controlOptionsList.forEach(function(controlOptions) {
-            if (factories.hasOwnProperty(controlOptions.type)) {
-                var factory = new factories[controlOptions.type]();
-                canvasState.addControl(factory.create(canvasState, controlOptions));
-            }
-        });
-
-        var controlConnectionKeys = Object.keys(controlConnectionList);
-        var keyLength             = controlConnectionKeys.length;
-
-        for (var index = 0; index < keyLength; index++) {
-            controlConnectionList[controlConnectionKeys[index]]
-                .setupControl(audioModuleList, canvasState.getControls());
-        }
-
-        audioModuleList.forEach(function(audioModule) {
-            audioModule.setupModuleConnections(audioModuleList);
-
-            if (dejavu.instanceOf(audioModule, IControllable)) {
-                audioModule.connectToControls(controlConnectionList);
-            }
-        });
-        
-
-        /*
-        var synth           = new Synthesizer(audioCtx, canvasState);
-
-        synth.init();
-
-        canvasState.getContainer().addEventListener(
-            "click",
-            function(evt) {
-                var eventObject = canvasState.getBaseLayer().getAttr('event');
-                synth.processEventObject(eventObject, canvasState);
-            }
-        );
-
-
-
-        canvasState.getStage().on(
-            "dragmove",
-            function(evt) {
-                var eventObject = canvasState.getBaseLayer().getAttr('event');
-                synth.processEventObject(eventObject, canvasState);
-            }
-        );
-
-        window.addEventListener("keyup", function(e) { synth.noteOff(e.keyCode); });
-
-        window.addEventListener("keydown", function(e) { synth.noteOn(e.keyCode); });
-        */
-
-        canvasState.getStage().on(
-            "dragmove",
-            function() {executeCallback();}
-        );
-
-
-        canvasState.getContainer().addEventListener(
-            "dblclick",
-            function() {executeCallback();}
-        );
-
-        canvasState.getContainer().addEventListener(
-            "mousemove",
-            function() {executeCallback();}
-        );
-
-        canvasState.getContainer().addEventListener(
-            "click",
-            function() {executeCallback();}
-        );
-
-
-        window.addEventListener("keyup",
-            function() {executeCallback();}
-        );
-
-        window.addEventListener("keydown",
-            function() {executeCallback();}
+        var synthesizer = new Synthesizer(
+            audioContext,
+            audioModuleOptionsList,
+            canvasState,
+            controlConnectionOptionsList,
+            controlOptionsList
         );
     }
 );
