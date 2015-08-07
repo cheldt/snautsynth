@@ -252,12 +252,12 @@ define(
                 this._octaves   = 0;
                 this._halftones = 0;
 
-                if (tuning / Wave.CENTS_OCTAVE >= 1) {
+                if (Math.abs(tuning / Wave.CENTS_OCTAVE) >= 1) {
                     this._octaves = parseInt(tuning / Wave.CENTS_OCTAVE);
                     tuning = tuning - this._octaves * Wave.CENTS_OCTAVE;
                 }
 
-                if (tuning / Wave.CENTS_HALFTONE >= 1) {
+                if (Math.abs(tuning / Wave.CENTS_HALFTONE) >= 1) {
                     this._halftones = parseInt(tuning / Wave.CENTS_HALFTONE);
                     tuning = tuning - this._halftones * Wave.CENTS_HALFTONE;
                 }
@@ -508,12 +508,12 @@ define(
              *
              * @return {null|*}
              */
-            getDefaultValueByCtrlTarget: function(ctrlTargetId) {
+            getValueByCtrlTarget: function(ctrlTargetId) {
                 switch(ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
-                        return 1;
+                        return this._gainNode.gain.value;
                     case Wave.CTRL_TARGET_VALUE_WAVETYPE:
-                        return Wave.WAVEFORM_SINE;
+                        return this._waveType;
                     case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
                         return this._cents;
                     case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
@@ -535,6 +535,13 @@ define(
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
                 switch(ctrlTargetId) {
+                    case Wave.CTRL_TARGET_VALUE_GAIN:
+                        return new RangeValueOptions(
+                            new NumberRange(0, 0.5),
+                            new SnapOptions(0, 0, 0),
+                            1,
+                            new NumberFormatter('#0.0')
+                        );
                     case Wave.CTRL_TARGET_VALUE_WAVETYPE:
                         var discreteValueList = [];
 

@@ -129,6 +129,15 @@ define(
             });
         },
 
+        /**
+         * @memberof Snautsynth.Audio.Module.Module
+         * @instance
+         *
+         * @param {Object} toObject
+         * @param {string} methodName
+         *
+         * @return {Function}
+         */
         bindCallback: function(toObject, methodName) {
             return function(value, time) {
                 toObject[methodName](value, time);

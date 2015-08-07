@@ -23,6 +23,14 @@ define(
              * @memberof Snautsynth.Synthesizer
              * @protected
              *
+             * @type {AudioContext}
+             */
+            _audioContext: null,
+
+            /**
+             * @memberof Snautsynth.Synthesizer
+             * @protected
+             *
              * @type {Array.<Snautsynth.Audio.Module.Module>}
              */
             _audioModuleList: null,
@@ -43,6 +51,16 @@ define(
              */
             _controlConnectionList: null,
 
+            /**
+             * @constructor
+             * @class Snautsynth.Synthesizer
+             *
+             * @param {AudioContext}                  audioContext
+             * @param {Array.<Object>}                audioModuleOptionsList
+             * @param {Snautsynth.Canvas.CanvasState} canvasState
+             * @param {Array.<Object>}                controlConnectionOptionsList
+             * @param {Array.<Object>}                controlOptionsList
+             */
             initialize: function(
                 audioContext,
                 audioModuleOptionsList,
@@ -63,6 +81,7 @@ define(
 
                 var controlListFactory = new ControlListFactory();
                 controlListFactory.create(controlOptionsList, canvasState);
+
 
                 this.setupControls();
 
@@ -99,11 +118,13 @@ define(
                     function() {me.executeCallback();}
                 );
 
-                window.addEventListener("keyup",
+                window.addEventListener(
+                    "keyup",
                     function() {me.executeCallback();}
                 );
 
-                window.addEventListener("keydown",
+                window.addEventListener(
+                    "keydown",
                     function() {me.executeCallback();}
                 );
             },
@@ -145,7 +166,7 @@ define(
                 var eventValue = eventObject.getValue();
                 var controlId  = eventObject.getControlId();
 
-                var controlConnection = controlConnectionList[controlId];
+                var controlConnection = this._controlConnectionList[controlId];
 
                 var callBackFunction = controlConnection.getCallback();
 

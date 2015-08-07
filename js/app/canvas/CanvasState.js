@@ -4,14 +4,12 @@
 define(
     [
         'dejavu',
-        'app/event/CustomEvent',
         'app/util/Position',
         'konva',
         'app/util/MouseMovement'
     ],
     function(
         dejavu,
-        CustomEvent,
         Position,
         Konva,
         MouseMovement

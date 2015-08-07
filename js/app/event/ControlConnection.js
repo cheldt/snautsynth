@@ -138,14 +138,14 @@ define(['dejavu', 'app/audio/module/IControllable'], function(dejavu, IControlla
 
             if (dejavu.instanceOf(connectionModule, IControllable)) {
                 var valueOptions = connectionModule.getValueOptionsByCtrlTarget(controlTargetId);
-                var defaultValue = connectionModule.getDefaultValueByCtrlTarget(controlTargetId);
+                var value        = connectionModule.getValueByCtrlTarget(controlTargetId);
 
                 if (null === valueOptions) {
                     return;
                 }
 
-                if (null !== defaultValue) {
-                    connectionControl.setValue(defaultValue);
+                if (null !== value) {
+                    connectionControl.setValue(value);
                 }
 
                 if (null !== valueOptions) {

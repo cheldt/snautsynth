@@ -56,7 +56,6 @@ define(
              * @return {Array.<Snautsynth.Audio.Module.Module>}
              */
             create: function(audioModuleOptionsList, audioContext) {
-
                 var factoryList = this._factoryList;
 
                 var audioModuleList = [];

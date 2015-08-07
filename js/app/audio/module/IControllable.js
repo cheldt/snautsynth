@@ -29,7 +29,7 @@ define(['dejavu'], function(dejavu) {
          *
          * @return {null|*}
          */
-        getDefaultValueByCtrlTarget: function(ctrlTargetId) {},
+        getValueByCtrlTarget: function(ctrlTargetId) {},
 
         /**
          * @memberof Snautsynth.Audio.Module.IControllable
@@ -38,7 +38,7 @@ define(['dejavu'], function(dejavu) {
          *
          * @param {number} ctrlTargetId
          *
-         * @return {null|Snautsynth.DataType.ValueOption}
+         * @return {null|Snautsynth.DataType.ValueOptions}
          */
         getValueOptionsByCtrlTarget: function(ctrlTargetId) {}
     });

@@ -7,14 +7,22 @@ define(
         'app/audio/module/Module',
         'app/audio/module/IConnectable',
         'app/audio/module/IConnecting',
-        'app/audio/module/IControllable'
+        'app/audio/module/IControllable',
+        'app/control/ui/SnapOptions',
+        'app/datatype/NumberRange',
+        'app/datatype/RangeValueOptions',
+        'app/util/formatter/NumberFormatter'
     ],
     function(
         dejavu,
         Module,
         IConnectable,
         IConnecting,
-        IConrollable
+        IConrollable,
+        SnapOptions,
+        NumberRange,
+        RangeValueOptions,
+        NumberFormatter
     ) {
         'use strict';
 
@@ -134,8 +142,8 @@ define(
              *
              * @return {number}
              */
-            getDefaultValueByCtrlTarget: function(ctrlTargetId) {
-              return 1;
+            getValueByCtrlTarget: function(ctrlTargetId) {
+              return this._gainNode.gain.value;
             },
 
             /**
@@ -148,10 +156,12 @@ define(
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
                 switch(ctrlTargetId) {
-                    case Wave.CTRL_TARGET_VALUE_GAIN:
-                        return new ValueOption(
-                            new SnapOptions(1, 0, 0),
-                            new NumberRange(0, 1)
+                    case Gain.CTRL_TARGET_VALUE_GAIN:
+                        return new RangeValueOptions(
+                            new NumberRange(0, 1),
+                            new SnapOptions(0, 0, 0),
+                            1,
+                            new NumberFormatter('#0.0')
                         );
                         break;
                     default:
