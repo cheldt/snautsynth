@@ -30,9 +30,19 @@ define(
                 var controlConnectionObject  = {};
 
                 controlConnectionOptionsList.forEach(function(controlConnectionOptions) {
-                    controlConnectionObject[controlConnectionOptions.controlId] = controlConnectionFactory.create(
-                        controlConnectionOptions
-                    );
+                    var groupControlConnectionID = controlConnectionOptions.controlId;
+
+                    controlConnectionObject[controlConnectionOptions.controlId] = [];
+
+                    controlConnectionOptionsList.forEach(function(innerControlConnectionOptions) {
+                        if (groupControlConnectionID == innerControlConnectionOptions.controlId) {
+                            controlConnectionObject[controlConnectionOptions.controlId].push(
+                                controlConnectionFactory.create(
+                                    innerControlConnectionOptions
+                                )
+                            );
+                        }
+                    });
                 });
 
                 return controlConnectionObject;

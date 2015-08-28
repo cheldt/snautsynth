@@ -395,44 +395,46 @@ define(
                 var length = keys.length;
 
                 for (var i = 0; i < length; i++) {
-                    var controlConnection = controlConnectionList[keys[i]];
+                    var groupedControlConnections = controlConnectionList[keys[i]];
 
-                    if (this.getId() !== controlConnection.getModuleId()) {
-                        continue;
-                    }
+                    groupedControlConnections.forEach(function(controlConnection) {
+                        if (module.getId() !== controlConnection.getModuleId()) {
+                            return;
+                        }
 
-                    switch(controlConnection.getControlTarget()) {
-                        case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
-                            controlConnection.setCallback(
-                                this.bindCallback(module,'changeCents')
-                            );
-                            break;
-                        case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
-                            controlConnection.setCallback(
-                                this.bindCallback(module,'changeHalftones')
-                            );
-                            break;
-                        case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
-                            controlConnection.setCallback(
-                                this.bindCallback(module,'changeOctaves')
-                            );
-                            break;
-                        case Wave.CTRL_TARGET_VALUE_WAVETYPE:
-                            controlConnection.setCallback(
-                                this.bindCallback(module,'changeWaveType')
-                            );
-                            break;
-                        case Wave.CTRL_TARGET_TRIGGER_NOTE:
-                            controlConnection.setCallback(
-                                this.bindCallback(module,'triggerNote')
-                            );
-                            break;
-                        case Wave.CTRL_TARGET_VALUE_GAIN:
-                            controlConnection.setCallback(
-                                this.bindCallback(module,'changeGain')
-                            );
-                            break;
-                    }
+                        switch(controlConnection.getControlTarget()) {
+                            case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module,'changeCents')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module,'changeHalftones')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module,'changeOctaves')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_VALUE_WAVETYPE:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module,'changeWaveType')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_TRIGGER_NOTE:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module,'triggerNote')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_VALUE_GAIN:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module,'changeGain')
+                                );
+                                break;
+                        }
+                    });
                 }
             },
 
@@ -536,7 +538,6 @@ define(
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
                 switch(ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
-                        console.log('xx');
                         return new RangeValueOptions(
                             new NumberRange(0, 0.5),
                             new SnapOptions(0, 0, 0),

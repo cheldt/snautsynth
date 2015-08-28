@@ -525,11 +525,10 @@ define(
                     var snapOptions     = this.getValueOptions().getSnapOptions();
                     var maxMouseDelta   = 200;
                     var mouseY          = mouseMovement.getDeltaY();
-                    var speedup         = 1 / 1.1; //Math.abs((10 * mouseY) / maxMouseDelta);
-                    var value           = 0;
+                    var speedup         = 1 * 1.2; //Math.abs((10 * mouseY) / maxMouseDelta);
+
                     this._increaseValue = false;
                     this._mouseMoves    = true;
-                    var lastValue       = this._lastValue;
                     var speed           = 0.05;
                     var moveDirection   = mouseMovement.getDirection();
 
@@ -541,12 +540,10 @@ define(
 
                     var valueRange = this._rangeValueOptions.getNumberRange();
 
-                    value = Knob.calcValueFromRad(newPointerRadian, this._pointerRadRange, valueRange);
+                    var value = Knob.calcValueFromRad(newPointerRadian, this._pointerRadRange, valueRange);
 
                     if (this._mouseMoves) {
                         if (null !== snapOptions && 0 !== snapOptions.getSnapStep()) {
-
-
                             this.__updateValueStepwise(value, newPointerRadian)
                         } else {
                             this.__updateValueContinualy(value, newPointerRadian);
@@ -683,7 +680,7 @@ define(
 
                 this._kineticGroup.on('mousedown', function() {
                     myKnob.getCanvasState().lockPointer();
-                    myKnob.setLastValue(myKnob.getValue()); //myKnob.getCanvasState().setLastValue(myKnob.getValue());
+                    myKnob.setLastValue(myKnob.getValue());
                     myKnob.setSelected(true);
                 });
             },

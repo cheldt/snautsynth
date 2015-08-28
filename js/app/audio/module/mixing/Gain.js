@@ -67,9 +67,9 @@ define(
              */
             initialize: function(id, audioContext, gain, moduleConnectionList) {
                 this.$super(id, audioContext, moduleConnectionList);
-
                 this._gainNode = audioContext.createGain();
                 this._gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
+                this._gainNode.gain.value = gain;
             },
 
             /**
@@ -85,21 +85,23 @@ define(
                         continue;
                     }
 
-                    var controlConnection = controlConnectionList[controlId];
+                    var groupedControlConnections =  controlConnectionList[controlId];
 
-                    if (module.getId() !== controlConnection.getModuleId()) {
-                        continue;
-                    }
+                    groupedControlConnections.forEach(function(controlConnection) {
+                        if (module.getId() !== controlConnection.getModuleId()) {
+                            return;
+                        }
 
-                    switch(controlConnection.getControlTarget()) {
-                        case Gain.CTRL_TARGET_VALUE_GAIN:
-                            controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeGain(value, time);
-                                }
-                            );
-                            break;
-                    }
+                        switch(controlConnection.getControlTarget()) {
+                            case Gain.CTRL_TARGET_VALUE_GAIN:
+                                controlConnection.setCallback(
+                                    function(value, time) {
+                                        module.changeGain(value, time);
+                                    }
+                                );
+                                break;
+                        }
+                    });
                 }
             },
 
@@ -158,9 +160,9 @@ define(
                 switch(ctrlTargetId) {
                     case Gain.CTRL_TARGET_VALUE_GAIN:
                         return new RangeValueOptions(
-                            new NumberRange(0, 1),
+                            new NumberRange(0, this._gainNode.gain.value),
                             new SnapOptions(1, 0, 0),
-                            1,
+                            1 / this._gainNode.gain.value,
                             new NumberFormatter('#0.0')
                         );
                         break;

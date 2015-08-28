@@ -82,7 +82,6 @@ define(
                 var controlListFactory = new ControlListFactory();
                 controlListFactory.create(controlOptionsList, canvasState);
 
-
                 this.setupControls();
 
                 this.connectAudioModules();
@@ -166,11 +165,12 @@ define(
                 var eventValue = eventObject.getValue();
                 var controlId  = eventObject.getControlId();
 
-                var controlConnection = this._controlConnectionList[controlId];
+                var groupedControlConnections = this._controlConnectionList[controlId];
 
-                var callBackFunction = controlConnection.getCallback();
-
-                callBackFunction(eventValue, now);
+                groupedControlConnections.forEach(function(controlConnection) {
+                    var callBackFunction = controlConnection.getCallback();
+                    callBackFunction(eventValue, now);
+                });
             },
 
             /**
@@ -186,8 +186,12 @@ define(
                 var keyLength             = controlConnectionKeys.length;
 
                 for (var index = 0; index < keyLength; index++) {
-                    controlConnectionList[controlConnectionKeys[index]]
-                        .setupControl(audioModuleList, canvasState.getControls());
+                    var groupedControlConnections = controlConnectionList[controlConnectionKeys[index]]
+
+                    groupedControlConnections.forEach(function(controlConnection) {
+                        controlConnection.setupControl(audioModuleList, canvasState.getControls());
+                    });
+
                 }
             }
         });
