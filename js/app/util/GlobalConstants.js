@@ -45,12 +45,12 @@ define(
                 CTRL_KEYBOARD:                    18,
                 */
 
-                AMOD_DESTINATION: 1,
-                AMOD_FILTER:      2,
-                AMOD_OSC1:        3,
-                AMOD_OSC1_GAIN:   4,
-                AMOD_OSC2:        5,
-                AMOD_OSC2_GAIN:   6,
+                AMOD_DESTINATION:   1,
+                AMOD_BIQUAD_FILTER: 2,
+                AMOD_OSC1:          3,
+                AMOD_OSC1_GAIN:     4,
+                AMOD_OSC2:          5,
+                AMOD_OSC2_GAIN:     6,
 
                 KEY_CODE_A: 65,
                 KEY_CODE_W: 87,

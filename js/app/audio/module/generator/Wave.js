@@ -511,7 +511,7 @@ define(
              * @return {null|*}
              */
             getValueByCtrlTarget: function(ctrlTargetId) {
-                switch(ctrlTargetId) {
+                switch (ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
                         return this._gainNode.gain.value;
                     case Wave.CTRL_TARGET_VALUE_WAVETYPE:
@@ -536,7 +536,7 @@ define(
              * @return {null|Snautsynth.DataType.ValueOptions|Snautsynth.DataType.DiscreteValueOptions}
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
-                switch(ctrlTargetId) {
+                switch (ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
                         return new RangeValueOptions(
                             new NumberRange(0, 0.5),

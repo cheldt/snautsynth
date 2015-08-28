@@ -4,12 +4,14 @@
 define(
     [
         'dejavu',
+        'app/factory/audio/module/filter/Biquad',
         'app/factory/audio/module/output/Destination',
         'app/factory/audio/module/mixing/Gain',
         'app/factory/audio/module/generator/Wave'
     ],
     function(
         dejavu,
+        BiquadFilterFactory,
         DestinationFactory,
         GainFactory,
         WaveFactory
@@ -28,7 +30,7 @@ define(
             _factoryList: null,
 
             $constants: {
-                CLASS_TYPE_BIQUAD_FILTER: 0,
+                CLASS_TYPE_AMOD_BIQUAD_FILTER: 0,
                 CLASS_TYPE_AMOD_DESTINATION:   1,
                 CLASS_TYPE_AMOD_GAIN:          2,
                 CLASS_TYPE_AMOD_WAVE:          3
@@ -40,7 +42,7 @@ define(
              */
             initialize: function() {
                 this._factoryList = {};
-                this._factoryList[ModuleListFactory.CLASS_TYPE_BIQUAD_FILTER] = null;
+                this._factoryList[ModuleListFactory.CLASS_TYPE_AMOD_BIQUAD_FILTER] = BiquadFilterFactory;
                 this._factoryList[ModuleListFactory.CLASS_TYPE_AMOD_DESTINATION]   = DestinationFactory;
                 this._factoryList[ModuleListFactory.CLASS_TYPE_AMOD_GAIN]          = GainFactory;
                 this._factoryList[ModuleListFactory.CLASS_TYPE_AMOD_WAVE]          = WaveFactory;

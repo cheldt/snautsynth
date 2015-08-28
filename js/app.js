@@ -27,6 +27,7 @@ require.config({
 requirejs(
     [
         'dejavu',
+        'app/audio/module/filter/Biquad',
         'app/audio/module/generator/Wave',
         'app/audio/module/mixing/Gain',
         'app/canvas/CanvasState',
@@ -37,6 +38,7 @@ requirejs(
     ],
     function (
         dejavu,
+        BiquadFilter,
         Wave,
         Gain,
         CanvasState,
@@ -45,7 +47,7 @@ requirejs(
         Synthesizer,
         GlobalConstants
     ) {
-        var canvasState = new CanvasState(600, 550, 'syn');
+        var canvasState = new CanvasState(600, 650, 'syn');
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         var audioContext    = new window.AudioContext();
@@ -89,7 +91,7 @@ requirejs(
                 moduleConnectionList: [
                     {
                         sourceModuleId: GlobalConstants.AMOD_OSC1_GAIN,
-                        targetModuleId: GlobalConstants.AMOD_DESTINATION,
+                        targetModuleId: GlobalConstants.AMOD_BIQUAD_FILTER,
                         channelConnectionList: [
                             {
                                 sourceChannelNumber: 0,
@@ -137,6 +139,25 @@ requirejs(
                 moduleConnectionList: [
                     {
                         sourceModuleId: GlobalConstants.AMOD_OSC2_GAIN,
+                        targetModuleId: GlobalConstants.AMOD_BIQUAD_FILTER,
+                        channelConnectionList: [
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id:            GlobalConstants.AMOD_BIQUAD_FILTER,
+                type:          AudioModuleListFactory.CLASS_TYPE_AMOD_BIQUAD_FILTER,
+                filterType:    BiquadFilter.FILTER_LOWPASS,
+                frequency:     22000,
+                qualityFactor: 1,
+                moduleConnectionList: [
+                    {
+                        sourceModuleId: GlobalConstants.AMOD_BIQUAD_FILTER,
                         targetModuleId: GlobalConstants.AMOD_DESTINATION,
                         channelConnectionList: [
                             {
@@ -145,6 +166,7 @@ requirejs(
                             }
                         ]
                     }
+
                 ]
             },
             {
@@ -213,7 +235,19 @@ requirejs(
                 controlId:   GlobalConstants.CTRL_OSC2_GAIN,
                 moduleId:    GlobalConstants.AMOD_OSC2_GAIN,
                 valueTarget: Gain.CTRL_TARGET_VALUE_GAIN
+            },
+            {
+                controlId:   GlobalConstants.CTRL_FILTER_TYPE,
+                moduleId:    GlobalConstants.AMOD_BIQUAD_FILTER,
+                valueTarget: BiquadFilter.CTRL_TARGET_TYPE
             }
+            /*
+            {
+                controlId:   GlobalConstants.CTRL_FILTER_RESONANCE,
+                moduleId:    GlobalConstants.AMOD_BIQUAD_FILTER,
+                valueTarget: BiquadFilter.CTRL_TARGET_FREQUENCY
+            }
+            */
         ];
 
         var controlOptionsList = [
@@ -234,29 +268,29 @@ requirejs(
                         position:     null,
                         label:        'Sine',
                         value:        Wave.WAVEFORM_SINE,
-                        color:        '#000',
-                        checkedColor: '#FFF'
+                        color:        '#AABBCC',
+                        checkedColor: '#000'
                     },
                     {
                         position:     null,
                         label:        'Square',
                         value:        Wave.WAVEFORM_SQUARE,
-                        color:        '#000',
-                        checkedColor: '#FFF'
+                        color:        '#AABBCC',
+                        checkedColor: '#000'
                     },
                     {
                         position:     null,
                         label:        'Saw',
                         value:        Wave.WAVEFORM_SAWTOOTH,
-                        color:        '#000',
-                        checkedColor: '#FFF'
+                        color:        '#AABBCC',
+                        checkedColor: '#000'
                     },
                     {
                         position:     null,
                         label:        'Triangle',
                         value:        Wave.WAVEFORM_TRIANGLE,
-                        color:        '#000',
-                        checkedColor: '#FFF'
+                        color:        '#AABBCC',
+                        checkedColor: '#000'
                     }
                 ]
             },
@@ -347,7 +381,7 @@ requirejs(
             {
                 id:       GlobalConstants.CTRL_KEYBOARD,
                 type:     ControlListFactory.CLASS_TYPE_CTRL_KEYBOARD,
-                position: {x: 0, y: 500}
+                position: {x: 0, y: 600}
             },
             {
                 id:       -1,
@@ -366,29 +400,29 @@ requirejs(
                         position:     null,
                         label:        'Sine',
                         value:        Wave.WAVEFORM_SINE,
-                        color:        '#000',
-                        checkedColor: '#FFF'
+                        color:        '#aaccbb',
+                        checkedColor: '#000'
                     },
                     {
                         position:     null,
                         label:        'Square',
                         value:        Wave.WAVEFORM_SQUARE,
-                        color:        '#000',
-                        checkedColor: '#FFF'
+                        color:        '#aaccbb',
+                        checkedColor: '#000'
                     },
                     {
                         position:     null,
                         label:        'Saw',
                         value:        Wave.WAVEFORM_SAWTOOTH,
-                        color:        '#000',
-                        checkedColor: '#FFF'
+                        color:        '#aaccbb',
+                        checkedColor: '#000'
                     },
                     {
                         position:     null,
                         label:        'Triangle',
                         value:        Wave.WAVEFORM_TRIANGLE,
-                        color:        '#000',
-                        checkedColor: '#FFF'
+                        color:        '#aaccbb',
+                        checkedColor: '#000'
                     }
                 ]
             },
@@ -411,7 +445,7 @@ requirejs(
                 },
                 value:                  0,
                 radius:                 50,
-                color:                  '#AABBCC'
+                color:                  '#aaccbb'
             },
             {
                 id:       -1,
@@ -432,7 +466,7 @@ requirejs(
                 },
                 value:                  0,
                 radius:                 50,
-                color:                  '#AABBCC'
+                color:                  '#aaccbb'
             },
             {
                 id:       -1,
@@ -453,7 +487,7 @@ requirejs(
                 },
                 value:                  0,
                 radius:                 50,
-                color:                  '#AABBCC'
+                color:                  '#aaccbb'
             },
             {
                 id:       -1,
@@ -474,7 +508,62 @@ requirejs(
                 },
                 value:                  0,
                 radius:                 50,
-                color:                  '#AABBCC'
+                color:                  '#aaccbb'
+            },
+            {
+                id:       -1,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
+                position: {x: 0, y: 400},
+                color:    '#000',
+                text:     'Filtertype'
+            },
+            {
+                id:           GlobalConstants.CTRL_FILTER_TYPE,
+                type:         ControlListFactory.CLASS_TYPE_CTRL_RADIOGROUP,
+                position:     {x: 0, y: 420},
+                value:        BiquadFilter.FILTER_LOWPASS,
+                radioButtonOptions: [
+                    {
+                        position:     null,
+                        label:        'Lowpass',
+                        value:        BiquadFilter.FILTER_LOWPASS,
+                        color:        '#b2aacc',
+                        checkedColor: '#000'
+                    },
+                    {
+                        position:     null,
+                        label:        'Bandpass',
+                        value:        BiquadFilter.FILTER_BANDPASS,
+                        color:        '#b2aacc',
+                        checkedColor: '#000'
+                    },
+                    {
+                        position:     null,
+                        label:        'Highpass',
+                        value:        BiquadFilter.FILTER_HIGHPASS,
+                        color:        '#b2aacc',
+                        checkedColor: '#000'
+                    }
+                ]
+            },
+            {
+                id:       -1,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
+                position: {x: 130, y: 400},
+                color:    '#000',
+                text:     'Filter-Resonance'
+            },
+            {
+                id:           GlobalConstants.CTRL_FILTER_RESONANCE,
+                type:         ControlListFactory.CLASS_TYPE_CTRL_FADER,
+                position:     {x: 130, y: 420},
+                rangeValueOptions:      {
+                    valueDisplayMultiplier: 1,
+                    valueRange:   {min: 0, max: 0.5},
+                    snapOptions:  {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
+                    numberFormat: '#0.0'
+                },
+                value:       0
             }
         ];
 

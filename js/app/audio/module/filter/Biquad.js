@@ -1,32 +1,41 @@
 /**
  * @namespace Snautsynth.Audio.Module.Filter
  */
-require(
+define(
     [
         'dejavu',
         'app/audio/module/Module',
         'app/audio/module/IConnectable',
         'app/audio/module/IConnecting',
-        'app/audio/module/IControllable'
+        'app/audio/module/IControllable',
+        'app/control/ui/SnapOptions',
+        'app/datatype/DiscreteValue',
+        'app/datatype/DiscreteValueOptions',
+        'app/datatype/NumberRange',
+        'app/datatype/RangeValueOptions',
+        'app/util/formatter/NumberFormatter'
     ],
     function(
         dejavu,
         Module,
         IConnectable,
         IConnecting,
-        IConrollable
+        IConrollable,
+        SnapOptions,
+        DiscreteValue,
+        DiscreteValueOptions,
+        NumberRange,
+        RangeValueOptions,
+        NumberFormatter
     ) {
         'use strict';
 
         var Biquad = dejavu.Class.declare({
-
-            $name: 'Gain',
+            $name: 'Biquad',
 
             $extends: Module,
 
             $implements: [IConnectable, IConnecting, IConrollable],
-
-
 
             _filterNode: null,
 
@@ -63,15 +72,6 @@ require(
                  * @constant
                  * @default
                  *
-                 * @type {string}
-                 */
-                FILTER_OFF:          'off',
-
-                /**
-                 * @memberof Snautsynth.Audio.Module.Filter.Biquad
-                 * @constant
-                 * @default
-                 *
                  * @type {number}
                  */
                 FILTER_DEFAULT_FREQ: 22050,
@@ -92,7 +92,7 @@ require(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_FREQUENCY: 1,
+                CTRL_TARGET_FREQUENCY:      1,
 
                 /**
                  * @memberof Snautsynth.Audio.Module.Filter.Biquad
@@ -101,7 +101,7 @@ require(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_RESONANCE: 2,
+                CTRL_TARGET_QUALITY_FACTOR: 2,
 
                 /**
                  * @memberof Snautsynth.Audio.Module.Filter.Biquad
@@ -110,7 +110,7 @@ require(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_TYPE:      3
+                CTRL_TARGET_TYPE:           3
             },
 
             /**
@@ -125,16 +125,16 @@ require(
              * @param {AudioContext}                                     audioContext
              * @param {string}                                           type
              * @param {number}                                           frequency
-             * @param {number}                                           resonance
+             * @param {number}                                           qualityFactor
              * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>} moduleConnectionList
              */
-            initialize: function(id, audioContext, type, frequency, resonance, moduleConnectionList) {
+            initialize: function(id, audioContext, type, frequency, qualityFactor, moduleConnectionList) {
                 this.$super(id, audioContext, moduleConnectionList);
 
                 this._filterNode                  = audioContext.createBiquadFilter();
                 this._filterNode.type             = type;
                 this._filterNode.frequency.value  = frequency;
-                this._filterNode.Q.value          = resonance;
+                this._filterNode.Q.value          = qualityFactor;
             },
 
 
@@ -156,7 +156,7 @@ require(
              * @param {string} value
              * @param {number} time
              */
-            changeResonance: function(value, time) {
+            changeQualityFactor: function(value, time) {
                 this._filterNode.Q.setValueAtTime(value, time);
             },
 
@@ -178,40 +178,44 @@ require(
              */
             connectToControls: function(controlConnectionList) {
                 var module = this;
+
                 for (var controlId in controlConnectionList) {
                     if (!controlConnectionList.hasOwnProperty(controlId)) {
                         continue;
                     }
 
-                    var controlConnection = controlConnectionList[controlId];
+                    var groupedControlConnections = controlConnectionList[controlId];
 
-                    if (module.getId() !== controlConnection.getModuleId()) {
-                        continue;
-                    }
+                    groupedControlConnections.forEach(function(controlConnection) {
+                        if (module.getId() !== controlConnection.getModuleId()) {
+                            return;
+                        }
 
-                    switch(controlConnection.getControlTarget()) {
-                        case Biquad.CTRL_TARGET_FREQUENCY:
-                            controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeFrequency(value, time);
-                                }
-                            );
-                            break;
-                        case Biquad.CTRL_TARGET_RESONANCE:
-                            controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeResonance(value, time);
-                                }
-                            );
-                            break;
-                        case Biquad.CTRL_TARGET_TYPE:
-                            controlConnection.setCallback(
-                                function(value, time) {
-                                    module.changeType(value);
-                                }
-                            );
-                            break;
-                    }
+                        switch(controlConnection.getControlTarget()) {
+                            case Biquad.CTRL_TARGET_FREQUENCY:
+                                controlConnection.setCallback(
+                                    function(value, time) {
+                                        module.changeFrequency(value, time);
+                                    }
+                                );
+                                break;
+                            case Biquad.CTRL_TARGET_QUALITY_FACTOR:
+                                controlConnection.setCallback(
+                                    function(value, time) {
+                                        module.changeQualityFactor(value, time);
+                                    }
+                                );
+                                break;
+                            case Biquad.CTRL_TARGET_TYPE:
+                                controlConnection.setCallback(
+                                    function(value, time) {
+                                        module.changeType(value);
+                                    }
+                                );
+                                break;
+                        }
+
+                    });
                 }
             },
 
@@ -233,6 +237,64 @@ require(
              */
             getSourceNode: function() {
                 return this._filterNode;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Filter.Biquad
+             * @instance
+             *
+             * @param {number} ctrlTargetId
+             *
+             * @return {null|*}
+             */
+            getValueByCtrlTarget: function(ctrlTargetId) {
+                switch (ctrlTargetId) {
+                    case Biquad.CTRL_TARGET_FREQUENCY:
+                        return this._filterNode.frequency.value;
+                    case Biquad.CTRL_TARGET_QUALITY_FACTOR:
+                        return this._filterNode.Q.value;
+                    case Biquad.CTRL_TARGET_TYPE:
+                        return this._filterNode.type;
+                    default:
+                        return null;
+                }
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             *
+             * @param {number} ctrlTargetId
+             *
+             * @return {null|Snautsynth.DataType.ValueOptions|Snautsynth.DataType.DiscreteValueOptions}
+             */
+            getValueOptionsByCtrlTarget: function(ctrlTargetId) {
+                switch (ctrlTargetId) {
+                    case Biquad.CTRL_TARGET_FREQUENCY:
+                        return new RangeValueOptions(
+                            new NumberRange(0, this._filterNode.frequency.value),
+                            new SnapOptions(0, 0, 0),
+                            1,
+                            new NumberFormatter('#0')
+                        );
+                    case Biquad.CTRL_TARGET_QUALITY_FACTOR:
+                        return new RangeValueOptions(
+                            new NumberRange(0, this._filterNode.Q.value),
+                            new SnapOptions(0, 0, 0),
+                            100,
+                            new NumberFormatter('#0')
+                        );
+                    case Biquad.CTRL_TARGET_TYPE:
+                        var discreteValueList = [];
+
+                        discreteValueList.push(new DiscreteValue('Lowpass', Biquad.FILTER_LOWPASS));
+                        discreteValueList.push(new DiscreteValue('Bandpass', Biquad.FILTER_BANDPASS));
+                        discreteValueList.push(new DiscreteValue('Highpass', Biquad.FILTER_HIGHPASS));
+
+                        return new DiscreteValueOptions(discreteValueList, null, null);
+                    default:
+                        return null;
+                }
             }
         });
 

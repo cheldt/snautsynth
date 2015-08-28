@@ -263,6 +263,8 @@ define(
                     canvasState,
                     rangeValueOptions
                 );
+
+                var snapOptions   = rangeValueOptions.getSnapOptions();
                 this._length      = length;
                 this._color       = color;
                 this._orientation = orientation;
@@ -286,6 +288,8 @@ define(
                     stroke:      '#000'
                 });
 
+                this._kineticGroup.add(this._faderTrack);
+
                 //create handle
                 this._faderKnob = new Konva.Rect({
                     cornerRadius: Fader.BORDER_RADIUS,
@@ -293,6 +297,8 @@ define(
                     fill:         color,
                     stroke:       '#000'
                 });
+
+                this._kineticGroup.add(this._faderKnob);
 
                 //create value display
                 this._valueDisplayArea = new Konva.Rect({
@@ -445,12 +451,16 @@ define(
                     width  = this._length;
                 }
 
+
                 // setup border
+                //this._faderBorder.x(this._x);
+                //this._faderBorder.y(this._y);
+
                 this._faderBorder.height(height);
                 this._faderBorder.width(width);
 
                 this._trackLength = this._length * 0.9;
-                this._tmpPosition = this.calcPositionFromValue(value);
+                this._tmpPosition = this.calcPositionFromValue(this._value);
 
                 this._startTrackPosition = new Position(
                     Fader.FADER_TRACK_HEIGHT / 2,
@@ -614,6 +624,7 @@ define(
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
              * @instance
+             * @private
              */
             __updateValueDisplayText: function() {
                 var text = this._rangeValueOptions
