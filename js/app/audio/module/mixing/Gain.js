@@ -161,7 +161,7 @@ define(
                     case Gain.CTRL_TARGET_VALUE_GAIN:
                         return new RangeValueOptions(
                             new NumberRange(0, this._gainNode.gain.value),
-                            new SnapOptions(1, 0, 0),
+                            new SnapOptions(this._gainNode.gain.value, 0, 0),
                             1 / this._gainNode.gain.value,
                             new NumberFormatter('#0.0')
                         );
