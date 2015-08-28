@@ -9,40 +9,35 @@ define(
             $name: 'GlobalConstants',
 
             $constants: {
-                CLASS_TYPE_KNOB:        1,
-                CLASS_TYPE_FADER:       2,
-                CLASS_TYPE_GRAPH:       3,
-                CLASS_TYPE_RADIOGROUP:  4,
-                CLASS_TYPE_RADIOBUTTON: 5,
-                CLASS_TYPE_LABEL:       6,
-                CLASS_TYPE_POINT:       7,
-                CLASS_TYPE_WAVE:        8,
-                CLASS_TYPE_GAIN:        9,
-                CLASS_TYPE_DESTINATION: 10,
-                CLASS_TYPE_KEYBOARD:    11,
+                CLASS_TYPE_AMOD_DESTINATION: 1,
+                CLASS_TYPE_AMOD_GAIN:        2,
+                CLASS_TYPE_AMOD_WAVE:        3,
+                CLASS_TYPE_CTRL_FADER:       4,
+                CLASS_TYPE_CTRL_GRAPH:       5,
+                CLASS_TYPE_CTRL_KEYBOARD:    6,
+                CLASS_TYPE_CTRL_KNOB:        7,
+                CLASS_TYPE_CTRL_LABEL:       8,
+                CLASS_TYPE_CTRL_POINT:       9,
+                CLASS_TYPE_CTRL_RADIOGROUP:  10,
+                CLASS_TYPE_CTRL_RADIOBUTTON: 11,
 
                 CTRL_MASTERGAIN:                  1,
-
-                CTRL_OSC1_GAIN:                   2,
-                CTRL_OSC1_WAVE:                   3,
-                CTRL_OSC1_TUNE_CENTS:             4,
-                CTRL_OSC1_TUNE_HALF:              5,
-                CTRL_OSC1_TUNE_OCT:               6,
-
-                CTRL_KEYBOARD:                    7,
-
+                CTRL_FILTER_TYPE:                 2,
+                CTRL_FILTER_FREQUENCY:            3,
+                CTRL_FILTER_RESONANCE:            4,
+                CTRL_OSC1_GAIN:                   5,
+                CTRL_OSC1_WAVE:                   6,
+                CTRL_OSC1_TUNE_CENTS:             7,
+                CTRL_OSC1_TUNE_HALF:              8,
+                CTRL_OSC1_TUNE_OCT:               9,
+                CTRL_OSC2_GAIN:                   10,
+                CTRL_OSC2_WAVE:                   11,
+                CTRL_OSC2_TUNE_CENTS:             12,
+                CTRL_OSC2_TUNE_HALF:              13,
+                CTRL_OSC2_TUNE_OCT:               14,
+                CTRL_KEYBOARD:                    15,
 
                 /*
-
-                CTRL_OSC2_WAVE:                   6,
-                CTRL_OSC2_TUNE:                   7,
-                CTRL_OSC2_GAIN:                   8,
-                CTRL_OSC2_OCT:                    9,
-
-                CTRL_FLT_TYPE:                    10,
-                CTRL_FLT_FREQUENCY:               11,
-                CTRL_FLT_RESONANCE:               12,
-
                 CTRL_ENVELOPE:                    14,
                 CTRL_ATTACK_POINT:                15,
                 CTRL_DECAYTIME_SUSTAINGAIN_POINT: 16,
@@ -50,9 +45,12 @@ define(
                 CTRL_KEYBOARD:                    18,
                 */
 
-                AMOD_OSC1:        1,
-                AMOD_OSC1_GAIN:   2,
-                AMOD_DESTINATION: 3,
+                AMOD_DESTINATION: 1,
+                AMOD_FILTER:      2,
+                AMOD_OSC1:        3,
+                AMOD_OSC1_GAIN:   4,
+                AMOD_OSC2:        5,
+                AMOD_OSC2_GAIN:   6,
 
                 KEY_CODE_A: 65,
                 KEY_CODE_W: 87,

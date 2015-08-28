@@ -53,7 +53,7 @@ requirejs(
         var audioModuleOptionsList = [
             {
                 id:       GlobalConstants.AMOD_OSC1,
-                type:     AudioModuleListFactory.CLASS_TYPE_WAVE,
+                type:     AudioModuleListFactory.CLASS_TYPE_AMOD_WAVE,
                 tuning:   0,
                 gain:     0.5,
                 waveType: Wave.WAVEFORM_SQUARE,
@@ -84,7 +84,7 @@ requirejs(
             },
             {
                 id:   GlobalConstants.AMOD_OSC1_GAIN,
-                type: AudioModuleListFactory.CLASS_TYPE_GAIN,
+                type: AudioModuleListFactory.CLASS_TYPE_AMOD_GAIN,
                 gain: 0.5,
                 moduleConnectionList: [
                     {
@@ -101,8 +101,39 @@ requirejs(
             },
             {
                 id:   GlobalConstants.AMOD_DESTINATION,
-                type: AudioModuleListFactory.CLASS_TYPE_DESTINATION
-            }
+                type: AudioModuleListFactory.CLASS_TYPE_AMOD_DESTINATION
+            },
+            {
+                id:       GlobalConstants.AMOD_OSC2,
+                type:     AudioModuleListFactory.CLASS_TYPE_AMOD_WAVE,
+                tuning:   0,
+                gain:     0.5,
+                waveType: Wave.WAVEFORM_SQUARE,
+                moduleConnectionList: [
+                    {
+                        sourceModuleId: GlobalConstants.AMOD_OSC1,
+                        targetModuleId: GlobalConstants.AMOD_OSC1_GAIN,
+                        channelConnectionList: [
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            },
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            },
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            },
+                            {
+                                sourceChannelNumber: 0,
+                                targetChannelNumber: 0
+                            }
+                        ]
+                    }
+                ]
+            },
         ];
 
         var controlConnectionOptionsList = [
@@ -141,14 +172,14 @@ requirejs(
         var controlOptionsList = [
             {
                 id:       -1,
-                type:     ControlListFactory.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
                 position: {x: 0, y: 20},
                 color:    '#000',
                 text:     'OSC1-Waveform'
             },
             {
                 id:           GlobalConstants.CTRL_OSC1_WAVE,
-                type:         ControlListFactory.CLASS_TYPE_RADIOGROUP,
+                type:         ControlListFactory.CLASS_TYPE_CTRL_RADIOGROUP,
                 position:     {x: 0, y: 40},
                 value:        Wave.WAVEFORM_SINE,
                 radioButtonOptions: [
@@ -184,14 +215,14 @@ requirejs(
             },
             {
                 id:       -1,
-                type:     ControlListFactory.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
                 position: {x: 130, y: 20},
                 color:    '#000',
                 text:     'OSC1-Octave'
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_TUNE_OCT,
-                type:                   ControlListFactory.CLASS_TYPE_KNOB,
+                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
                 position:               {x: 130, y: 40},
                 rangeValueOptions:      {
                     valueDisplayMultiplier: 1,
@@ -205,14 +236,14 @@ requirejs(
             },
             {
                 id:       -1,
-                type:     ControlListFactory.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
                 position: {x: 250, y: 20},
                 color:    '#000',
                 text:     'OSC1-Halftone'
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_TUNE_HALF,
-                type:                   ControlListFactory.CLASS_TYPE_KNOB,
+                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
                 position:               {x: 250, y: 40},
                 rangeValueOptions:      {
                     valueDisplayMultiplier: 1,
@@ -226,14 +257,14 @@ requirejs(
             },
             {
                 id:       -1,
-                type:     ControlListFactory.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
                 position: {x: 370, y: 20},
                 color:    '#000',
                 text:     'OSC1-Cents'
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_TUNE_CENTS,
-                type:                   ControlListFactory.CLASS_TYPE_KNOB,
+                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
                 position:               {x: 370, y: 40},
                 rangeValueOptions:      {
                     valueDisplayMultiplier: 1,
@@ -247,14 +278,14 @@ requirejs(
             },
             {
                 id:       -1,
-                type:     ControlListFactory.CLASS_TYPE_LABEL,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
                 position: {x: 490, y: 20},
                 color:    '#000',
                 text:     'OSC1-Gain'
             },
             {
                 id:                     GlobalConstants.CTRL_OSC1_GAIN,
-                type:                   ControlListFactory.CLASS_TYPE_KNOB,
+                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
                 position:               {x: 490, y: 40},
                 rangeValueOptions:      {
                     valueDisplayMultiplier: 1,
@@ -268,7 +299,7 @@ requirejs(
             },
             {
                 id:       GlobalConstants.CTRL_KEYBOARD,
-                type:     ControlListFactory.CLASS_TYPE_KEYBOARD,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KEYBOARD,
                 position: {x: 0, y: 300}
             }
         ];

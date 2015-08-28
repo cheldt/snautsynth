@@ -34,12 +34,12 @@ define(
             _factoryList: null,
 
             $constants: {
-                CLASS_TYPE_LABEL:      0,
-                CLASS_TYPE_RADIOGROUP: 1,
-                CLASS_TYPE_GRAPH:      2,
-                CLASS_TYPE_FADER:      3,
-                CLASS_TYPE_KEYBOARD:   4,
-                CLASS_TYPE_KNOB:       5
+                CLASS_TYPE_CTRL_LABEL:      0,
+                CLASS_TYPE_CTRL_RADIOGROUP: 1,
+                CLASS_TYPE_CTRL_GRAPH:      2,
+                CLASS_TYPE_CTRL_FADER:      3,
+                CLASS_TYPE_CTRL_KEYBOARD:   4,
+                CLASS_TYPE_CTRL_KNOB:       5
 
             },
 
@@ -49,12 +49,12 @@ define(
              */
             initialize: function() {
                 this._factoryList = {};
-                this._factoryList[ControlListFactory.CLASS_TYPE_LABEL]      = LabelFactory;
-                this._factoryList[ControlListFactory.CLASS_TYPE_RADIOGROUP] = RadioGroupFactory;
-                this._factoryList[ControlListFactory.CLASS_TYPE_GRAPH]      = GraphFactory;
-                this._factoryList[ControlListFactory.CLASS_TYPE_FADER]      = FaderFactory;
-                this._factoryList[ControlListFactory.CLASS_TYPE_KEYBOARD]   = KeyboardFactory;
-                this._factoryList[ControlListFactory.CLASS_TYPE_KNOB]       = KnobFactory;
+                this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_LABEL]      = LabelFactory;
+                this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_RADIOGROUP] = RadioGroupFactory;
+                this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_GRAPH]      = GraphFactory;
+                this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_FADER]      = FaderFactory;
+                this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_KEYBOARD]   = KeyboardFactory;
+                this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_KNOB]       = KnobFactory;
             },
 
             /**

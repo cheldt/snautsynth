@@ -12,9 +12,46 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          * @instance
          * @protected
          *
+         * @type {boolean}
+         */
+        _increaseValue: null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
+        _lastValue: null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         * @protected
+         *
+         * @type {number}
+         */
+        _mouseMoves: null,
+
+        /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         * @protected
+         *
          * @type {Snautsynth.DataType.RangeValueOptions}
          */
         _rangeValueOptions: null,
+
+        /**
+         * @memberof Snautsynth.Control.I.RangeControl.RangeControl
+         * @instance
+         *
+         * @param {number} lastValue
+         */
+        setLastValue: function(lastValue) {
+            this._lastValue = lastValue;
+        },
 
         /**
          * @memberof Snautsynth.Control.UI.RangeControl.RangeControl

@@ -122,15 +122,6 @@ define(
              * @instance
              * @protected
              *
-             * @type {number}
-             */
-            _tmpPointerRad: null,
-
-            /**
-             * @memberof Snautsynth.Control.UI.RangeControl.Knob
-             * @instance
-             * @protected
-             *
              * @type {Konva.Rect}
              */
             _valueDisplayArea: null,
@@ -184,17 +175,6 @@ define(
              */
             setPointerRadian: function(pointerRadian) {
                 this._pointerRadian = pointerRadian;
-                return this;
-            },
-
-            /**
-             * @memberof Snautsynth.Control.UI.RangeControl.Knob
-             * @instance
-             *
-             * @param {number} tmpPointerRad
-             */
-            setTmpPointerRad: function(tmpPointerRad) {
-                this._tmpPointerRad = tmpPointerRad;
                 return this;
             },
 
@@ -320,9 +300,7 @@ define(
                     rangeValueOptions
                 );
 
-                this._radius        = radius;
-                this._tmpPointerRad = this._pointerRadian;
-                var snapOptions     = rangeValueOptions.getSnapOptions();
+                this._radius = radius;
 
                 // create knob circle
                 this._knobCircle = new Konva.Circle({
@@ -360,72 +338,6 @@ define(
                 });
 
                 this._kineticGroup.add(this._valueDisplayText);
-
-                var myKnob = this;
-
-                var container = this.getCanvasState().getContainer();
-
-                // add eventlistener for mousedown => lock mouse
-                this._kineticGroup.on('mousedown', function(evt) {
-                    myKnob.getCanvasState().lockPointer();
-                    myKnob.getCanvasState().setLastValue(myKnob.getValue());
-                    myKnob.setSelected(true);
-                });
-
-                container.addEventListener('mousemove', function(evt) {
-
-                    if (myKnob.getSelected()) {
-                        var mousePos  = myKnob.getCanvasState().getMouseMovement(evt);
-                        var baseLayer = myKnob.getCanvasState().getBaseLayer();
-
-                        myKnob.update(mousePos);
-                        baseLayer.setAttr('event', new Event(myKnob.getId(), myKnob.getValue(), Event.TYPE_VALUE_CHANGED));
-                    }
-                });
-
-                container.addEventListener('mouseup', function(evt) {
-                    if (myKnob.getSelected()) {
-                        myKnob.getCanvasState().unlockPointer();
-                        myKnob.setSelected(false);
-                    }
-                });
-
-                if (null !== snapOptions && null !== snapOptions.getDoubleClickSnapValue()) {
-                    container.addEventListener('dblclick', function() {
-                        var stage      = myKnob.getCanvasState().getStage();
-                        var pointerPos = stage.getPointerPosition();
-                        var shape      = stage.getIntersection(pointerPos);
-
-                        if (!shape) {
-                            return;
-                        }
-
-                        if (myKnob.getId() !== shape.getId()) {
-                            return;
-                        }
-
-                        myKnob.setValue(snapOptions.getDoubleClickSnapValue());
-
-                        myKnob.setPointerRadian(
-                            Knob.calcRadFromValue(
-                                snapOptions.getDoubleClickSnapValue(),
-                                myKnob.getPointerRadRange(),
-                                myKnob.getValueOptions().getNumberRange()
-                            )
-                        );
-
-                        var newPointerPos = myKnob.calcPointerPos();
-
-                        myKnob.updatePointerPosition(newPointerPos);
-                        myKnob.setTmpPointerRad(myKnob.getPointerRadian());
-                        myKnob.updateValueDisplayText();
-
-                        myKnob.getCanvasState().getBaseLayer().setAttr(
-                            'event',
-                            new Event(myKnob.getId(), myKnob.getValue(), Event.TYPE_VALUE_CHANGED)
-                        );
-                    });
-                }
             },
 
             $statics: {
@@ -555,8 +467,7 @@ define(
                     this._rangeValueOptions.getNumberRange()
                 );
 
-                this._tmpPointerRad = this._pointerRadian;
-                var pointerDeg      = Knob.POINTER_MAX_DEG - Knob.POINTER_MIN_DEG;
+                var pointerDeg = Knob.POINTER_MAX_DEG - Knob.POINTER_MIN_DEG;
 
                 // create components of control
                 this._knobPosition  = new Position(
@@ -598,7 +509,9 @@ define(
 
                 this._valueDisplayText.fontSize(Knob.VAL_DISPLAY_FONT_SIZE * radiusScaleMultiplier);
 
-                this.updateValueDisplayText();
+                this.__updateValueDisplayText();
+
+                this.__registerEventHandlers();
             },
 
             /**
@@ -609,96 +522,34 @@ define(
              */
             update: function(mouseMovement) {
                 if(this._selected) {
-                    var snapOptions    = this._rangeValueOptions.getSnapOptions();
-                    var maxMouseDelta  = 200;
-                    var mouseY         = mouseMovement.getDeltaY();
-                    var speedup        = 1 / 2; //Math.abs((10 * mouseY) / maxMouseDelta);
-                    var value;
-                    var forward        = false;
-                    var mouseMoves     = true;
-                    var lastValue      = this._canvasState.getLastValue();
-                    var speed          = 0.05;
-                    var moveDirection  = mouseMovement.getDirection();
+                    var snapOptions     = this.getValueOptions().getSnapOptions();
+                    var maxMouseDelta   = 200;
+                    var mouseY          = mouseMovement.getDeltaY();
+                    var speedup         = 1 / 1.1; //Math.abs((10 * mouseY) / maxMouseDelta);
+                    var value           = 0;
+                    this._increaseValue = false;
+                    this._mouseMoves    = true;
+                    var lastValue       = this._lastValue;
+                    var speed           = 0.05;
+                    var moveDirection   = mouseMovement.getDirection();
 
                     if (null === snapOptions || (null !== snapOptions && snapOptions.getSnapStep() === 0)) {
                        speed = speed * speedup;
                     }
 
-                    if (
-                        MouseMovement.DIRECTION_UP === moveDirection
-                    ) {
-                        //check if knob was turned to far clockwise
-                        if ((this._tmpPointerRad + speed) <= this._pointerRadRange.getMax()) {
-                            this._tmpPointerRad += speed;
-                        } else {
-                            this._tmpPointerRad = this._pointerRadRange.getMax();
-                        }
-
-                        forward = true;
-                    } else if (
-                        MouseMovement.DIRECTION_DOWN === moveDirection
-                    ) {
-                        //check if knob was turned to far counter clockwise
-                        if ((this._tmpPointerRad - speed) >= this._pointerRadRange.getMin()) {
-                            this._tmpPointerRad -= speed;
-                        }
-                        else {
-                            this._tmpPointerRad = this._pointerRadRange.getMin();
-                        }
-                    } else {
-                        mouseMoves = false;
-                    }
+                    var newPointerRadian = this.__calcNewPointerRadian(moveDirection, speed);
 
                     var valueRange = this._rangeValueOptions.getNumberRange();
 
-                    value = Knob.calcValueFromRad(this._tmpPointerRad, this._pointerRadRange, valueRange);
+                    value = Knob.calcValueFromRad(newPointerRadian, this._pointerRadRange, valueRange);
 
-                    if (mouseMoves) {
+                    if (this._mouseMoves) {
                         if (null !== snapOptions && 0 !== snapOptions.getSnapStep()) {
-                            var step = 0;
 
-                            if (
-                                Math.abs(value - lastValue) >= snapOptions.getSnapStep() - snapOptions.getSnapDistance()
-                            ) {
-                                step = snapOptions.getSnapStep();
-                            }
 
-                            if (0 !== step) {
-                                if (forward) {
-                                    if (this._value + step <= valueRange.getMax()) {
-                                        this._value = this._value + step;
-                                    } else {
-                                        this._value = valueRange.getMax();
-                                    }
-                                }
-                                else {
-                                    if (this._value - step >= valueRange.getMin()) {
-                                        this._value = this._value - step;
-                                    } else {
-                                        this._value = valueRange.getMin();
-                                    }
-                                }
-
-                                this._canvasState.setLastValue(this._value);
-
-                                this._pointerRadian = Knob.calcRadFromValue(
-                                    this._value,
-                                    this._pointerRadRange,
-                                    valueRange
-                                );
-
-                                var newPointerPos = this.calcPointerPos();
-
-                                this.updatePointerPosition(newPointerPos);
-                                this.updateValueDisplayText();
-                            }
+                            this.__updateValueStepwise(value, newPointerRadian)
                         } else {
-                            this._pointerRadian = this._tmpPointerRad;
-                            this._value         = value;
-                            var newPointerPos   = this.calcPointerPos();
-
-                            this.updatePointerPosition(newPointerPos);
-                            this.updateValueDisplayText();
+                            this.__updateValueContinualy(value, newPointerRadian);
                         }
                     }
                 }
@@ -707,8 +558,9 @@ define(
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
              * @instance
+             * @private
              */
-            updateValueDisplayText: function() {
+            __updateValueDisplayText: function() {
                 var formatter = this._rangeValueOptions.getNumberFormatter();
                 var text      = formatter.format(this._value * this._rangeValueOptions.getValueDisplayMultiplier());
 
@@ -723,14 +575,243 @@ define(
                 );
             },
 
+
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
              * @instance
+             * @private
+             *
+             * @param {number} moveDirection
+             * @param {number} speed
+             *
+             * @return {number}
              */
-            updatePointerPosition: function(newPointerPos) {
+            __calcNewPointerRadian: function(moveDirection, speed) {
+                var newPointerRadian = this._pointerRadian;
+
+                if (
+                    MouseMovement.DIRECTION_UP === moveDirection
+                ) {
+                    //check if knob has been turned to far clockwise
+                    if ((newPointerRadian + speed) <= this._pointerRadRange.getMax()) {
+                        newPointerRadian += speed;
+                    } else {
+                        newPointerRadian = this._pointerRadRange.getMax();
+                    }
+
+                    this._increaseValue = true;
+                } else if (
+                    MouseMovement.DIRECTION_DOWN === moveDirection
+                ) {
+                    //check if knob has been turned to far counter clockwise
+                    if ((newPointerRadian - speed) >= this._pointerRadRange.getMin()) {
+                        newPointerRadian -= speed;
+                    }
+                    else {
+                        newPointerRadian = this._pointerRadRange.getMin();
+                    }
+                } else {
+                    this._mouseMoves = false;
+                }
+
+                return newPointerRadian;
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             */
+            __registerDoubleClickEventHandler: function() {
+                var snapOptions = this.getValueOptions().getSnapOptions();
+                var container   = this.getCanvasState().getContainer();
+                var myKnob      = this;
+
+                if (null !== snapOptions && null !== snapOptions.getDoubleClickSnapValue()) {
+                    container.addEventListener('dblclick', function() {
+                        var stage      = myKnob.getCanvasState().getStage();
+                        var pointerPos = stage.getPointerPosition();
+                        var shape      = stage.getIntersection(pointerPos);
+
+                        if (!shape) {
+                            return;
+                        }
+
+                        if (myKnob.getId() !== shape.getId()) {
+                            return;
+                        }
+
+                        myKnob.setValue(snapOptions.getDoubleClickSnapValue());
+
+                        myKnob.setPointerRadian(
+                            Knob.calcRadFromValue(
+                                snapOptions.getDoubleClickSnapValue(),
+                                myKnob.getPointerRadRange(),
+                                myKnob.getValueOptions().getNumberRange()
+                            )
+                        );
+
+                        myKnob.updateUI();
+
+                        myKnob.getCanvasState().getBaseLayer().setAttr(
+                            'event',
+                            new Event(myKnob.getId(), myKnob.getValue(), Event.TYPE_VALUE_CHANGED)
+                        );
+                    });
+                }
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             */
+            __registerEventHandlers: function() {
+                this.__registerDoubleClickEventHandler();
+                this.__registerMouseDownEventHandler();
+                this.__registerMouseMoveEventHandler();
+                this.__registerMouseUpEventHandler();
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             */
+            __registerMouseDownEventHandler: function() {
+                var myKnob = this;
+
+                this._kineticGroup.on('mousedown', function() {
+                    myKnob.getCanvasState().lockPointer();
+                    myKnob.setLastValue(myKnob.getValue()); //myKnob.getCanvasState().setLastValue(myKnob.getValue());
+                    myKnob.setSelected(true);
+                });
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             */
+            __registerMouseMoveEventHandler: function() {
+                var myKnob = this;
+
+                this.getCanvasState().getContainer().addEventListener('mousemove', function(evt) {
+                    if (myKnob.getSelected()) {
+                        var mousePos  = myKnob.getCanvasState().getMouseMovement(evt);
+                        var baseLayer = myKnob.getCanvasState().getBaseLayer();
+
+                        myKnob.update(mousePos);
+                        baseLayer.setAttr(
+                            'event',
+                            new Event(myKnob.getId(), myKnob.getValue(), Event.TYPE_VALUE_CHANGED)
+                        );
+                    }
+                });
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             */
+            __registerMouseUpEventHandler: function() {
+                var myKnob = this;
+
+                this.getCanvasState().getContainer().addEventListener('mouseup', function(evt) {
+                    if (myKnob.getSelected()) {
+                        myKnob.getCanvasState().unlockPointer();
+                        myKnob.setSelected(false);
+                    }
+                });
+            },
+
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             */
+            __updatePointerPosition: function(newPointerPos) {
                 this._pointer.setPoints(
                     [this._knobPosition.getX(), this._knobPosition.getY(), newPointerPos.getX(), newPointerPos.getY()]
                 );
+            },
+
+            /**
+             * Updates Pointer-Position and value-display
+             *
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             */
+            updateUI: function() {
+                this.__updatePointerPosition(this.calcPointerPos());
+                this.__updateValueDisplayText();
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             *
+             * @param {number} value
+             * @param {number} newPointerRadian
+             */
+            __updateValueContinualy: function(value, newPointerRadian) {
+                this._pointerRadian = newPointerRadian;
+                this._value         = value;
+
+                this.updateUI();
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Knob
+             * @instance
+             * @private
+             *
+             * @param {number} value
+             * @param {number} newPointerRadian
+             */
+            __updateValueStepwise: function(value, newPointerRadian) {
+                this._pointerRadian = newPointerRadian;
+
+                var snapOptions = this._rangeValueOptions.getSnapOptions();
+                var step        = 0;
+                var valueRange  = this._rangeValueOptions.getNumberRange();
+
+                if (
+                    Math.abs(value - this._lastValue) >= snapOptions.getSnapStep() - snapOptions.getSnapDistance()
+                ) {
+                    step = snapOptions.getSnapStep();
+                }
+
+                if (0 !== step) {
+                    if (this._increaseValue) {
+                        if (this._value + step <= valueRange.getMax()) {
+                            this._value = this._value + step;
+                        } else {
+                            this._value = valueRange.getMax();
+                        }
+                    }
+                    else {
+                        if (this._value - step >= valueRange.getMin()) {
+                            this._value = this._value - step;
+                        } else {
+                            this._value = valueRange.getMin();
+                        }
+                    }
+
+                    this._lastValue = this._value;
+
+                    this._pointerRadian = Knob.calcRadFromValue(
+                        this._value,
+                        this._pointerRadRange,
+                        valueRange
+                    );
+
+                    this.updateUI();
+                }
             }
         });
 

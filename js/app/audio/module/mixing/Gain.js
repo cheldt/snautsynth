@@ -111,7 +111,7 @@ define(
              * @param {number} time
              */
             changeGain: function (value, time) {
-                this._gainNode.setValueAtTime(value, time);
+                this._gainNode.gain.setValueAtTime(value, time);
             },
 
             /**
@@ -159,7 +159,7 @@ define(
                     case Gain.CTRL_TARGET_VALUE_GAIN:
                         return new RangeValueOptions(
                             new NumberRange(0, 1),
-                            new SnapOptions(0, 0, 0),
+                            new SnapOptions(1, 0, 0),
                             1,
                             new NumberFormatter('#0.0')
                         );

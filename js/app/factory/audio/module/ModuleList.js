@@ -29,9 +29,9 @@ define(
 
             $constants: {
                 CLASS_TYPE_BIQUAD_FILTER: 0,
-                CLASS_TYPE_DESTINATION:   1,
-                CLASS_TYPE_GAIN:          2,
-                CLASS_TYPE_WAVE:          3
+                CLASS_TYPE_AMOD_DESTINATION:   1,
+                CLASS_TYPE_AMOD_GAIN:          2,
+                CLASS_TYPE_AMOD_WAVE:          3
             },
 
             /**
@@ -41,9 +41,9 @@ define(
             initialize: function() {
                 this._factoryList = {};
                 this._factoryList[ModuleListFactory.CLASS_TYPE_BIQUAD_FILTER] = null;
-                this._factoryList[ModuleListFactory.CLASS_TYPE_DESTINATION]   = DestinationFactory;
-                this._factoryList[ModuleListFactory.CLASS_TYPE_GAIN]          = GainFactory;
-                this._factoryList[ModuleListFactory.CLASS_TYPE_WAVE]          = WaveFactory;
+                this._factoryList[ModuleListFactory.CLASS_TYPE_AMOD_DESTINATION]   = DestinationFactory;
+                this._factoryList[ModuleListFactory.CLASS_TYPE_AMOD_GAIN]          = GainFactory;
+                this._factoryList[ModuleListFactory.CLASS_TYPE_AMOD_WAVE]          = WaveFactory;
             },
 
             /**

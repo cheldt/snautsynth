@@ -133,14 +133,14 @@ define(
          * @memberof Snautsynth.Audio.Module.Module
          * @instance
          *
-         * @param {Object} toObject
+         * @param {Object} targetObject
          * @param {string} methodName
          *
          * @return {Function}
          */
-        bindCallback: function(toObject, methodName) {
+        bindCallback: function(targetObject, methodName) {
             return function(value, time) {
-                toObject[methodName](value, time);
+                targetObject[methodName](value, time);
             };
         }
     });

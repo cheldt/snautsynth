@@ -229,7 +229,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_TRIGGER_NOTE:           8
+                CTRL_TARGET_TRIGGER_NOTE:         8
             },
 
             /**
@@ -536,6 +536,7 @@ define(
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
                 switch(ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
+                        console.log('xx');
                         return new RangeValueOptions(
                             new NumberRange(0, 0.5),
                             new SnapOptions(0, 0, 0),

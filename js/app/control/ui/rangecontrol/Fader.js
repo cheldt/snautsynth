@@ -502,7 +502,7 @@ define(
                 this._valueDisplayArea.x(displayAreaX);
                 this._valueDisplayArea.y(displayAreaY);
 
-                this.updateValueDisplayText();
+                this.__updateValueDisplayText();
 
                 this.updateKnobPosition(this._tmpPosition);
             },
@@ -586,12 +586,12 @@ define(
                                 this._canvasState.setLastValue(this._value);
                                 this._tmpPosition = this.calcPositionFromValue(this._value);
                                 this.updateKnobPosition(this._tmpPosition);
-                                this.updateValueDisplayText();
+                                this.__updateValueDisplayText();
                             }
                         } else {
                             this._value = value;
                             this.updateKnobPosition(this._tmpPosition);
-                            this.updateValueDisplayText();
+                            this.__updateValueDisplayText();
                         }
                     }
                 }
@@ -615,7 +615,7 @@ define(
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
              * @instance
              */
-            updateValueDisplayText: function() {
+            __updateValueDisplayText: function() {
                 var text = this._rangeValueOptions
                     .getNumberFormatter()
                     .format(this._value * this._rangeValueOptions.getValueDisplayMultiplier());
