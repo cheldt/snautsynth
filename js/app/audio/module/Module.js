@@ -44,6 +44,8 @@ define(
          */
         _moduleConnectionList: null,
 
+        _controlTargetOptions: null,
+
         /**
          * @memberof Snautsynth.Audio.Module.Module
          * @instance
@@ -68,14 +70,16 @@ define(
          * @constructor
          * @class Snautsynth.Audio.Module.Mixing.Gain
          *
-         * @param {number}                                           id
-         * @param {AudioContext}                                     audioContext
-         * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>} moduleConnectionList
+         * @param {number}                                                  id
+         * @param {AudioContext}                                            audioContext
+         * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}        moduleConnectionList
+         * @param {Snautsynth.Audio.Module.IControlTargetOptionsAccessable} controlTargetOptions
          */
-        initialize: function(id, audioContext, moduleConnectionList) {
+        initialize: function(id, audioContext, moduleConnectionList, controlTargetOptions) {
             this._id                   = id;
             this._audioContext         = audioContext;
             this._moduleConnectionList = moduleConnectionList;
+            this._controlTargetOptions = controlTargetOptions;
         },
 
 

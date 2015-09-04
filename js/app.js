@@ -32,6 +32,7 @@ requirejs(
         'app/audio/module/mixing/Gain',
         'app/canvas/CanvasState',
         'app/factory/control/ControlList',
+        'app/factory/audio/module/ControlTargetOptions',
         'app/factory/audio/module/ModuleList',
         'app/Synthesizer',
         'app/util/GlobalConstants'
@@ -44,6 +45,7 @@ requirejs(
         CanvasState,
         ControlListFactory,
         AudioModuleListFactory,
+        ControlTargetOptionsFactory,
         Synthesizer,
         GlobalConstants
     ) {
@@ -79,6 +81,38 @@ requirejs(
                             {
                                 sourceChannelNumber: 0,
                                 targetChannelNumber: 0
+                            }
+                        ]
+                    }
+                ],
+                controlTargetOptions: [
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               Wave.CTRL_TARGET_VALUE_GAIN,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             {min: 0, max: 0.5},
+                        snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
+                        numberFormat:           '#0.0'
+                    },
+                    {
+                        type:     ControlTargetOptionsFactory.CLASS_TYPE_DISCRETEVALUEOPTIONS,
+                        targetId: Wave.CTRL_TARGET_VALUE_WAVETYPE,
+                        discreteOptions: [
+                            {
+                                name: 'Saw',
+                                value: Wave.WAVEFORM_SAWTOOTH
+                            },
+                            {
+                                name: 'Sine',
+                                value: Wave.WAVEFORM_SINE
+                            },
+                            {
+                                name: 'Square',
+                                value: Wave.WAVEFORM_SQUARE
+                            },
+                            {
+                                name: 'Triangle',
+                                value: Wave.WAVEFORM_TRIANGLE
                             }
                         ]
                     }

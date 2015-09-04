@@ -31,12 +31,8 @@ define(['dejavu', 'app/datatype/ValueOptions'], function(dejavu, ValueOptions) {
          * @extends Snautsynth.DataType.ValueOptions
          *
          * @param {Array.<Snautsynth.DataType.DiscreteValue>} discreteValueList
-         * @param {Snautsynth.Control.UI.RangeControl.SnapOptions} snapOptions
-         * @param {number}                                         valueDisplayMultiplier
          */
-        initialize: function(discreteValueList, snapOptions, valueDisplayMultiplier) {
-            this.$super(snapOptions, valueDisplayMultiplier);
-
+        initialize: function(discreteValueList) {
             this._discreteValueList = discreteValueList;
         }
     });

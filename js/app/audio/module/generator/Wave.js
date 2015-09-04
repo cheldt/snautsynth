@@ -239,15 +239,24 @@ define(
              * @implements Snautsynth.Audio.Module.IConnecting
              * @implements Snautsynth.Audio.Module.IControllable
              *
-             * @param {number}                                            id
-             * @param {AudioContext}                                      audioContext
-             * @param {number}                                            tuning
-             * @param {string}                                            waveType
-             * @param {number}                                            gain
-             * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}  moduleConnectionList
+             * @param {number}                                                  id
+             * @param {AudioContext}                                            audioContext
+             * @param {number}                                                  tuning
+             * @param {string}                                                  waveType
+             * @param {number}                                                  gain
+             * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}        moduleConnectionList
+             * @param {Snautsynth.Audio.Module.IControlTargetOptionsAccessable} controlTargetOptions
              */
-            initialize: function(id, audioContext, tuning, waveType, gain, moduleConnectionList) {
-                this.$super(id, audioContext, moduleConnectionList);
+            initialize: function(
+                id,
+                audioContext,
+                tuning,
+                waveType,
+                gain,
+                moduleConnectionList,
+                controlTargetOptions
+            ) {
+                this.$super(id, audioContext, moduleConnectionList, controlTargetOptions);
 
                 this._octaves   = 0;
                 this._halftones = 0;
@@ -536,6 +545,9 @@ define(
              * @return {null|Snautsynth.DataType.ValueOptions|Snautsynth.DataType.DiscreteValueOptions}
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
+                return this._controlTargetOptions.getOptionsById(ctrlTargetId);
+
+
                 switch (ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
                         return new RangeValueOptions(
