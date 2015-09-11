@@ -245,7 +245,6 @@ define(
              * @param {Snautsynth.Util.Position}              position
              * @param {number}                                value
              * @param {Snautsynth.Canvas.CanvasState}         canvasState
-             * @param {Snautsynth.DataType.RangeValueOptions} rangeValueOptions
              * @param {number}                                length
              * @param {string}                                color
              * @param {number}                                orientation
@@ -341,10 +340,10 @@ define(
 
                 container.addEventListener('mousemove', function(evt) {
                     if (myFader.getSelected()) {
-                        var mousePos  = myFader.getCanvasState().getMouseMovement(evt);
-                        var baseLayer = myFader.getCanvasState().getBaseLayer();
+                        var mouseMovement = myFader.getCanvasState().getMouseMovement(evt);
+                        var baseLayer     = myFader.getCanvasState().getBaseLayer();
 
-                        myFader.update(mousePos);
+                        myFader.update(mouseMovement);
                         baseLayer.setAttr(
                             'event',
                             new Event(myFader.getId(), myFader.getValue(), Event.TYPE_VALUE_CHANGED)
@@ -541,9 +540,9 @@ define(
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
              * @instance
              *
-             * @param {Snautsynth.Util.Position} mousePos
+             * @param {Snautsynth.Util.MouseMovement} mouseMovement
              */
-            update: function(mousePos) {
+            update: function(mouseMovement) {
                 if(this._selected) {
                     var forward       = false;
                     var lastValue     = this._canvasState.getLastValue();
@@ -554,13 +553,13 @@ define(
                     var value;
 
                     if (Fader.ORIENTATION_HORIZONTAL === this._orientation) {
-                        mouseDelta = mousePos.getX();
+                        mouseDelta = (-1) * mouseMovement.getDeltaX();
                     } else {
-                        mouseDelta = (-1) * mousePos.getY();
+                        mouseDelta = mouseMovement.getDeltaY();
                     }
 
                     var snapOptions = this._rangeValueOptions.getSnapOptions();
-                    var speedup     = Math.abs((10 * mouseDelta) / maxMouseDelta);
+                    var speedup     = 0.5; //Math.abs((10 * mouseDelta) / maxMouseDelta);
                     var speed       = 2.05;
                     var mouseMoves  = true;
 

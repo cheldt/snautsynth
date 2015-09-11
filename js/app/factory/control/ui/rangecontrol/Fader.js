@@ -28,11 +28,11 @@ define(
              * @return {Snautsynth.Control.UI.RangeControl.Fader}
              */
             create: function(canvasState, options) {
-                var position                 = new Position(options.position.x, options.position.y);
+                console.log(options);
 
                 return new Fader(
                     options.id,
-                    position,
+                    new Position(options.position.x, options.position.y),
                     options.value,
                     canvasState,
                     options.length,

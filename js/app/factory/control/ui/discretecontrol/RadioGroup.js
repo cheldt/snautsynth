@@ -4,7 +4,7 @@
 define(
     [
         'app/factory/control/ui/discretecontrol/RadioButtonOptions',
-        '../../../../control/ui/discretecontrol/RadioGroup',
+        'app/control/ui/discretecontrol/RadioGroup',
         'app/util/Position',
         'dejavu'
     ],

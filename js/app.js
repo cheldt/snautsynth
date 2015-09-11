@@ -31,6 +31,7 @@ requirejs(
         'app/audio/module/generator/Wave',
         'app/audio/module/mixing/Gain',
         'app/canvas/CanvasState',
+        'app/control/ui/rangecontrol/Fader',
         'app/factory/control/ControlList',
         'app/factory/audio/module/ControlTargetOptions',
         'app/factory/audio/module/ModuleList',
@@ -43,6 +44,7 @@ requirejs(
         Wave,
         Gain,
         CanvasState,
+        Fader,
         ControlListFactory,
         ControlTargetOptionsFactory,
         AudioModuleListFactory,
@@ -382,14 +384,12 @@ requirejs(
                 controlId:   GlobalConstants.CTRL_FILTER_TYPE,
                 moduleId:    GlobalConstants.AMOD_BIQUAD_FILTER,
                 valueTarget: BiquadFilter.CTRL_TARGET_TYPE
-            }
-            /*
+            },
             {
                 controlId:   GlobalConstants.CTRL_FILTER_RESONANCE,
                 moduleId:    GlobalConstants.AMOD_BIQUAD_FILTER,
                 valueTarget: BiquadFilter.CTRL_TARGET_FREQUENCY
             }
-            */
         ];
 
         var controlOptionsList = [
@@ -648,10 +648,13 @@ requirejs(
                 text:     'Filter-Resonance'
             },
             {
-                id:       GlobalConstants.CTRL_FILTER_RESONANCE,
-                type:     ControlListFactory.CLASS_TYPE_CTRL_FADER,
-                position: {x: 130, y: 420},
-                value:     0
+                id:          GlobalConstants.CTRL_FILTER_RESONANCE,
+                type:        ControlListFactory.CLASS_TYPE_CTRL_FADER,
+                position:    {x: 130, y: 420},
+                value:       0,
+                length:      130,
+                orientation: Fader.ORIENTATION_VERTICAL,
+                color:       '#b2aacc'
             }
         ];
 

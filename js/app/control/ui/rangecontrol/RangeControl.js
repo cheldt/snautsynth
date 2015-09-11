@@ -44,6 +44,17 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
         _rangeValueOptions: null,
 
         /**
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
+         * @instance
+         * @protected
+         *
+         * @return {Snautsynth.DataType.RangeValueOptions}
+         */
+        getValueOptions: function() {
+            return this._rangeValueOptions;
+        },
+
+        /**
          * @memberof Snautsynth.Control.I.RangeControl.RangeControl
          * @instance
          *
@@ -62,8 +73,9 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          * @param {Snautsynth.Util.Position}                       position
          * @param {*}                                              value
          * @param {Snautsynth.Canvas.CanvasState}                  canvasState
+         * @param {Snautsynth.DataType.RangeValueOptions}          rangeValueOptions
          */
-        initialize: function (id, position, value, canvasState) {
+        initialize: function (id, position, value, canvasState, rangeValueOptions) {
             this.$super(id, position, value, canvasState);
         }
     });
