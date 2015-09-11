@@ -1,0 +1,40 @@
+/**
+ * @namespace Snautsynth.Factory.Audio.Module.Generator.Wave.ControlTargetOptions
+ */
+define(
+    [
+        'dejavu',
+        'app/audio/module/generator/wave/ControlTargetOptions',
+        'app/factory/audio/module/ControlTargetOptions'
+    ],
+    function(
+        dejavu,
+        ControlTargetOptions,
+        ControlTargetOptionsFactory
+    ) {
+        'use strict';
+
+        /** @class Snautsynth.Factory.Audio.Module.Generator.Wave.ControlTargetOptions */
+        return dejavu.Class.declare({
+            $name: 'Wave',
+
+            $extends: ControlTargetOptionsFactory,
+
+            /**
+             * @memberof Snautsynth.Factory.Audio.Module.Generator.Wave.ControlTargetOptions
+             * @instance
+             *
+             * @param {Object} options
+             *
+             * @return {Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions}
+             */
+            create: function(options) {
+                var controlTargetOptions = new ControlTargetOptions();
+
+                this._setOptionsById(options, controlTargetOptions);
+
+                return controlTargetOptions;
+            }
+        });
+    }
+);

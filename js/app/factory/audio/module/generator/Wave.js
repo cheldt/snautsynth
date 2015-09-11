@@ -5,11 +5,13 @@ define(
     [
         'dejavu',
         'app/audio/module/generator/Wave',
+        'app/factory/audio/module/generator/wave/ControlTargetOptions',
         'app/factory/audio/module/Module'
     ],
     function(
         dejavu,
         Wave,
+        ControlTargetOptionsFactory,
         ModuleFactory
     ) {
         'use strict';
@@ -30,13 +32,16 @@ define(
              * @return {Snautsynth.Audio.Module.Generator.Wave}
              */
             create: function(audioContext, options) {
+                var controlTargetOptionsFactory = new ControlTargetOptionsFactory();
+
                 return new Wave(
                     options.id,
                     audioContext,
                     options.tuning,
                     options.waveType,
                     options.gain,
-                    this.createModuleConnectionList(options)
+                    this.createModuleConnectionList(options),
+                    controlTargetOptionsFactory.create(options.controlTargetOptions)
                 );
             }
         });

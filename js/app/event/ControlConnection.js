@@ -140,6 +140,8 @@ define(['dejavu', 'app/audio/module/IControllable'], function(dejavu, IControlla
                 var valueOptions = connectionModule.getValueOptionsByCtrlTarget(controlTargetId);
                 var value        = connectionModule.getValueByCtrlTarget(controlTargetId);
 
+
+
                 if (null === valueOptions) {
                     return;
                 }
@@ -147,13 +149,9 @@ define(['dejavu', 'app/audio/module/IControllable'], function(dejavu, IControlla
                 if (null !== value) {
                     connectionControl.setValue(value);
                 }
-
-                if (null !== valueOptions) {
-                    connectionControl.setValueOptions(valueOptions);
-                }
             }
 
-            connectionControl.setUp();
+            connectionControl.setUp(valueOptions);
         }
     });
 });

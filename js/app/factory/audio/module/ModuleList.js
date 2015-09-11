@@ -62,13 +62,14 @@ define(
 
                 var audioModuleList = [];
 
-                audioModuleOptionsList.forEach(function(audioModuleOptions) {
 
+                audioModuleOptionsList.forEach(function(audioModuleOptions) {
                     if (factoryList.hasOwnProperty(audioModuleOptions.type)) {
                         var factory = new factoryList[audioModuleOptions.type]();
                         audioModuleList.push(factory.create(audioContext, audioModuleOptions));
                     }
                 });
+
 
                 return audioModuleList;
             }

@@ -4,10 +4,12 @@
 define(
     [
         'dejavu',
+        'app/audio/module/generator/Wave',
         'app/audio/module/IControlTargetOptionsAccessible'
     ],
     function (
         dejavu,
+        Wave,
         IControlTargetOptionsAccessible
     ) {
         'use strict';
@@ -29,6 +31,15 @@ define(
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
             _gainOptions: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
+             * @instance
+             * @protected
+             *
+             * @type {Snautsynth.DataType.DiscreteValueOptions}
+             */
+            _triggerNoteOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
@@ -62,7 +73,7 @@ define(
              * @instance
              * @protected
              *
-             * @type {Snautsynth.DataType.RangeValueOptions}
+             * @type {Snautsynth.DataType.DiscreteValueOptions}
              */
             _wavetypeOptions: null,
 
@@ -87,12 +98,18 @@ define(
                         return this._tuneHalftonesOptions;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
                         return this._tuneOctavesOptions;
+                    case Wave.CTRL_TARGET_TRIGGER_NOTE:
+                        return this._triggerNoteOptions;
                     default:
                         return null;
                 }
             },
 
             /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
+             * @instance
+             * @public
+             *
              * @param {number}                           ctrlTargetId
              * @param {Snautsynth.DataType.ValueOptions} valueOptions
              */
@@ -112,6 +129,9 @@ define(
                         break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
                         this._tuneOctavesOptions = valueOptions;
+                        break;
+                    case Wave.CTRL_TARGET_TRIGGER_NOTE:
+                        this._triggerNoteOptions = valueOptions;
                         break;
                 }
             }

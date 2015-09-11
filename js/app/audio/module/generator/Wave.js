@@ -546,49 +546,6 @@ define(
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
                 return this._controlTargetOptions.getOptionsById(ctrlTargetId);
-
-
-                switch (ctrlTargetId) {
-                    case Wave.CTRL_TARGET_VALUE_GAIN:
-                        return new RangeValueOptions(
-                            new NumberRange(0, 0.5),
-                            new SnapOptions(0, 0, 0),
-                            1,
-                            new NumberFormatter('#0.0')
-                        );
-                    case Wave.CTRL_TARGET_VALUE_WAVETYPE:
-                        var discreteValueList = [];
-
-                        discreteValueList.push(new DiscreteValue('Saw', Wave.WAVEFORM_SAWTOOTH));
-                        discreteValueList.push(new DiscreteValue('Sine', Wave.WAVEFORM_SINE));
-                        discreteValueList.push(new DiscreteValue('Square', Wave.WAVEFORM_SQUARE));
-                        discreteValueList.push(new DiscreteValue('Triangle', Wave.WAVEFORM_TRIANGLE));
-
-                        return new DiscreteValueOptions(discreteValueList, null, null);
-                    case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
-                        return new RangeValueOptions(
-                            new NumberRange(Wave.CENTS_HALFTONE * -1, Wave.CENTS_HALFTONE),
-                            new SnapOptions(0, 0, 0),
-                            1,
-                            new NumberFormatter('#0')
-                        );
-                    case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
-                        return new RangeValueOptions(
-                            new NumberRange(-12, 12),
-                            new SnapOptions(0, 0.5, 1),
-                            1,
-                            new NumberFormatter('#0')
-                        );
-                    case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
-                        return new RangeValueOptions(
-                            new NumberRange(-4, 4),
-                            new SnapOptions(0, 0.5, 1),
-                            1,
-                            new NumberFormatter('#0')
-                        );
-                    default:
-                        return null;
-                }
             },
 
             /**

@@ -37,6 +37,14 @@ define(
              * @memberof Snautsynth.Audio.Module.Mixing.Gain
              * @instance
              *
+             * @type {Snautsynth.Audio.Module.Mixing.Gain.ControlTargetOptions}
+             */
+            _controlTargetOptions: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             *
              * @type {AudioGainNode}
              */
             _gainNode: null,
@@ -60,13 +68,14 @@ define(
              * @implements Snautsynth.Audio.Module.IConnecting
              * @implements Snautsynth.Audio.Module.IControllable
              *
-             * @param {number}                                           id
-             * @param {AudioContext}                                     audioContext
-             * @param {number}                                           gain
-             * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>} moduleConnectionList
+             * @param {number}                                                   id
+             * @param {AudioContext}                                             audioContext
+             * @param {number}                                                   gain
+             * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}         moduleConnectionList
+             * @param {Snautsynth.Audio.Module.Mixing.Gain.ControlTargetOptions} controlTargetOptions
              */
-            initialize: function(id, audioContext, gain, moduleConnectionList) {
-                this.$super(id, audioContext, moduleConnectionList);
+            initialize: function(id, audioContext, gain, moduleConnectionList, controlTargetOptions) {
+                this.$super(id, audioContext, moduleConnectionList, controlTargetOptions);
                 this._gainNode = audioContext.createGain();
                 this._gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
                 this._gainNode.gain.value = gain;
@@ -145,7 +154,7 @@ define(
              * @return {number}
              */
             getValueByCtrlTarget: function(ctrlTargetId) {
-              return this._gainNode.gain.value;
+                return this._gainNode.gain.value;
             },
 
             /**
@@ -154,21 +163,10 @@ define(
              *
              * @param {number} ctrlTargetId
              *
-             * @return {null|Snautsynth.DataType.ValueOption}
+             * @return {null|Snautsynth.DataType.ValueOptions}
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
-                switch(ctrlTargetId) {
-                    case Gain.CTRL_TARGET_VALUE_GAIN:
-                        return new RangeValueOptions(
-                            new NumberRange(0, this._gainNode.gain.value),
-                            new SnapOptions(this._gainNode.gain.value, 0, 0),
-                            1 / this._gainNode.gain.value,
-                            new NumberFormatter('#0.0')
-                        );
-                        break;
-                    default:
-                        return null;
-                }
+                return this._controlTargetOptions.getOptionsById(ctrlTargetId);
             }
         });
 

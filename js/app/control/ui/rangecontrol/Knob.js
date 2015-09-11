@@ -4,6 +4,7 @@
 define(
     [
         'dejavu',
+        'app/control/ui/IConfigurable',
         'app/control/ui/rangecontrol/RangeControl',
         'app/event/Event',
         'konva',
@@ -13,6 +14,7 @@ define(
     ],
     function(
         dejavu,
+        IConfigurable,
         RangeControl,
         Event,
         Konva,
@@ -26,6 +28,8 @@ define(
             $name: 'Knob',
 
             $extends: RangeControl,
+
+            $implements: IConfigurable,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
@@ -279,7 +283,6 @@ define(
              * @param {Snautsynth.Util.Position}              position
              * @param {number}                                value
              * @param {Snautsynth.Canvas.CanvasState}         canvasState
-             * @param {Snautsynth.DataType.RangeValueOptions} rangeValueOptions
              * @param {number}                                radius
              * @param {string}                                color
              */
@@ -288,7 +291,6 @@ define(
                 position,
                 value,
                 canvasState,
-                rangeValueOptions,
                 radius,
                 color
             ) {
@@ -296,8 +298,7 @@ define(
                     id,
                     position,
                     value,
-                    canvasState,
-                    rangeValueOptions
+                    canvasState
                 );
 
                 this._radius = radius;
@@ -453,8 +454,12 @@ define(
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Knob
              * @instance
+             *
+             * @param {Snautsynth.DataType.ValueOptions} valueOptions
              */
-            setUp: function() {
+            setUp: function(valueOptions) {
+                this._rangeValueOptions = valueOptions;
+
                 this._pointerRadRange = new NumberRange(
                     Knob.calcDegToRad(Knob.POINTER_MIN_DEG),
                     Knob.calcDegToRad(Knob.POINTER_MAX_DEG)
@@ -522,7 +527,7 @@ define(
              */
             update: function(mouseMovement) {
                 if(this._selected) {
-                    var snapOptions     = this.getValueOptions().getSnapOptions();
+                    var snapOptions     = this._rangeValueOptions.getSnapOptions();
                     var maxMouseDelta   = 200;
                     var mouseY          = mouseMovement.getDeltaY();
                     var speedup         = 1 * 1.2; //Math.abs((10 * mouseY) / maxMouseDelta);
@@ -620,7 +625,7 @@ define(
              * @private
              */
             __registerDoubleClickEventHandler: function() {
-                var snapOptions = this.getValueOptions().getSnapOptions();
+                var snapOptions = this._rangeValueOptions.getSnapOptions();
                 var container   = this.getCanvasState().getContainer();
                 var myKnob      = this;
 

@@ -4,13 +4,11 @@
 define(
     [
         'app/control/ui/rangecontrol/Knob',
-        'app/factory/datatype/RangeValueOptions',
         'app/util/Position',
         'dejavu'
     ],
     function(
         Knob,
-        RangeValueOptionsFactory,
         Position,
         dejavu
     ) {
@@ -30,16 +28,11 @@ define(
              * @return {Snautsynth.Control.UI.RangeControl.Knob}
              */
             create: function(canvasState, options) {
-                var position                 = new Position(options.position.x, options.position.y);
-                var rangeValueOptionsFactory = new RangeValueOptionsFactory();
-                var rangeValueOptions        = rangeValueOptionsFactory.create(options.rangeValueOptions);
-
                 return new Knob(
                     options.id,
-                    position,
+                    new Position(options.position.x, options.position.y),
                     options.value,
                     canvasState,
-                    rangeValueOptions,
                     options.radius,
                     options.color
                 );

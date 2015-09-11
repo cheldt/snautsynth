@@ -4,17 +4,19 @@
 define(
     [
         'dejavu',
+        'app/control/ui/IConfigurable',
         'app/control/ui/rangecontrol/RangeControl',
         'app/event/Event',
-        'konva',
-        'app/util/Position'
+        'app/util/Position',
+        'konva'
     ],
     function(
         dejavu,
+        IConfigurable,
         RangeControl,
         Event,
-        Kinectic,
-        Position
+        Position,
+        Konva
     ) {
         'use strict';
 
@@ -22,6 +24,8 @@ define(
             $name: 'Fader',
 
             $extends: RangeControl,
+
+            $implements: IConfigurable,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -251,7 +255,6 @@ define(
                 position,
                 value,
                 canvasState,
-                rangeValueOptions,
                 length,
                 color,
                 orientation
@@ -260,17 +263,15 @@ define(
                     id,
                     position,
                     value,
-                    canvasState,
-                    rangeValueOptions
+                    canvasState
                 );
 
-                var snapOptions   = rangeValueOptions.getSnapOptions();
                 this._length      = length;
                 this._color       = color;
                 this._orientation = orientation;
 
                 //create border
-                this._faderBorder = new Kinectic.Rect({
+                this._faderBorder = new Konva.Rect({
                     cornerRadius: Fader.BORDER_RADIUS,
                     strokeWidth:  Fader.FADER_TRACK_BORDER_WIDTH,
                     fill:         color,
@@ -319,9 +320,17 @@ define(
 
                 this._kineticGroup.add(this._valueDisplayText);
 
-                var myFader = this;
 
-                var container = this.getCanvasState().getContainer();
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
+             */
+            addEventHandlers: function() {
+                var snapOptions = this._rangeValueOptions.getSnapOptions();
+                var myFader     = this;
+                var container   = this.getCanvasState().getContainer();
 
                 // add eventlistener for mousedown => lock mouse
                 this._faderKnob.on('mousedown', function(evt) {
@@ -372,6 +381,9 @@ define(
 
             /**
              * Calculates faderknob-coordinates from position
+             *
+             * @memberof Snautsynth.Control.UI.RangeControl.Fader
+             * @instance
              *
              * @param {number} position
              *
@@ -441,8 +453,12 @@ define(
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
              * @instance
+             *
+             * @param {Snautsynth.DataType.ValueOptions} valueOptions
              */
-            setUp: function() {
+            setUp: function(valueOptions) {
+                this._rangeValueOptions = valueOptions;
+
                 var height = this._length;
                 var width  = Fader.FADER_TRACK_HEIGHT;
 
@@ -515,6 +531,8 @@ define(
                 this.__updateValueDisplayText();
 
                 this.updateKnobPosition(this._tmpPosition);
+
+                this.addEventHandlers();
             },
 
             /**

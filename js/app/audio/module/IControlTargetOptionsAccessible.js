@@ -18,7 +18,7 @@ define(['dejavu'], function(dejavu) {
          *
          * @param {number} ctrlTargetId
          *
-         * @return {Snautsynth.DataType.ValueOptions}
+         * @return {null|Snautsynth.DataType.ValueOptions}
          */
         getOptionsById: function (ctrlTargetId) {},
 

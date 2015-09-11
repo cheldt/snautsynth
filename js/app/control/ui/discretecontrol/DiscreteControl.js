@@ -8,33 +8,13 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
         $extends: UIControl,
 
         /**
-         * @memberof Snautsynth.Control.UI.DiscreteControl.DiscreteControl
+         * @memberof Snautsynth.Control.UI.RangeControl.RangeControl
          * @instance
          * @protected
          *
          * @type {Snautsynth.DataType.DiscreteValueOptions}
          */
-        _discreteValueOptions: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.DiscreteControl.DiscreteControl
-         * @instance
-         *
-         * @return {Snautsynth.DataType.DiscreteValueOptions}
-         */
-        getValueOptions: function() {
-            return this._discreteValueOptions;
-        },
-
-        /**
-         * @memberof Snautsynth.Control.UI.DiscreteControl.DiscreteControl
-         * @instance
-         *
-         * @param {Snautsynth.DataType.DiscreteValueOptions} discreteValueOptions
-         */
-        setValueOptions: function(discreteValueOptions) {
-            this._discreteValueOptions = discreteValueOptions;
-        },
+        _rangeValueOptions: null,
 
         /**
          * @constructor
@@ -45,12 +25,9 @@ define(['dejavu', 'app/control/ui/UIControl'], function(dejavu, UIControl){
          * @param {Snautsynth.Util.Position}                 position
          * @param {*}                                        value
          * @param {Snautsynth.Canvas.CanvasState}            canvasState
-         * @param {Snautsynth.DataType.DiscreteValueOptions} discreteValueOptions
          */
-        initialize: function (id, position, value, canvasState, discreteValueOptions) {
+        initialize: function (id, position, value, canvasState) {
             this.$super(id, position, value, canvasState);
-
-            this._discreteValueOptions = discreteValueOptions;
         }
     });
 

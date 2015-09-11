@@ -121,15 +121,24 @@ define(
              * @implements Snautsynth.Audio.Module.IConnecting
              * @implements Snautsynth.Audio.Module.IControllable
              *
-             * @param {number}                                           id
-             * @param {AudioContext}                                     audioContext
-             * @param {string}                                           type
-             * @param {number}                                           frequency
-             * @param {number}                                           qualityFactor
-             * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>} moduleConnectionList
+             * @param {number}                                                  id
+             * @param {AudioContext}                                            audioContext
+             * @param {string}                                                  type
+             * @param {number}                                                  frequency
+             * @param {number}                                                  qualityFactor
+             * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}        moduleConnectionList
+             * @param {Snautsynth.Audio.Module.IControlTargetOptionsAccessable} controlTargetOptions
              */
-            initialize: function(id, audioContext, type, frequency, qualityFactor, moduleConnectionList) {
-                this.$super(id, audioContext, moduleConnectionList);
+            initialize: function(
+                id,
+                audioContext,
+                type,
+                frequency,
+                qualityFactor,
+                moduleConnectionList,
+                controlTargetOptions
+            ) {
+                this.$super(id, audioContext, moduleConnectionList, controlTargetOptions);
 
                 this._filterNode                  = audioContext.createBiquadFilter();
                 this._filterNode.type             = type;

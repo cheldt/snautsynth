@@ -5,11 +5,13 @@ define(
     [
         'dejavu',
         'app/audio/module/mixing/Gain',
+        'app/factory/audio/module/mixing/gain/ControlTargetOptions',
         'app/factory/audio/module/Module'
     ],
     function(
         dejavu,
         Gain,
+        ControlTargetOptionsFactory,
         ModuleFactory
     ) {
         'use strict';
@@ -30,11 +32,15 @@ define(
              * @return {Snautsynth.Audio.Module.Mixing.Gain}
              */
             create: function(audioContext, options) {
+
+                var controlTargetOptionsFactory = new ControlTargetOptionsFactory();
+
                 return new Gain(
                     options.id,
                     audioContext,
                     options.gain,
-                    this.createModuleConnectionList(options)
+                    this.createModuleConnectionList(options),
+                    controlTargetOptionsFactory.create(options.controlTargetOptions)
                 );
             }
         });

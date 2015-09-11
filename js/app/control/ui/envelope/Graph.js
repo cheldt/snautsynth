@@ -1,233 +1,244 @@
 /**
  * @namespace Snautsynth.Control.UI.Envelope
  */
-define(['dejavu','konva', 'app/control/Control'], function(dejavu, Konva, Control){
-    'use strict';
+define(
+    [
+        'dejavu',
+        'konva',
+        'app/control/Control'
+    ],
+    function (
+        dejavu,
+        Konva,
+        Control,
+        IConfigurable
+    ) {
+        'use strict';
 
-    var Graph = dejavu.Class.declare({
-        $name: 'Graph',
+        var Graph = dejavu.Class.declare({
+            $name: 'Graph',
 
-        $extends: Control,
-
-        /**
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         * @protected
-         *
-         * @type {number}
-         */
-        _maxGain: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         * @protected
-         *
-         * @type {number}
-         */
-        _maxTime: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         * @protected
-         *
-         * @type {number}
-         */
-        _maxPixelGain: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         * @protected
-         *
-         * @type {number}
-         */
-        _maxPixelTime: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         * @protected
-         *
-         * @type {Konva.Line}
-         */
-        _pointConnection: null,
-
-        /**
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         *
-         * @returns {number}
-         */
-        getMaxPixelGain: function() {
-            return this._maxPixelGain;
-        },
-
-        /**
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         *
-         * @returns {number}
-         */
-        getMaxPixelTime: function() {
-            return this._maxPixelTime;
-        },
-
-        $constants: {
-            /**
-             * @memberof Snautsynth.Control.UI.Envelope.Graph
-             * @constant
-             * @default
-             *
-             * @type {number}
-             */
-            PIXEL_PER_GAIN:       100,
+            $extends: Control,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
-             * @constant
-             * @default
+             * @instance
+             * @protected
              *
              * @type {number}
              */
-            PIXEL_PER_TIME:       80,
+            _maxGain: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
-             * @constant
-             * @default
+             * @instance
+             * @protected
              *
              * @type {number}
              */
-            MAX_GAIN:             1,
+            _maxTime: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
-             * @constant
-             * @default
+             * @instance
+             * @protected
              *
              * @type {number}
              */
-            X_Y_AXIS_WIDTH:       3,
+            _maxPixelGain: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
-             * @constant
-             * @default
+             * @instance
+             * @protected
              *
              * @type {number}
              */
-            POINTCONNECTOR_WIDTH: 1.5
-        },
+            _maxPixelTime: null,
 
-        /**
-         * @constructor
-         * @class Snautsynth.Control.UI.Envelope.Graph
-         * @extends Snautsynth.Control.UI.UIControl
-         *
-         * @param {number}                        id
-         * @param {Snautsynth.Util.Position}      position
-         * @param {Snautsynth.Canvas.CanvasState} canvasState
-         * @param {string}                        color
-         * @param {number}                        maxTime
-         */
-        initialize: function(id, position, canvasState, color, maxTime) {
-            this.$super(id, position, canvasState);
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             * @protected
+             *
+             * @type {Konva.Line}
+             */
+            _pointConnection: null,
 
-            this._controls     = [];
-            this._maxTime      = maxTime;
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             *
+             * @returns {number}
+             */
+            getMaxPixelGain: function() {
+                return this._maxPixelGain;
+            },
 
-            this._maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
-            this._maxPixelTime = maxTime * Graph.PIXEL_PER_TIME;
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             *
+             * @returns {number}
+             */
+            getMaxPixelTime: function() {
+                return this._maxPixelTime;
+            },
 
-            var xAxis = new Konva.Line({
-                points:      [0, this._maxPixelGain , this._maxPixelTime, this._maxPixelGain ],
-                strokeWidth: Graph.X_Y_AXIS_WIDTH,
-                stroke:      color,
-                lineCap:     'round',
-                lineJoin:    'round'
-            });
+            $constants: {
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                PIXEL_PER_GAIN:       100,
 
-            this._kineticGroup.add(xAxis);
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                PIXEL_PER_TIME:       80,
 
-            var yAxis = new Konva.Line({
-                points:      [0, 0, 0, this._maxPixelGain],
-                strokeWidth: Graph.X_Y_AXIS_WIDTH,
-                stroke:      color,
-                lineCap:     'round',
-                lineJoin:    'round'
-            });
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                MAX_GAIN:             1,
 
-            this._kineticGroup.add(yAxis);
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                X_Y_AXIS_WIDTH:       3,
 
-            this._pointConnection = new Konva.Line({
-                strokeWidth: Graph.POINTCONNECTOR_WIDTH,
-                stroke:      color,
-                lineCap:     'round',
-                lineJoin:    'round'
-            });
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                POINTCONNECTOR_WIDTH: 1.5
+            },
 
-            this._kineticGroup.add(this._pointConnection);
-        },
+            /**
+             * @constructor
+             * @class Snautsynth.Control.UI.Envelope.Graph
+             * @extends Snautsynth.Control.UI.UIControl
+             *
+             * @param {number}                        id
+             * @param {Snautsynth.Util.Position}      position
+             * @param {Snautsynth.Canvas.CanvasState} canvasState
+             * @param {string}                        color
+             * @param {number}                        maxTime
+             */
+            initialize: function(id, position, canvasState, color, maxTime) {
+                this.$super(id, position, canvasState);
 
-        /**
-         * Adds point to internal array and adds kinectgroup of point to kinectgroup of Graph.
-         *
-         * @param {Snautsynth.Control.UI.Envelope.Point} point
-         */
-        addControl: function(point) {
-            this.$super(point);
+                this._controls     = [];
+                this._maxTime      = maxTime;
 
-            var newPosition = point.calcPositionByValues();
+                this._maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
+                this._maxPixelTime = maxTime * Graph.PIXEL_PER_TIME;
 
-            point.updatePosition(newPosition);
+                var xAxis = new Konva.Line({
+                    points:      [0, this._maxPixelGain , this._maxPixelTime, this._maxPixelGain ],
+                    strokeWidth: Graph.X_Y_AXIS_WIDTH,
+                    stroke:      color,
+                    lineCap:     'round',
+                    lineJoin:    'round'
+                });
 
-            this.connectPoints();
-        },
+                this._kineticGroup.add(xAxis);
 
-        /**
-         * Renders connections between points
-         *
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         */
-        connectPoints: function() {
-            var pointConnectorCoordsList = [0, Graph.PIXEL_PER_GAIN];
+                var yAxis = new Konva.Line({
+                    points:      [0, 0, 0, this._maxPixelGain],
+                    strokeWidth: Graph.X_Y_AXIS_WIDTH,
+                    stroke:      color,
+                    lineCap:     'round',
+                    lineJoin:    'round'
+                });
 
-            for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
-                var point = this._controls[pointIndex];
-                pointConnectorCoordsList.push(point.getX());
-                pointConnectorCoordsList.push(point.getY());
-            }
+                this._kineticGroup.add(yAxis);
 
-            var lastPoint = this._controls[this._controls.length - 1];
+                this._pointConnection = new Konva.Line({
+                    strokeWidth: Graph.POINTCONNECTOR_WIDTH,
+                    stroke:      color,
+                    lineCap:     'round',
+                    lineJoin:    'round'
+                });
 
-            pointConnectorCoordsList.push(this._maxPixelTime, lastPoint.getY())
+                this._kineticGroup.add(this._pointConnection);
+            },
 
-            this._pointConnection.setPoints(pointConnectorCoordsList);
-        },
+            /**
+             * Adds point to internal array and adds kinectgroup of point to kinectgroup of Graph.
+             *
+             * @param {Snautsynth.Control.UI.Envelope.Point} point
+             */
+            addControl: function(point) {
+                this.$super(point);
 
-        /**
-         * @memberof Snautsynth.Control.UI.Envelope.Graph
-         * @instance
-         *
-         * @param   {number} id
-         *
-         * @returns {Snautsynth.Control.UI.Envelope.Point}
-         */
-        getPointById: function(id) {
-            var point = null;
+                var newPosition = point.calcPositionByValues();
 
-            for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
-                point = this._controls[pointIndex];
+                point.updatePosition(newPosition);
 
-                if (point.getId() === id) {
-                    return point;
+                this.connectPoints();
+            },
+
+            /**
+             * Renders connections between points
+             *
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             */
+            connectPoints: function() {
+                var pointConnectorCoordsList = [0, Graph.PIXEL_PER_GAIN];
+
+                for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
+                    var point = this._controls[pointIndex];
+                    pointConnectorCoordsList.push(point.getX());
+                    pointConnectorCoordsList.push(point.getY());
+                }
+
+                var lastPoint = this._controls[this._controls.length - 1];
+
+                pointConnectorCoordsList.push(this._maxPixelTime, lastPoint.getY())
+
+                this._pointConnection.setPoints(pointConnectorCoordsList);
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             *
+             * @param   {number} id
+             *
+             * @returns {Snautsynth.Control.UI.Envelope.Point}
+             */
+            getPointById: function(id) {
+                var point = null;
+
+                for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
+                    point = this._controls[pointIndex];
+
+                    if (point.getId() === id) {
+                        return point;
+                    }
                 }
             }
-        }
-    });
+        });
 
-    return Graph;
+        return Graph;
 });

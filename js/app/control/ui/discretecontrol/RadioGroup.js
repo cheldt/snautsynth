@@ -5,18 +5,18 @@ define(
     [
         'app/control/ui/discretecontrol/DiscreteControl',
         'app/control/ui/discretecontrol/RadioButton',
+        'app/control/ui/discretecontrol/RadioButtonOptions',
+        'app/control/ui/IConfigurable',
         'app/event/Event',
-        'dejavu',
-        'mout/lang/defaults',
-        'app/control/ui/discretecontrol/RadioButtonOptions'
+        'dejavu'
     ],
     function (
         DiscreteControl,
         RadioButton,
+        RadioButtonOptions,
+        IConfigurable,
         Event,
-        dejavu,
-        defaults,
-        RadioButtonOptions
+        dejavu
     ) {
         'use strict';
 
@@ -24,6 +24,8 @@ define(
                 $name: 'RadioGroup',
 
                 $extends: DiscreteControl,
+
+                $implements: IConfigurable,
 
                 /**
                  * @memberof Snautsynth.Control.UI.DiscreteControl.RadioGroup
@@ -70,7 +72,6 @@ define(
                  * @param {Snautsynth.Util.Position}                                         position
                  * @param {*}                                                                value
                  * @param {Snautsynth.Canvas.CanvasState}                                    canvasState
-                 * @param {Snautsynth.DataType.DiscreteValueOptions}                         discreteValueOptions
                  * @param {Array.<Snautsynth.Control.UI.DiscreteControl.RadioButtonOptions>} radioButtonOptionsList
                  */
                 initialize: function (
@@ -78,10 +79,9 @@ define(
                     position,
                     value,
                     canvasState,
-                    discreteValueOptions,
                     radioButtonOptionsList
                 ) {
-                    this.$super(id, position, value, canvasState, discreteValueOptions);
+                    this.$super(id, position, value, canvasState);
 
                     this._lastRadioY             = 0;
                     this._controls               = [];
@@ -130,12 +130,14 @@ define(
                 /**
                  * @memberof Snautsynth.Control.UI.DiscreteControl.RadioGroup
                  * @instance
+                 *
+                 * @param {Snautsynth.DataType.ValueOptions} valueOptions
                  */
-                setUp: function() {
+                setUp: function(valueOptions) {
                     var radioGroup             = this;
                     var radioButtonOptionsList = this._radioButtonOptionsList;
 
-                    this._discreteValueOptions.getDiscreteValueList().forEach(function(discreteValue) {
+                    valueOptions.getDiscreteValueList().forEach(function(discreteValue) {
                         var radioButtonOptions = null;
 
                         if (null !== radioButtonOptionsList) {

@@ -44,8 +44,8 @@ requirejs(
         Gain,
         CanvasState,
         ControlListFactory,
-        AudioModuleListFactory,
         ControlTargetOptionsFactory,
+        AudioModuleListFactory,
         Synthesizer,
         GlobalConstants
     ) {
@@ -53,6 +53,122 @@ requirejs(
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         var audioContext    = new window.AudioContext();
+
+
+        var controlTargetOptionsOSC1_OSC2 = [
+            {
+                type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                targetId:               Wave.CTRL_TARGET_VALUE_GAIN,
+                valueDisplayMultiplier: 1,
+                valueRange:             {min: 0, max: 0.5},
+                snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
+                numberFormat:           '#0.0'
+            },
+            {
+                type:     ControlTargetOptionsFactory.CLASS_TYPE_DISCRETEVALUEOPTIONS,
+                targetId: Wave.CTRL_TARGET_VALUE_WAVETYPE,
+                discreteOptions: [
+                    {
+                        name: 'Saw',
+                        value: Wave.WAVEFORM_SAWTOOTH
+                    },
+                    {
+                        name: 'Sine',
+                        value: Wave.WAVEFORM_SINE
+                    },
+                    {
+                        name: 'Square',
+                        value: Wave.WAVEFORM_SQUARE
+                    },
+                    {
+                        name: 'Triangle',
+                        value: Wave.WAVEFORM_TRIANGLE
+                    }
+                ]
+            },
+            {
+                type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                targetId:               Wave.CTRL_TARGET_VALUE_TUNE_CENTS,
+                valueDisplayMultiplier: 1,
+                valueRange:             {min: Wave.CENTS_HALFTONE * -1, max: Wave.CENTS_HALFTONE},
+                snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
+                numberFormat:           '#0'
+            },
+            {
+                type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                targetId:               Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES,
+                valueDisplayMultiplier: 1,
+                valueRange:             {min: -12, max: 12},
+                snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0.5, snapStep: 1},
+                numberFormat:           '#0'
+            },
+            {
+                type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                targetId:               Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES,
+                valueDisplayMultiplier: 1,
+                valueRange:             {min: -4, max: 4},
+                snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0.5, snapStep: 1},
+                numberFormat:           '#0'
+            },
+            {
+                type:     ControlTargetOptionsFactory.CLASS_TYPE_DISCRETEVALUEOPTIONS,
+                targetId: Wave.CTRL_TARGET_TRIGGER_NOTE,
+                discreteOptions: [
+                    {
+                        name: 'C-F',
+                        value: GlobalConstants.NOTE_C_5
+                    },
+                    {
+                        name: 'C#5',
+                        value: GlobalConstants.NOTE_Cis5
+                    },
+                    {
+                        name: 'D-5',
+                        value: GlobalConstants.NOTE_D_5
+                    },
+                    {
+                        name: 'D#5',
+                        value: GlobalConstants.NOTE_Dis5
+                    },
+                    {
+                        name: 'E-5',
+                        value: GlobalConstants.NOTE_E_5
+                    },
+                    {
+                        name: 'F-5',
+                        value: GlobalConstants.NOTE_F_5
+                    },
+                    {
+                        name: 'F#5',
+                        value: GlobalConstants.NOTE_Fis5
+                    },
+                    {
+                        name: 'G-5',
+                        value: GlobalConstants.NOTE_G_5
+                    },
+                    {
+                        name: 'G#5',
+                        value: GlobalConstants.NOTE_Gis5
+                    },
+                    {
+                        name: 'A-5',
+                        value: GlobalConstants.NOTE_A_5
+                    },
+                    {
+                        name: 'A#5',
+                        value: GlobalConstants.NOTE_Ais5
+                    },
+                    {
+                        name: 'B-5',
+                        value: GlobalConstants.NOTE_B_5
+                    },
+                    {
+                        name: 'C-6',
+                        value: GlobalConstants.NOTE_C_6
+                    }
+                ]
+            }
+        ];
 
         var audioModuleOptionsList = [
             {
@@ -85,38 +201,7 @@ requirejs(
                         ]
                     }
                 ],
-                controlTargetOptions: [
-                    {
-                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
-                        targetId:               Wave.CTRL_TARGET_VALUE_GAIN,
-                        valueDisplayMultiplier: 1,
-                        valueRange:             {min: 0, max: 0.5},
-                        snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                        numberFormat:           '#0.0'
-                    },
-                    {
-                        type:     ControlTargetOptionsFactory.CLASS_TYPE_DISCRETEVALUEOPTIONS,
-                        targetId: Wave.CTRL_TARGET_VALUE_WAVETYPE,
-                        discreteOptions: [
-                            {
-                                name: 'Saw',
-                                value: Wave.WAVEFORM_SAWTOOTH
-                            },
-                            {
-                                name: 'Sine',
-                                value: Wave.WAVEFORM_SINE
-                            },
-                            {
-                                name: 'Square',
-                                value: Wave.WAVEFORM_SQUARE
-                            },
-                            {
-                                name: 'Triangle',
-                                value: Wave.WAVEFORM_TRIANGLE
-                            }
-                        ]
-                    }
-                ]
+                controlTargetOptions: controlTargetOptionsOSC1_OSC2
             },
             {
                 id:   GlobalConstants.AMOD_OSC1_GAIN,
@@ -132,6 +217,16 @@ requirejs(
                                 targetChannelNumber: 0
                             }
                         ]
+                    }
+                ],
+                controlTargetOptions: [
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               Gain.CTRL_TARGET_VALUE_GAIN,
+                        valueDisplayMultiplier: 10,
+                        valueRange:             {min: 0, max: 0.1},
+                        snapOptions:            {doubleClickSnapValue: 0.1, snapDistance: 0, snapStep: 0},
+                        numberFormat:           '#0.0'
                     }
                 ]
             },
@@ -164,7 +259,8 @@ requirejs(
                             }
                         ]
                     }
-                ]
+                ],
+                controlTargetOptions: controlTargetOptionsOSC1_OSC2
             },
             {
                 id:   GlobalConstants.AMOD_OSC2_GAIN,
@@ -180,6 +276,16 @@ requirejs(
                                 targetChannelNumber: 0
                             }
                         ]
+                    }
+                ],
+                controlTargetOptions: [
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               Gain.CTRL_TARGET_VALUE_GAIN,
+                        valueDisplayMultiplier: 10,
+                        valueRange:             {min: 0, max: 0.1},
+                        snapOptions:            {doubleClickSnapValue: 0.1, snapDistance: 0, snapStep: 0},
+                        numberFormat:           '#0.0'
                     }
                 ]
             },
@@ -200,6 +306,8 @@ requirejs(
                             }
                         ]
                     }
+                ],
+                controlTargetOptions: [
 
                 ]
             },
@@ -293,10 +401,10 @@ requirejs(
                 text:     'OSC1-Waveform'
             },
             {
-                id:           GlobalConstants.CTRL_OSC1_WAVE,
-                type:         ControlListFactory.CLASS_TYPE_CTRL_RADIOGROUP,
-                position:     {x: 0, y: 40},
-                value:        Wave.WAVEFORM_SINE,
+                id:       GlobalConstants.CTRL_OSC1_WAVE,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_RADIOGROUP,
+                position: {x: 0, y: 40},
+                value:    Wave.WAVEFORM_SINE,
                 radioButtonOptions: [
                     {
                         position:     null,
@@ -336,18 +444,12 @@ requirejs(
                 text:     'OSC1-Octave'
             },
             {
-                id:                     GlobalConstants.CTRL_OSC1_TUNE_OCT,
-                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
-                position:               {x: 130, y: 40},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:             {min: -4, max: 4},
-                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0.5, snapStep: 1},
-                    numberFormat:           '#0.0'
-                },
-                value:                  0,
-                radius:                 50,
-                color:                  '#AABBCC'
+                id:       GlobalConstants.CTRL_OSC1_TUNE_OCT,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KNOB,
+                position: {x: 130, y: 40},
+                value:    0,
+                radius:   50,
+                color:    '#AABBCC'
             },
             {
                 id:       -1,
@@ -357,18 +459,12 @@ requirejs(
                 text:     'OSC1-Halftone'
             },
             {
-                id:                     GlobalConstants.CTRL_OSC1_TUNE_HALF,
-                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
-                position:               {x: 250, y: 40},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:             {min: -12, max: 12},
-                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                    numberFormat:           '#0.0'
-                },
-                value:                  0,
-                radius:                 50,
-                color:                  '#AABBCC'
+                id:       GlobalConstants.CTRL_OSC1_TUNE_HALF,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KNOB,
+                position: {x: 250, y: 40},
+                value:    0,
+                radius:   50,
+                color:    '#AABBCC'
             },
             {
                 id:       -1,
@@ -378,18 +474,12 @@ requirejs(
                 text:     'OSC1-Cents'
             },
             {
-                id:                     GlobalConstants.CTRL_OSC1_TUNE_CENTS,
-                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
-                position:               {x: 370, y: 40},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:             {min: Wave.CENTS_HALFTONE * -1, max: Wave.CENTS_HALFTONE},
-                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                    numberFormat:           '#0.0'
-                },
-                value:                  0,
-                radius:                 50,
-                color:                  '#AABBCC'
+                id:       GlobalConstants.CTRL_OSC1_TUNE_CENTS,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KNOB,
+                position: {x: 370, y: 40},
+                value:    0,
+                radius:   50,
+                color:    '#AABBCC'
             },
             {
                 id:       -1,
@@ -399,18 +489,12 @@ requirejs(
                 text:     'OSC1-Gain'
             },
             {
-                id:                     GlobalConstants.CTRL_OSC1_GAIN,
-                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
-                position:               {x: 490, y: 40},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:             {min: 0, max: 0.5},
-                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                    numberFormat:           '#0.0'
-                },
-                value:                  0,
-                radius:                 50,
-                color:                  '#AABBCC'
+                id:       GlobalConstants.CTRL_OSC1_GAIN,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KNOB,
+                position: {x: 490, y: 40},
+                value:    0,
+                radius:   50,
+                color:    '#AABBCC'
             },
             {
                 id:       GlobalConstants.CTRL_KEYBOARD,
@@ -468,18 +552,12 @@ requirejs(
                 text:     'OSC1-Octave'
             },
             {
-                id:                     GlobalConstants.CTRL_OSC2_TUNE_OCT,
-                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
-                position:               {x: 130, y: 230},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:             {min: -4, max: 4},
-                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0.5, snapStep: 1},
-                    numberFormat:           '#0.0'
-                },
-                value:                  0,
-                radius:                 50,
-                color:                  '#aaccbb'
+                id:       GlobalConstants.CTRL_OSC2_TUNE_OCT,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KNOB,
+                position: {x: 130, y: 230},
+                value:    0,
+                radius:   50,
+                color:    '#aaccbb'
             },
             {
                 id:       -1,
@@ -489,18 +567,12 @@ requirejs(
                 text:     'OSC1-Halftone'
             },
             {
-                id:                     GlobalConstants.CTRL_OSC2_TUNE_HALF,
-                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
-                position:               {x: 250, y: 230},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:             {min: -12, max: 12},
-                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                    numberFormat:           '#0.0'
-                },
-                value:                  0,
-                radius:                 50,
-                color:                  '#aaccbb'
+                id:       GlobalConstants.CTRL_OSC2_TUNE_HALF,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KNOB,
+                position: {x: 250, y: 230},
+                value:    0,
+                radius:   50,
+                color:    '#aaccbb'
             },
             {
                 id:       -1,
@@ -510,18 +582,12 @@ requirejs(
                 text:     'OSC1-Cents'
             },
             {
-                id:                     GlobalConstants.CTRL_OSC2_TUNE_CENTS,
-                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
-                position:               {x: 370, y: 230},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:             {min: Wave.CENTS_HALFTONE * -1, max: Wave.CENTS_HALFTONE},
-                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                    numberFormat:           '#0.0'
-                },
-                value:                  0,
-                radius:                 50,
-                color:                  '#aaccbb'
+                id:       GlobalConstants.CTRL_OSC2_TUNE_CENTS,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KNOB,
+                position: {x: 370, y: 230},
+                value:    0,
+                radius:   50,
+                color:    '#aaccbb'
             },
             {
                 id:       -1,
@@ -531,18 +597,12 @@ requirejs(
                 text:     'OSC1-Gain'
             },
             {
-                id:                     GlobalConstants.CTRL_OSC2_GAIN,
-                type:                   ControlListFactory.CLASS_TYPE_CTRL_KNOB,
-                position:               {x: 490, y: 230},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:             {min: 0, max: 0.5},
-                    snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                    numberFormat:           '#0.0'
-                },
-                value:                  0,
-                radius:                 50,
-                color:                  '#aaccbb'
+                id:       GlobalConstants.CTRL_OSC2_GAIN,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_KNOB,
+                position: {x: 490, y: 230},
+                value:    0,
+                radius:   50,
+                color:    '#aaccbb'
             },
             {
                 id:       -1,
@@ -588,16 +648,10 @@ requirejs(
                 text:     'Filter-Resonance'
             },
             {
-                id:           GlobalConstants.CTRL_FILTER_RESONANCE,
-                type:         ControlListFactory.CLASS_TYPE_CTRL_FADER,
-                position:     {x: 130, y: 420},
-                rangeValueOptions:      {
-                    valueDisplayMultiplier: 1,
-                    valueRange:   {min: 0, max: 0.5},
-                    snapOptions:  {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                    numberFormat: '#0.0'
-                },
-                value:       0
+                id:       GlobalConstants.CTRL_FILTER_RESONANCE,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_FADER,
+                position: {x: 130, y: 420},
+                value:     0
             }
         ];
 

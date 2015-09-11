@@ -49,7 +49,6 @@ define(
                     position,
                     options.value,
                     canvasState,
-                    null,
                     radioButtonOptionsList
                 );
             }

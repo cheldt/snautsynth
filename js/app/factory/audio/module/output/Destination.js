@@ -6,7 +6,7 @@ define(['dejavu', 'app/audio/module/output/Destination'], function(dejavu, Desti
 
     /** @class Snautsynth.Factory.Audio.Module.Output.Destination */
     return dejavu.Class.declare({
-        $name: 'Gain',
+        $name: 'Destination',
 
         /**
          * @memberof Snautsynth.Factory.Audio.Module.Output.Destination

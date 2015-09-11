@@ -29,9 +29,9 @@ define(
             create: function(options) {
                 var optionsList = [];
 
-                options.forEach(function(discreteValueOptions) {
+                options.discreteOptions.forEach(function(discreteValueOption) {
                     optionsList.push(
-                        new DiscreteValue(discreteValueOptions.name, discreteValueOptions.value)
+                        new DiscreteValue(discreteValueOption.name, discreteValueOption.value)
                     );
                 });
 

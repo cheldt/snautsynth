@@ -51,7 +51,7 @@ define(
                 var factoryList = this._factoryList;
 
                 options.forEach(function(option) {
-                    var factory = new factoryList[audioModuleOptions.type]();
+                    var factory = new factoryList[option.type]();
                     controlTargetOptions.setOptionsById(
                         option.targetId,
                         factory.create(option)
