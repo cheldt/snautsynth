@@ -559,7 +559,7 @@ define(
                     }
 
                     var snapOptions = this._rangeValueOptions.getSnapOptions();
-                    var speedup     = 0.5; //Math.abs((10 * mouseDelta) / maxMouseDelta);
+                    var speedup     = Math.abs((50 * mouseDelta) / maxMouseDelta);
                     var speed       = 2.05;
                     var mouseMoves  = true;
 
