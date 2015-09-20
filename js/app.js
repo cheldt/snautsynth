@@ -310,7 +310,40 @@ requirejs(
                     }
                 ],
                 controlTargetOptions: [
-
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               BiquadFilter.CTRL_TARGET_FREQUENCY,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             {min: 0, max: 22000},
+                        snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
+                        numberFormat:           '#0'
+                    },
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               BiquadFilter.CTRL_TARGET_QUALITY_FACTOR,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             {min: 0, max: 1},
+                        snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
+                        numberFormat:           '#0'
+                    },
+                    {
+                        type:     ControlTargetOptionsFactory.CLASS_TYPE_DISCRETEVALUEOPTIONS,
+                        targetId: BiquadFilter.CTRL_TARGET_TYPE,
+                        discreteOptions: [
+                            {
+                                name: 'Lowpass',
+                                value: BiquadFilter.FILTER_LOWPASS
+                            },
+                            {
+                                name: 'Bandpass',
+                                value: BiquadFilter.FILTER_BANDPASS
+                            },
+                            {
+                                name: 'Highpass',
+                                value: BiquadFilter.FILTER_HIGHPASS
+                            }
+                        ]
+                    }
                 ]
             },
             {

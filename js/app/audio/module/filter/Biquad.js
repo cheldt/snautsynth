@@ -7,26 +7,14 @@ define(
         'app/audio/module/Module',
         'app/audio/module/IConnectable',
         'app/audio/module/IConnecting',
-        'app/audio/module/IControllable',
-        'app/control/ui/SnapOptions',
-        'app/datatype/DiscreteValue',
-        'app/datatype/DiscreteValueOptions',
-        'app/datatype/NumberRange',
-        'app/datatype/RangeValueOptions',
-        'app/util/formatter/NumberFormatter'
+        'app/audio/module/IControllable'
     ],
     function(
         dejavu,
         Module,
         IConnectable,
         IConnecting,
-        IConrollable,
-        SnapOptions,
-        DiscreteValue,
-        DiscreteValueOptions,
-        NumberRange,
-        RangeValueOptions,
-        NumberFormatter
+        IConrollable
     ) {
         'use strict';
 
@@ -278,32 +266,7 @@ define(
              * @return {null|Snautsynth.DataType.ValueOptions|Snautsynth.DataType.DiscreteValueOptions}
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
-                switch (ctrlTargetId) {
-                    case Biquad.CTRL_TARGET_FREQUENCY:
-                        return new RangeValueOptions(
-                            new NumberRange(0, this._filterNode.frequency.value),
-                            new SnapOptions(0, 0, 0),
-                            1,
-                            new NumberFormatter('#0')
-                        );
-                    case Biquad.CTRL_TARGET_QUALITY_FACTOR:
-                        return new RangeValueOptions(
-                            new NumberRange(0, this._filterNode.Q.value),
-                            new SnapOptions(0, 0, 0),
-                            100,
-                            new NumberFormatter('#0')
-                        );
-                    case Biquad.CTRL_TARGET_TYPE:
-                        var discreteValueList = [];
-
-                        discreteValueList.push(new DiscreteValue('Lowpass', Biquad.FILTER_LOWPASS));
-                        discreteValueList.push(new DiscreteValue('Bandpass', Biquad.FILTER_BANDPASS));
-                        discreteValueList.push(new DiscreteValue('Highpass', Biquad.FILTER_HIGHPASS));
-
-                        return new DiscreteValueOptions(discreteValueList, null, null);
-                    default:
-                        return null;
-                }
+                return this._controlTargetOptions.getOptionsById(ctrlTargetId);
             }
         });
 

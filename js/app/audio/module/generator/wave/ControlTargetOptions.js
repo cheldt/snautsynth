@@ -77,6 +77,9 @@ define(
              */
             _wavetypeOptions: null,
 
+
+            _envelopeAttackOptions: null,
+
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
              * @instance
