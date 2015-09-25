@@ -12,9 +12,7 @@ define(
         'app/datatype/NumberRange',
         'app/datatype/RangeValueOptions',
         'app/control/ui/SnapOptions',
-        'app/control/ui/discretecontrol/KeyValue',
-        'app/datatype/DiscreteValueOptions',
-        'app/util/formatter/NumberFormatter'
+        'app/control/ui/discretecontrol/KeyValue'
     ],
     function(
         dejavu,
@@ -26,9 +24,7 @@ define(
         NumberRange,
         RangeValueOptions,
         SnapOptions,
-        KeyValue,
-        DiscreteValueOptions,
-        NumberFormatter
+        KeyValue
     ) {
         'use strict';
 
@@ -42,56 +38,85 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
-             * @protected
+             * @private
              *
              * @type {number}
              */
-            _cents: null,
+            __cents: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
-             * @protected
-             *
-             * @type {GainNode}
-             */
-            _gainNode: null,
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             * @protected
-             *
-             * @type {number}
-             */
-            _halftones: null,
-
-            /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave
-             * @instance
-             * @protected
+             * @private
              *
              * @type {Object}
              */
-            _runningOscillatorList: null,
+            __envelopeGainNodeList: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
-             * @protected
+             * @private
+             *
+             * @type {Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues}
+             */
+            __envelopeValues: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @private
              *
              * @type {number}
              */
-            _octaves: null,
+            __gain: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
-             * @protected
+             * @private
+             *
+             * @type {GainNode}
+             */
+            __gainNode: null,
+
+
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @private
+             *
+             * @type {number}
+             */
+            __halftones: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @private
+             *
+             * @type {Object}
+             */
+            __runningOscillatorList: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @private
+             *
+             * @type {number}
+             */
+            __octaves: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave
+             * @instance
+             * @private
              *
              * @type {string}
              */
-            _waveType: null,
+            __waveType: null,
 
             $constants: {
                 MAX_RUNNING_OSCILLATORS: 4,
@@ -244,6 +269,7 @@ define(
              * @param {number}                                                  tuning
              * @param {string}                                                  waveType
              * @param {number}                                                  gain
+             * @param {Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues}   envelopeValues
              * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}        moduleConnectionList
              * @param {Snautsynth.Audio.Module.IControlTargetOptionsAccessable} controlTargetOptions
              */
@@ -253,30 +279,33 @@ define(
                 tuning,
                 waveType,
                 gain,
+                envelopeValues,
                 moduleConnectionList,
                 controlTargetOptions
             ) {
                 this.$super(id, audioContext, moduleConnectionList, controlTargetOptions);
 
-                this._octaves   = 0;
-                this._halftones = 0;
+                this.__envelopeValues = envelopeValues;
+                this.__octaves        = 0;
+                this.__halftones      = 0;
 
                 if (Math.abs(tuning / Wave.CENTS_OCTAVE) >= 1) {
-                    this._octaves = parseInt(tuning / Wave.CENTS_OCTAVE);
-                    tuning = tuning - this._octaves * Wave.CENTS_OCTAVE;
+                    this.__octaves = parseInt(tuning / Wave.CENTS_OCTAVE);
+                    tuning = tuning - this.__octaves * Wave.CENTS_OCTAVE;
                 }
 
                 if (Math.abs(tuning / Wave.CENTS_HALFTONE) >= 1) {
-                    this._halftones = parseInt(tuning / Wave.CENTS_HALFTONE);
-                    tuning = tuning - this._halftones * Wave.CENTS_HALFTONE;
+                    this.__halftones = parseInt(tuning / Wave.CENTS_HALFTONE);
+                    tuning = tuning - this.__halftones * Wave.CENTS_HALFTONE;
                 }
 
-                this._cents = tuning;
+                this.__cents = tuning;
 
-                this._waveType = waveType;
+                this.__waveType = waveType;
 
-                this._gainNode = audioContext.createGain();
-                this._gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
+                this.__gainNode = audioContext.createGain();
+                this.__gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
+                this.__gain = gain;
             },
 
             /**
@@ -287,8 +316,8 @@ define(
              * @param {number} time
              */
             changeCents: function(cents, time) {
-                this._cents = cents;
-                cents       = cents + this._halftones * Wave.CENTS_HALFTONE + this._octaves * Wave.CENTS_OCTAVE;
+                this.__cents = cents;
+                cents       = cents + this.__halftones * Wave.CENTS_HALFTONE + this.__octaves * Wave.CENTS_OCTAVE;
 
                 this.changeTune(cents, time);
             },
@@ -301,7 +330,8 @@ define(
              * @param {number} time
              */
             changeGain: function(value, time) {
-                this._gainNode.gain.setValueAtTime(value, time);
+                this.__gainNode.gain.setValueAtTime(value, time);
+                this.__gain = value;
             },
 
             /**
@@ -314,8 +344,8 @@ define(
              * @param {number} time
              */
             changeHalftones: function(halftones, time) {
-                this._halftones = halftones;
-                var cents       = this._cents + halftones * Wave.CENTS_HALFTONE + this._octaves * Wave.CENTS_OCTAVE;
+                this.__halftones = halftones;
+                var cents       = this.__cents + halftones * Wave.CENTS_HALFTONE + this.__octaves * Wave.CENTS_OCTAVE;
 
                 this.changeTune(cents, time);
             },
@@ -330,8 +360,8 @@ define(
              * @param {number} time
              */
             changeOctaves: function(octaves, time) {
-                this._octaves = octaves;
-                var cents     = this._cents + this._halftones * Wave.CENTS_HALFTONE + octaves * Wave.CENTS_OCTAVE;
+                this.__octaves = octaves;
+                var cents     = this.__cents + this.__halftones * Wave.CENTS_HALFTONE + octaves * Wave.CENTS_OCTAVE;
 
                 this.changeTune(cents, time);
             },
@@ -346,20 +376,20 @@ define(
              * @param {number} time
              */
             changeTune: function(cents, time) {
-                if (null === this._runningOscillatorList) {
+                if (null === this.__runningOscillatorList) {
                     return;
                 }
 
-                for (var noteKey in this._runningOscillatorList) {
-                    if (!this._runningOscillatorList.hasOwnProperty(noteKey)) {
+                for (var noteKey in this.__runningOscillatorList) {
+                    if (!this.__runningOscillatorList.hasOwnProperty(noteKey)) {
                         continue;
                     }
 
-                    if (undefined === this._runningOscillatorList[noteKey]) {
+                    if (undefined === this.__runningOscillatorList[noteKey]) {
                         continue;
                     }
 
-                    var oscillator = this._runningOscillatorList[noteKey];
+                    var oscillator = this.__runningOscillatorList[noteKey];
                     oscillator.detune.setValueAtTime(cents, time);
                 }
             },
@@ -371,23 +401,23 @@ define(
              * @param {string} waveType
              */
             changeWaveType: function (waveType) {
-                this._waveType = waveType;
+                this.__waveType = waveType;
 
-                if (null === this._runningOscillatorList) {
+                if (null === this.__runningOscillatorList) {
                     return;
                 }
 
-                for (var noteKey in this._runningOscillatorList) {
-                    if (!this._runningOscillatorList.hasOwnProperty(noteKey)) {
+                for (var noteKey in this.__runningOscillatorList) {
+                    if (!this.__runningOscillatorList.hasOwnProperty(noteKey)) {
                         continue;
                     }
 
-                    if (null === this._runningOscillatorList[noteKey]) {
+                    if (null === this.__runningOscillatorList[noteKey]) {
                         continue;
                     }
 
-                    var oscillator  = this._runningOscillatorList[noteKey];
-                    oscillator.type = this._waveType;
+                    var oscillator  = this.__runningOscillatorList[noteKey];
+                    oscillator.type = this.__waveType;
                 }
             },
 
@@ -451,54 +481,126 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
+             * @param {number} currentTime
              * @param {number} note
              */
-            createOscillator: function(note) {
-                if (null === this._runningOscillatorList) {
-                    this._runningOscillatorList    = {};
+            createOscillator: function(currentTime, note) {
+                if (null === this.__runningOscillatorList) {
+                    this.__runningOscillatorList = {};
                 }
 
-                var runningOscillatorCounter = Object.keys(this._runningOscillatorList);
+                if (null === this.__envelopeGainNodeList) {
+                    this.__envelopeGainNodeList = {};
+                }
+
+                var runningOscillatorCounter = Object.keys(this.__runningOscillatorList);
 
                 if (Wave.MAX_RUNNING_OSCILLATORS === runningOscillatorCounter) {
                     return;
                 }
 
-                if (typeof this._runningOscillatorList[note] !== 'undefined') {
+                if (typeof this.__runningOscillatorList[note] !== 'undefined') {
                     return;
                 }
 
                 var frequency = AudioUtil.calcFreqByKey(note);
 
                 var oscillator             = this._audioContext.createOscillator();
-                oscillator.type            = this._waveType;
-                oscillator.detune.value    = this._octaves * Wave.CENTS_OCTAVE + this._halftones * Wave.CENTS_HALFTONE;
+                oscillator.type            = this.__waveType;
+                oscillator.detune.value    = this.__octaves * Wave.CENTS_OCTAVE + this.__halftones * Wave.CENTS_HALFTONE;
                 oscillator.frequency.value = frequency;
 
-                oscillator.connect(this._gainNode);
+                if (null == this.__envelopeOptions) {
+                    oscillator.connect(this.__gainNode);
+                }
 
-                this._runningOscillatorList[note] = oscillator;
+                this.__runningOscillatorList[note] = oscillator;
+
+                var envelopeGainNode;
+
+                if (null != this.__envelopeOptions) {
+                    envelopeGainNode = this._audioContext.createGain();
+                    envelopeGainNode.gain.value = 0;
+
+                    this.__envelopeGainNodeList[note] = envelopeGainNode;
+
+                    oscillator.connect(envelopeGainNode);
+
+                    envelopeGainNode.connect(this.__gainNode);
+                }
 
                 oscillator.start(0);
+
+                if (null != this.__envelopeOptions) {
+                    // ADSR - envelope
+                    // reset all schedulers
+                    envelopeGainNode.gain.cancelScheduledValues(0.0);
+                    envelopeGainNode.gain.setValueAtTime(0, currentTime);
+
+                    // Ramp to attack-values
+                    envelopeGainNode.gain.linearRampToValueAtTime(
+                        this.__envelopeValues.getAttackGain(),
+                        currentTime + this.__envelopeValues.getAttackTime()
+                    );
+
+                    // Ramp to decay time and gain
+                    envelopeGainNode.gain.linearRampToValueAtTime(
+                        this.__envelopeValues.getDecayGain(),
+                        currentTime + this.__envelopeValues.getDecayTime()
+                    );
+
+                    // Hold sustain
+                    envelopeGainNode.gain.linearRampToValueAtTime(
+                        this.__envelopeValues.getDecayGain(),
+                        currentTime + this.__envelopeValues.getSustainTime()
+                    );
+
+                    // Ramp to 0 in release-time
+                    envelopeGainNode.gain.linearRampToValueAtTime(
+                        0,
+                        currentTime + this.__envelopeValues.getReleaseTime()
+                    );
+                }
             },
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param note
+             * @param {number} currentTime
+             * @param {number} note
              */
-            destroyOscillator: function(note) {
-                if (null === this._runningOscillatorList) {
+            destroyOscillator: function(currentTime, note) {
+                if (null === this.__runningOscillatorList) {
                     return;
                 }
 
-                var oscillator = this._runningOscillatorList[note];
+                var oscillator = this.__runningOscillatorList[note];
 
-                oscillator.disconnect();
-                oscillator.stop();
+                if (null != this.__envelopeOptions) {
+                    /** @type GainNode */
+                    var envelopeGainNode = this.__envelopeGainNodeList[note];
 
-                delete this._runningOscillatorList[note];
+
+                    envelopeGainNode.gain.cancelScheduledValues(0.0);
+                    envelopeGainNode.gain.setValueAtTime(envelopeGainNode.gain.value, currentTime);
+
+                    // ramp to release
+                    envelopeGainNode.gain.linearRampToValueAtTime(
+                        0,
+                        currentTime + this.__envelopeValues.getReleaseTime()
+                    );
+
+                    while (0 != envelopeGainNode.gain.value) {
+
+                    }
+                } else {
+
+                    oscillator.disconnect();
+                    oscillator.stop();
+
+                    delete this.__runningOscillatorList[note];
+                }
             },
 
             /**
@@ -508,7 +610,7 @@ define(
              * @return {AudioNode}
              */
             getSourceNode: function() {
-                return this._gainNode;
+                return this.__gainNode;
             },
 
             /**
@@ -522,15 +624,15 @@ define(
             getValueByCtrlTarget: function(ctrlTargetId) {
                 switch (ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
-                        return this._gainNode.gain.value;
+                        return this.__gainNode.gain.value;
                     case Wave.CTRL_TARGET_VALUE_WAVETYPE:
-                        return this._waveType;
+                        return this.__waveType;
                     case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
-                        return this._cents;
+                        return this.__cents;
                     case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
-                        return this._halftones;
+                        return this.__halftones;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
-                        return this._octaves;
+                        return this.__octaves;
                     default:
                         return null;
                 }
@@ -552,9 +654,10 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
+             * @param {number} currentTime
              * @param {number} note
              */
-            noteOff: function(note) {
+            noteOff: function(currentTime, note) {
                 this.destroyOscillator(note);
             },
 
@@ -562,9 +665,10 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
+             * @param {number} currentTime
              * @param {number} note
              */
-            noteOn: function(note) {
+            noteOn: function(currentTime, note) {
                 this.createOscillator(note);
             },
 
@@ -572,9 +676,10 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
+             * @param {number} currentTime
              * @param {Snautsynth.Control.UI.DiscreteControl.KeyValue} value
              */
-            triggerNote: function(value) {
+            triggerNote: function(currentTime, value) {
                 var keyState = value.getKeyState();
                 var note     = value.getNote();
 
@@ -584,7 +689,6 @@ define(
                     this.noteOff(note);
                 }
             }
-
         });
 
         return Wave;

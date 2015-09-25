@@ -47,7 +47,7 @@ define(
              *
              * @type {AudioGainNode}
              */
-            _gainNode: null,
+            __gainNode: null,
 
             $constants: {
                 /**
@@ -76,9 +76,9 @@ define(
              */
             initialize: function(id, audioContext, gain, moduleConnectionList, controlTargetOptions) {
                 this.$super(id, audioContext, moduleConnectionList, controlTargetOptions);
-                this._gainNode = audioContext.createGain();
-                this._gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
-                this._gainNode.gain.value = gain;
+                this.__gainNode = audioContext.createGain();
+                this.__gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
+                this.__gainNode.gain.value = gain;
             },
 
             /**
@@ -122,7 +122,7 @@ define(
              * @param {number} time
              */
             changeGain: function (value, time) {
-                this._gainNode.gain.setValueAtTime(value, time);
+                this.__gainNode.gain.setValueAtTime(value, time);
             },
 
             /**
@@ -132,7 +132,7 @@ define(
              * @return {AudioGainNode}
              */
             getTargetNode: function() {
-                return this._gainNode;
+                return this.__gainNode;
             },
 
             /**
@@ -142,7 +142,7 @@ define(
              * @return {AudioGainNode}
              */
             getSourceNode: function() {
-                return this._gainNode;
+                return this.__gainNode;
             },
 
             /**
@@ -154,7 +154,7 @@ define(
              * @return {number}
              */
             getValueByCtrlTarget: function(ctrlTargetId) {
-                return this._gainNode.gain.value;
+                return this.__gainNode.gain.value;
             },
 
             /**

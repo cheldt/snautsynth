@@ -21,7 +21,7 @@ define(
          * @class      Snautsynth.Audio.Module.Filter.Biquad.ControlTargetOptions
          * @implements Snautsynth.Audio.Module.IControlTargetOptionsAccessable
          */
-        var ControlTargetOptions = dejavu.Class.declare({
+        return dejavu.Class.declare({
             $name: 'ControlTargetOptions',
 
             $implements: [IControlTargetOptionsAccessible],
@@ -33,7 +33,7 @@ define(
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
-            _frequencyOptions: null,
+            __frequencyOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Filter.Biquad.ControlTargetOptions
@@ -42,7 +42,7 @@ define(
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
-            _qualityFactorOptions: null,
+            __qualityFactorOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Filter.Biquad.ControlTargetOptions
@@ -51,7 +51,7 @@ define(
              *
              * @type {Snautsynth.DataType.DiscreteValueOptions}
              */
-            _typeOptions: null,
+            __typeOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Mixing.Gain.ControlTargetOptions
@@ -65,11 +65,11 @@ define(
             getOptionsById: function(ctrlTargetId) {
                 switch(ctrlTargetId) {
                     case BiquadFilter.CTRL_TARGET_FREQUENCY:
-                        return this._frequencyOptions;
+                        return this.__frequencyOptions;
                     case BiquadFilter.CTRL_TARGET_QUALITY_FACTOR:
-                        return this._qualityFactorOptions;
+                        return this.__qualityFactorOptions;
                     case BiquadFilter.CTRL_TARGET_TYPE:
-                        return this._typeOptions;
+                        return this.__typeOptions;
                     default:
                         return null;
                 }
@@ -86,20 +86,18 @@ define(
             setOptionsById: function(ctrlTargetId, valueOptions) {
                 switch(ctrlTargetId) {
                     case BiquadFilter.CTRL_TARGET_FREQUENCY:
-                        this._frequencyOptions = valueOptions;
+                        this.__frequencyOptions = valueOptions;
                         break;
                     case BiquadFilter.CTRL_TARGET_QUALITY_FACTOR:
-                        this._qualityFactorOptions = valueOptions;
+                        this.__qualityFactorOptions = valueOptions;
                         break;
                     case BiquadFilter.CTRL_TARGET_TYPE:
-                        this._typeOptions = valueOptions;
+                        this.__typeOptions = valueOptions;
                         break;
                     default:
                         return null;
                 }
             }
         });
-
-        return ControlTargetOptions;
     }
 );

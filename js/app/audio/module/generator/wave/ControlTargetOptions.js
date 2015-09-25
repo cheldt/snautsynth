@@ -30,7 +30,7 @@ define(
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
-            _gainOptions: null,
+            __gainOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
@@ -39,7 +39,7 @@ define(
              *
              * @type {Snautsynth.DataType.DiscreteValueOptions}
              */
-            _triggerNoteOptions: null,
+            __triggerNoteOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
@@ -48,7 +48,7 @@ define(
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
-            _tuneCentsOptions: null,
+            __tuneCentsOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
@@ -57,7 +57,7 @@ define(
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
-            _tuneHalftonesOptions: null,
+            __tuneHalftonesOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
@@ -66,7 +66,7 @@ define(
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
-            _tuneOctavesOptions: null,
+            __tuneOctavesOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
@@ -75,10 +75,9 @@ define(
              *
              * @type {Snautsynth.DataType.DiscreteValueOptions}
              */
-            _wavetypeOptions: null,
+            __wavetypeOptions: null,
 
-
-            _envelopeAttackOptions: null,
+            __envelopeOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
@@ -92,17 +91,17 @@ define(
             getOptionsById: function(ctrlTargetId) {
                 switch (ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
-                        return this._gainOptions;
+                        return this.__gainOptions;
                     case Wave.CTRL_TARGET_VALUE_WAVETYPE:
-                        return this._wavetypeOptions;
+                        return this.__wavetypeOptions;
                     case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
-                        return this._tuneCentsOptions;
+                        return this.__tuneCentsOptions;
                     case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
-                        return this._tuneHalftonesOptions;
+                        return this.__tuneHalftonesOptions;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
-                        return this._tuneOctavesOptions;
+                        return this.__tuneOctavesOptions;
                     case Wave.CTRL_TARGET_TRIGGER_NOTE:
-                        return this._triggerNoteOptions;
+                        return this.__triggerNoteOptions;
                     default:
                         return null;
                 }
@@ -119,22 +118,22 @@ define(
             setOptionsById: function(ctrlTargetId, valueOptions) {
                 switch (ctrlTargetId) {
                     case Wave.CTRL_TARGET_VALUE_GAIN:
-                        this._gainOptions = valueOptions;
+                        this.__gainOptions = valueOptions;
                         break;
                     case Wave.CTRL_TARGET_VALUE_WAVETYPE:
-                        this._wavetypeOptions = valueOptions;
+                        this.__wavetypeOptions = valueOptions;
                         break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
-                        this._tuneCentsOptions = valueOptions;
+                        this.__tuneCentsOptions = valueOptions;
                         break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
-                        this._tuneHalftonesOptions = valueOptions;
+                        this.__tuneHalftonesOptions = valueOptions;
                         break;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
-                        this._tuneOctavesOptions = valueOptions;
+                        this.__tuneOctavesOptions = valueOptions;
                         break;
                     case Wave.CTRL_TARGET_TRIGGER_NOTE:
-                        this._triggerNoteOptions = valueOptions;
+                        this.__triggerNoteOptions = valueOptions;
                         break;
                 }
             }

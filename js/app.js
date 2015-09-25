@@ -178,6 +178,14 @@ requirejs(
                 type:     AudioModuleListFactory.CLASS_TYPE_AMOD_WAVE,
                 tuning:   0,
                 gain:     0.5,
+                envelopeValues: {
+                    attackGain:  0,
+                    attackTime:  1.0,
+                    decayGain:   0.5,
+                    decayTime:   2.0,
+                    releaseTime: 4,
+                    sustainTime: 5
+                },
                 waveType: Wave.WAVEFORM_SQUARE,
                 moduleConnectionList: [
                     {
@@ -209,6 +217,14 @@ requirejs(
                 id:   GlobalConstants.AMOD_OSC1_GAIN,
                 type: AudioModuleListFactory.CLASS_TYPE_AMOD_GAIN,
                 gain: 0.1,
+                envelopeValues: {
+                    attackGain:  0,
+                    attackTime:  1.0,
+                    decayGain:   0.5,
+                    decayTime:   2.0,
+                    releaseTime: 4,
+                    sustainTime: 5
+                },
                 moduleConnectionList: [
                     {
                         sourceModuleId: GlobalConstants.AMOD_OSC1_GAIN,
