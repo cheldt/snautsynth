@@ -158,7 +158,7 @@ define(
 
                 canvasState.getBaseLayer().setAttr('event', null);
 
-                if (typeof eventObject === 'undefined' || eventObject === null) {
+                if ('undefined'  === typeof eventObject || null === eventObject) {
                     return;
                 }
 

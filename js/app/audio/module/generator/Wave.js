@@ -5,6 +5,7 @@ define(
     [
         'dejavu',
         'app/audio/module/Module',
+        'app/audio/module/mixing/Gain',
         'app/audio/module/IConnecting',
         'app/audio/module/IControllable',
         'app/audio/util/Audio',
@@ -17,6 +18,7 @@ define(
     function(
         dejavu,
         Module,
+        Gain,
         IConnecting,
         IControllable,
         AudioUtil,
@@ -58,7 +60,7 @@ define(
              * @instance
              * @private
              *
-             * @type {Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues}
+             * @type {Snautsynth.Audio.Module.EnvelopeValues}
              */
             __envelopeValues: null,
 
@@ -79,8 +81,6 @@ define(
              * @type {GainNode}
              */
             __gainNode: null,
-
-
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
@@ -254,7 +254,16 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_TRIGGER_NOTE:         8
+                CTRL_TARGET_TRIGGER_NOTE:         8,
+
+                /**
+                 * @memberof Snautsynth.Audio.Module.Generator.Wave
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ATTACK:               9
             },
 
             /**
@@ -269,7 +278,7 @@ define(
              * @param {number}                                                  tuning
              * @param {string}                                                  waveType
              * @param {number}                                                  gain
-             * @param {Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues}   envelopeValues
+             * @param {Snautsynth.Audio.Module.EnvelopeValues}                  envelopeValues
              * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}        moduleConnectionList
              * @param {Snautsynth.Audio.Module.IControlTargetOptionsAccessable} controlTargetOptions
              */
@@ -313,13 +322,13 @@ define(
              * @instance
              *
              * @param {number} cents
-             * @param {number} time
+             * @param {number} currentTime
              */
-            changeCents: function(cents, time) {
+            changeCents: function(cents, currentTime) {
                 this.__cents = cents;
                 cents       = cents + this.__halftones * Wave.CENTS_HALFTONE + this.__octaves * Wave.CENTS_OCTAVE;
 
-                this.changeTune(cents, time);
+                this.changeTune(cents, currentTime);
             },
 
             /**
@@ -327,10 +336,10 @@ define(
              * @instance
              *
              * @param {number} value
-             * @param {number} time
+             * @param {number} currentTime
              */
-            changeGain: function(value, time) {
-                this.__gainNode.gain.setValueAtTime(value, time);
+            changeGain: function(value, currentTime) {
+                this.__gainNode.gain.setValueAtTime(value, currentTime);
                 this.__gain = value;
             },
 
@@ -341,13 +350,13 @@ define(
              * @instance
              *
              * @param {number} halftones
-             * @param {number} time
+             * @param {number} currentTime
              */
-            changeHalftones: function(halftones, time) {
+            changeHalftones: function(halftones, currentTime) {
                 this.__halftones = halftones;
                 var cents       = this.__cents + halftones * Wave.CENTS_HALFTONE + this.__octaves * Wave.CENTS_OCTAVE;
 
-                this.changeTune(cents, time);
+                this.changeTune(cents, currentTime);
             },
 
             /**
@@ -357,13 +366,13 @@ define(
              * @instance
              *
              * @param {number} octaves
-             * @param {number} time
+             * @param {number} currentTime
              */
-            changeOctaves: function(octaves, time) {
+            changeOctaves: function(octaves, currentTime) {
                 this.__octaves = octaves;
                 var cents     = this.__cents + this.__halftones * Wave.CENTS_HALFTONE + octaves * Wave.CENTS_OCTAVE;
 
-                this.changeTune(cents, time);
+                this.changeTune(cents, currentTime);
             },
 
             /**
@@ -372,10 +381,11 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
+             *
              * @param {number} cents
-             * @param {number} time
+             * @param {number} currentTime
              */
-            changeTune: function(cents, time) {
+            changeTune: function(cents, currentTime) {
                 if (null === this.__runningOscillatorList) {
                     return;
                 }
@@ -390,7 +400,7 @@ define(
                     }
 
                     var oscillator = this.__runningOscillatorList[noteKey];
-                    oscillator.detune.setValueAtTime(cents, time);
+                    oscillator.detune.setValueAtTime(cents, currentTime);
                 }
             },
 
@@ -398,9 +408,10 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
+             * @param {number} currentTime
              * @param {string} waveType
              */
-            changeWaveType: function (waveType) {
+            changeWaveType: function (waveType, currentTime) {
                 this.__waveType = waveType;
 
                 if (null === this.__runningOscillatorList) {
@@ -444,32 +455,37 @@ define(
                         switch(controlConnection.getControlTarget()) {
                             case Wave.CTRL_TARGET_VALUE_TUNE_CENTS:
                                 controlConnection.setCallback(
-                                    module.bindCallback(module,'changeCents')
+                                    module.bindCallback(module, 'changeCents')
                                 );
                                 break;
                             case Wave.CTRL_TARGET_VALUE_TUNE_HALFTONES:
                                 controlConnection.setCallback(
-                                    module.bindCallback(module,'changeHalftones')
+                                    module.bindCallback(module, 'changeHalftones')
                                 );
                                 break;
                             case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
                                 controlConnection.setCallback(
-                                    module.bindCallback(module,'changeOctaves')
+                                    module.bindCallback(module, 'changeOctaves')
                                 );
                                 break;
                             case Wave.CTRL_TARGET_VALUE_WAVETYPE:
                                 controlConnection.setCallback(
-                                    module.bindCallback(module,'changeWaveType')
+                                    module.bindCallback(module, 'changeWaveType')
                                 );
                                 break;
                             case Wave.CTRL_TARGET_TRIGGER_NOTE:
                                 controlConnection.setCallback(
-                                    module.bindCallback(module,'triggerNote')
+                                    module.bindCallback(module, 'triggerNote')
                                 );
                                 break;
                             case Wave.CTRL_TARGET_VALUE_GAIN:
                                 controlConnection.setCallback(
-                                    module.bindCallback(module,'changeGain')
+                                    module.bindCallback(module, 'changeGain')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_ATTACK:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module, 'changeAttack')
                                 );
                                 break;
                         }
@@ -477,14 +493,19 @@ define(
                 }
             },
 
+            changeAttack: function(pointValue, currentTime) {
+                this.__envelopeValues.setAttackGain(pointValue.getGain());
+                this.__envelopeValues.setAttackTime(pointValue.getTime());
+            },
+
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {number} currentTime
              * @param {number} note
+             * @param {number} currentTime
              */
-            createOscillator: function(currentTime, note) {
+            createOscillator: function(note, currentTime) {
                 if (null === this.__runningOscillatorList) {
                     this.__runningOscillatorList = {};
                 }
@@ -510,7 +531,7 @@ define(
                 oscillator.detune.value    = this.__octaves * Wave.CENTS_OCTAVE + this.__halftones * Wave.CENTS_HALFTONE;
                 oscillator.frequency.value = frequency;
 
-                if (null == this.__envelopeOptions) {
+                if (null == this.__envelopeValues) {
                     oscillator.connect(this.__gainNode);
                 }
 
@@ -518,48 +539,20 @@ define(
 
                 var envelopeGainNode;
 
-                if (null != this.__envelopeOptions) {
-                    envelopeGainNode = this._audioContext.createGain();
-                    envelopeGainNode.gain.value = 0;
+                if (null != this.__envelopeValues) {
+                    envelopeGainNode = new Gain(0, this._audioContext, 0, this.__envelopeValues, null, null);
 
                     this.__envelopeGainNodeList[note] = envelopeGainNode;
 
-                    oscillator.connect(envelopeGainNode);
+                    oscillator.connect(envelopeGainNode.getTargetNode());
 
-                    envelopeGainNode.connect(this.__gainNode);
+                    envelopeGainNode.getTargetNode().connect(this.__gainNode);
                 }
 
                 oscillator.start(0);
 
-                if (null != this.__envelopeOptions) {
-                    // ADSR - envelope
-                    // reset all schedulers
-                    envelopeGainNode.gain.cancelScheduledValues(0.0);
-                    envelopeGainNode.gain.setValueAtTime(0, currentTime);
-
-                    // Ramp to attack-values
-                    envelopeGainNode.gain.linearRampToValueAtTime(
-                        this.__envelopeValues.getAttackGain(),
-                        currentTime + this.__envelopeValues.getAttackTime()
-                    );
-
-                    // Ramp to decay time and gain
-                    envelopeGainNode.gain.linearRampToValueAtTime(
-                        this.__envelopeValues.getDecayGain(),
-                        currentTime + this.__envelopeValues.getDecayTime()
-                    );
-
-                    // Hold sustain
-                    envelopeGainNode.gain.linearRampToValueAtTime(
-                        this.__envelopeValues.getDecayGain(),
-                        currentTime + this.__envelopeValues.getSustainTime()
-                    );
-
-                    // Ramp to 0 in release-time
-                    envelopeGainNode.gain.linearRampToValueAtTime(
-                        0,
-                        currentTime + this.__envelopeValues.getReleaseTime()
-                    );
+                if (null != this.__envelopeValues) {
+                    envelopeGainNode.startEnvelope(currentTime);
                 }
             },
 
@@ -567,39 +560,47 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {number} currentTime
              * @param {number} note
+             * @param {number} currentTime
              */
-            destroyOscillator: function(currentTime, note) {
+            destroyOscillator: function(note, currentTime) {
                 if (null === this.__runningOscillatorList) {
                     return;
                 }
 
-                var oscillator = this.__runningOscillatorList[note];
+                var oscillatorList       = this.__runningOscillatorList;
+                var oscillator           = oscillatorList[note];
 
-                if (null != this.__envelopeOptions) {
-                    /** @type GainNode */
-                    var envelopeGainNode = this.__envelopeGainNodeList[note];
+                if (null != this.__envelopeValues) {
 
+                    var envelopeGainNodeList = this.__envelopeGainNodeList;
 
-                    envelopeGainNode.gain.cancelScheduledValues(0.0);
-                    envelopeGainNode.gain.setValueAtTime(envelopeGainNode.gain.value, currentTime);
-
-                    // ramp to release
-                    envelopeGainNode.gain.linearRampToValueAtTime(
-                        0,
-                        currentTime + this.__envelopeValues.getReleaseTime()
-                    );
-
-                    while (0 != envelopeGainNode.gain.value) {
-
+                    if (null === envelopeGainNodeList) {
+                        return;
                     }
+
+                    /** @type Gain */
+                    var envelopeGainNode = envelopeGainNodeList[note];
+
+                    if (null === envelopeGainNode) {
+                        return;
+                    }
+
+                    envelopeGainNode.stopEnvelope(currentTime);
+
+                    //oscillator.stop(currentTime + this.__envelopeValues.getReleaseTime());
+
+                    oscillator.onended = function() {
+                        oscillator.disconnect();
+                        delete oscillatorList[note];
+                        delete envelopeGainNodeList[note]
+                    };
                 } else {
-
-                    oscillator.disconnect();
                     oscillator.stop();
-
-                    delete this.__runningOscillatorList[note];
+                    oscillator.onended = function() {
+                        oscillator.disconnect();
+                        delete oscillatorList[note];
+                    };
                 }
             },
 
@@ -654,39 +655,39 @@ define(
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {number} currentTime
              * @param {number} note
+             * @param {number} currentTime
              */
-            noteOff: function(currentTime, note) {
-                this.destroyOscillator(note);
+            noteOff: function(note, currentTime) {
+                this.destroyOscillator(note, currentTime);
             },
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {number} currentTime
              * @param {number} note
+             * @param {number} currentTime
              */
-            noteOn: function(currentTime, note) {
-                this.createOscillator(note);
+            noteOn: function(note, currentTime) {
+                this.createOscillator(note, currentTime);
             },
 
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave
              * @instance
              *
-             * @param {number} currentTime
              * @param {Snautsynth.Control.UI.DiscreteControl.KeyValue} value
+             * @param {number} currentTime
              */
-            triggerNote: function(currentTime, value) {
+            triggerNote: function(value, currentTime) {
                 var keyState = value.getKeyState();
                 var note     = value.getNote();
 
                 if (KeyValue.KEY_STATE_DOWN === keyState) {
-                    this.noteOn(note);
+                    this.noteOn(note, currentTime);
                 } else {
-                    this.noteOff(note);
+                    this.noteOff(note, currentTime);
                 }
             }
         });

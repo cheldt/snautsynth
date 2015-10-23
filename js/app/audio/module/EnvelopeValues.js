@@ -11,11 +11,11 @@ define(
         'use strict';
 
         /**
-         * @class Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+         * @class Snautsynth.Audio.Module.EnvelopeValues
          */
         return dejavu.Class.declare({
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @private
              *
@@ -24,7 +24,7 @@ define(
             __attackGain: null,
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @private
              *
@@ -33,7 +33,7 @@ define(
             __attackTime: null,
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @private
              *
@@ -42,7 +42,7 @@ define(
             __decayGain: null,
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @private
              *
@@ -51,7 +51,7 @@ define(
             __decayTime: null,
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @private
              *
@@ -60,7 +60,7 @@ define(
             __sustainTime: null,
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @private
              *
@@ -69,74 +69,140 @@ define(
             __releaseTime: null,
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @public
              *
-             * @type {number}
+             * @return {number}
              */
             getAttackGain: function() {
                 return this.__attackGain;
             },
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @public
              *
-             * @type {number}
+             * @param {number} attackGain
+             */
+            setAttackGain: function(attackGain) {
+                this.__attackGain = attackGain;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @return {number}
              */
             getAttackTime: function() {
                 return this.__attackTime;
             },
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @public
              *
-             * @type {number}
+             * @param {number} attackTime
+             */
+            setAttackTime: function(attackTime) {
+                this.__attackTime = attackTime;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @return {number}
              */
             getDecayGain: function() {
                 return this.__decayGain;
             },
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @public
              *
-             * @type {number}
+             * @param {number} decayGain
+             */
+            setDecayGain: function(decayGain) {
+                this.__decayGain = decayGain;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @return {number}
              */
             getDecayTime: function() {
                 return this.__decayTime;
             },
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @public
              *
-             * @type {number}
+             * @param {number} decayTime
+             */
+            setDecayTime: function(decayTime) {
+                this.__decayTime = decayTime;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @return {number}
              */
             getSustainTime: function() {
                 return this.__sustainTime;
             },
 
             /**
-             * @memberof Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
              * @instance
              * @public
              *
-             * @type {number}
+             * @param {number} sustainTime
+             */
+            setSustainTime: function(sustainTime) {
+                this.__sustainTime = sustainTime;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @return {number}
              */
             getReleaseTime: function() {
                 return this.__releaseTime;
             },
 
             /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @param {number} releaseTime
+             */
+            setReleaseTime: function(releaseTime) {
+                this.__releaseTime = releaseTime;
+            },
+
+            /**
              * @constructor
-             * @class Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues
+             * @class Snautsynth.Audio.Module.EnvelopeValues
              *
              * @param {number} attackGain
              * @param {number} attackTime

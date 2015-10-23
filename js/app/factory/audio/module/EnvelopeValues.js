@@ -1,10 +1,10 @@
 /**
- * @namespace Snautsynth.Factory.Audio.Module.Generator.Wave.EnvelopeValues
+ * @namespace Snautsynth.Factory.Audio.Module.EnvelopeValues
  */
 define(
     [
         'dejavu',
-        'app/audio/module/generator/wave/EnvelopeValues'
+        '../../../audio/module/EnvelopeValues'
     ],
     function(
         dejavu,
@@ -12,24 +12,25 @@ define(
     ) {
         'use strict';
 
-        /** @class Snautsynth.Factory.Audio.Module.Generator.Wave.EnvelopeValues */
+        /** @class Snautsynth.Factory.Audio.Module.EnvelopeValues */
         return dejavu.Class.declare({
             $name: 'Wave',
 
             /**
-             * @memberof Snautsynth.Factory.Audio.Module.Generator.Wave.EnvelopeValues
+             * @memberof Snautsynth.Factory.Audio.Module.EnvelopeValues
              * @instance
              *
              * @param {Object} options
              *
-             * @return {Snautsynth.Audio.Module.Generator.Wave.EnvelopeValues}
+             * @return {Snautsynth.Audio.Module.EnvelopeValues}
              */
             create: function(options) {
+
                 if (null == options) {
                     return null;
                 }
 
-                new EnvelopeValues(
+                return new EnvelopeValues(
                     options.attackGain,
                     options.attackTime,
                     options.decayGain,

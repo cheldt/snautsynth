@@ -7,22 +7,14 @@ define(
         'app/audio/module/Module',
         'app/audio/module/IConnectable',
         'app/audio/module/IConnecting',
-        'app/audio/module/IControllable',
-        'app/control/ui/SnapOptions',
-        'app/datatype/NumberRange',
-        'app/datatype/RangeValueOptions',
-        'app/util/formatter/NumberFormatter'
+        'app/audio/module/IControllable'
     ],
     function(
         dejavu,
         Module,
         IConnectable,
         IConnecting,
-        IConrollable,
-        SnapOptions,
-        NumberRange,
-        RangeValueOptions,
-        NumberFormatter
+        IConrollable
     ) {
         'use strict';
 
@@ -39,7 +31,15 @@ define(
              *
              * @type {Snautsynth.Audio.Module.Mixing.Gain.ControlTargetOptions}
              */
-            _controlTargetOptions: null,
+            __controlTargetOptions: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             *
+             * @type {Snautsynth.Audio.Module.EnvelopeValues}
+             */
+            __envelopeValues: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Mixing.Gain
@@ -49,7 +49,7 @@ define(
              */
             __gainNode: null,
 
-            $constants: {
+           $constants: {
                 /**
                  * @memberof Snautsynth.Audio.Mixing.Gain
                  * @constant
@@ -57,7 +57,25 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_VALUE_GAIN: 1
+                CTRL_TARGET_VALUE_GAIN:     1,
+
+                /**
+                 * @memberof Snautsynth.Audio.Mixing.Gain
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_START_ENVELOPE: 2,
+
+                /**
+                 * @memberof Snautsynth.Audio.Mixing.Gain
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_STOP_ENVELOPE:  3
             },
 
             /**
@@ -71,14 +89,17 @@ define(
              * @param {number}                                                   id
              * @param {AudioContext}                                             audioContext
              * @param {number}                                                   gain
+             * @param {Snautsynth.Audio.Module.EnvelopeValues}                   envelopeValues
              * @param {Array.<Snautsynth.Audio.Module.ModuleConnection>}         moduleConnectionList
              * @param {Snautsynth.Audio.Module.Mixing.Gain.ControlTargetOptions} controlTargetOptions
              */
-            initialize: function(id, audioContext, gain, moduleConnectionList, controlTargetOptions) {
+            initialize: function(id, audioContext, gain, envelopeValues, moduleConnectionList, controlTargetOptions) {
                 this.$super(id, audioContext, moduleConnectionList, controlTargetOptions);
                 this.__gainNode = audioContext.createGain();
                 this.__gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
                 this.__gainNode.gain.value = gain;
+
+                this.__envelopeValues = envelopeValues;
             },
 
             /**
@@ -106,6 +127,20 @@ define(
                                 controlConnection.setCallback(
                                     function(value, time) {
                                         module.changeGain(value, time);
+                                    }
+                                );
+                                break;
+                            case Gain.CTRL_TARGET_START_ENVELOPE:
+                                controlConnection.setCallback(
+                                    function(value, time) {
+                                        module.startEnvelope(time);
+                                    }
+                                );
+                                break;
+                            case Gain.CTRL_TARGET_STOP_ENVELOPE:
+                                controlConnection.setCallback(
+                                    function(value, time) {
+                                        module.stopEnvelope(time);
                                     }
                                 );
                                 break;
@@ -166,7 +201,69 @@ define(
              * @return {null|Snautsynth.DataType.ValueOptions}
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
+                if (null == this._controlTargetOptions) {
+                    return null;
+                }
+
                 return this._controlTargetOptions.getOptionsById(ctrlTargetId);
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             *
+             * @param {number} currentTime
+             */
+            startEnvelope: function(currentTime) {
+                var gainNode = this.__gainNode;
+
+                // ADSR - envelope
+                // reset all schedulers
+                gainNode.gain.cancelScheduledValues(0.0);
+                gainNode.gain.setValueAtTime(0, currentTime);
+
+                // Ramp to attack-values
+                gainNode.gain.linearRampToValueAtTime(
+                    this.__envelopeValues.getAttackGain(),
+                    currentTime + this.__envelopeValues.getAttackTime()
+                );
+
+                // Ramp to decay time and gain
+                gainNode.gain.linearRampToValueAtTime(
+                    this.__envelopeValues.getDecayGain(),
+                    currentTime + this.__envelopeValues.getDecayTime()
+                );
+
+                // Hold sustain
+                gainNode.gain.linearRampToValueAtTime(
+                    this.__envelopeValues.getDecayGain(),
+                    currentTime + this.__envelopeValues.getSustainTime()
+                );
+
+                // Ramp to 0 in release-time
+                gainNode.gain.linearRampToValueAtTime(
+                    0,
+                    currentTime + this.__envelopeValues.getReleaseTime()
+                );
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             *
+             * @param {number} currentTime
+             */
+            stopEnvelope: function(currentTime) {
+                var gainNode = this.__gainNode;
+
+                gainNode.gain.cancelScheduledValues(0.0);
+                gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
+
+                // ramp to release
+                gainNode.gain.linearRampToValueAtTime(
+                    0,
+                    currentTime + this.__envelopeValues.getReleaseTime()
+                );
             }
         });
 

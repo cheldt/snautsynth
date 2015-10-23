@@ -27,7 +27,6 @@ define(
              * @return {Array.<Snautsynth.Audio.Module.ModuleConnection>}
              */
             createModuleConnectionList: function(options) {
-
                 var moduleConnectionList = [];
                 var moduleConnectionFactory = new ModuleConnectionFactory();
 

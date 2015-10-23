@@ -44,6 +44,13 @@ define(
          */
         _moduleConnectionList: null,
 
+        /**
+         * @memberof Snautsynth.Audio.Module.Module
+         * @instance
+         * @protected
+         *
+         * @type  {Snautsynth.Audio.Module.IControlTargetOptionsAccessable}
+         */
         _controlTargetOptions: null,
 
         /**
@@ -81,7 +88,6 @@ define(
             this._moduleConnectionList = moduleConnectionList;
             this._controlTargetOptions = controlTargetOptions;
         },
-
 
         /**
          * Set reference for source- and target-module
