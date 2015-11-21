@@ -528,9 +528,7 @@ define(
             update: function(mouseMovement) {
                 if(this._selected) {
                     var snapOptions     = this._rangeValueOptions.getSnapOptions();
-                    var maxMouseDelta   = 200;
-                    var mouseY          = mouseMovement.getDeltaY();
-                    var speedup         = 1 * 1.2; //Math.abs((10 * mouseY) / maxMouseDelta);
+                    var speedup         = 1.2; //Math.abs((10 * mouseY) / maxMouseDelta);
 
                     this._increaseValue = false;
                     this._mouseMoves    = true;
