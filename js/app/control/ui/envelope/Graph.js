@@ -10,8 +10,7 @@ define(
     function (
         dejavu,
         Konva,
-        Control,
-        IConfigurable
+        Control
     ) {
         'use strict';
 
@@ -183,7 +182,7 @@ define(
             },
 
             /**
-             * Adds point to internal array and adds kinectgroup of point to kinectgroup of Graph.
+             * Adds point to internal array and adds konvagroup of point to konvagroup of Graph.
              *
              * @param {Snautsynth.Control.UI.Envelope.Point} point
              */

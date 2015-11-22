@@ -656,7 +656,7 @@ requirejs(
             {
                 id:       -1,
                 type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
-                position: {x: 0, y: 400},
+                position: {x: 0, y: 390},
                 color:    '#000',
                 text:     'Filtertype'
             },
@@ -692,7 +692,7 @@ requirejs(
             {
                 id:       -1,
                 type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
-                position: {x: 130, y: 400},
+                position: {x: 130, y: 390},
                 color:    '#000',
                 text:     'Filter-Resonance'
             },

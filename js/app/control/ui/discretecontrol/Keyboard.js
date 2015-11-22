@@ -30,7 +30,7 @@ define(
              *
              * @type {Object}
              */
-            _keyCodeNoteMapping: null,
+            __keyCodeNoteMapping: null,
 
             /**
              * @memberof Snautsynth.Control.UI.DiscreteControl.Keyboard
@@ -39,7 +39,27 @@ define(
              *
              * @type {Konva.Text}
              */
-            _noteDisplay: null,
+            __noteDisplay: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.Keyboard
+             * @instance
+             * @private
+             *
+             * @type {Object}
+             */
+            __keyPressed: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.DiscreteControl.Keyboard
+             * @instance
+             * @public
+             *
+             * @returns {Object}
+             */
+            getKeyPressed: function() {
+                return this.__keyPressed;
+            },
 
             $constants: {
                 /**
@@ -76,31 +96,36 @@ define(
 
                 var myKeyboard = this;
 
-                this._keyCodeNoteMapping = {};
+                this.__keyCodeNoteMapping = {};
 
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_A] = ['C-5', GlobalConstants.NOTE_C_5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_W] = ['C#5', GlobalConstants.NOTE_Cis5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_S] = ['D-5', GlobalConstants.NOTE_D_5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_E] = ['D#5', GlobalConstants.NOTE_Dis5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_D] = ['E-5', GlobalConstants.NOTE_E_5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_F] = ['F-5', GlobalConstants.NOTE_F_5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_T] = ['F#5', GlobalConstants.NOTE_Fis5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_G] = ['G-5', GlobalConstants.NOTE_G_5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_Z] = ['G#5', GlobalConstants.NOTE_Gis5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_H] = ['A-5', GlobalConstants.NOTE_A_5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_U] = ['A#5', GlobalConstants.NOTE_Ais5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_J] = ['B-5', GlobalConstants.NOTE_B_5];
-                this._keyCodeNoteMapping[GlobalConstants.KEY_CODE_K] = ['C-6', GlobalConstants.NOTE_C_6];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_A] = ['C-5', GlobalConstants.NOTE_C_5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_W] = ['C#5', GlobalConstants.NOTE_Cis5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_S] = ['D-5', GlobalConstants.NOTE_D_5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_E] = ['D#5', GlobalConstants.NOTE_Dis5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_D] = ['E-5', GlobalConstants.NOTE_E_5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_F] = ['F-5', GlobalConstants.NOTE_F_5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_T] = ['F#5', GlobalConstants.NOTE_Fis5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_G] = ['G-5', GlobalConstants.NOTE_G_5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_Z] = ['G#5', GlobalConstants.NOTE_Gis5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_H] = ['A-5', GlobalConstants.NOTE_A_5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_U] = ['A#5', GlobalConstants.NOTE_Ais5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_J] = ['B-5', GlobalConstants.NOTE_B_5];
+                this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_K] = ['C-6', GlobalConstants.NOTE_C_6];
 
-                this._noteDisplay = new Konva.Text({
+                this.__noteDisplay = new Konva.Text({
                     fill: '#000',
                     fontSize: Keyboard.LABEL_DISPLAY_FONT_SIZE
                 });
 
-                this._kineticGroup.add(this._noteDisplay);
+                this._kineticGroup.add(this.__noteDisplay);
+
+                this.__keyPressed = {};
 
                 window.addEventListener("keyup", function (e) {
                     var keyValue = myKeyboard.retrieveKeyValueByKeyCode(e.keyCode, KeyValue.KEY_STATE_UP);
+                    var keyPressed = myKeyboard.getKeyPressed();
+
+                    keyPressed[e.keyCode] = false;
 
                     if (null === keyValue) {
                         return;
@@ -120,6 +145,14 @@ define(
 
                 window.addEventListener("keydown", function (e) {
                     var keyValue = myKeyboard.retrieveKeyValueByKeyCode(e.keyCode, KeyValue.KEY_STATE_DOWN);
+
+                    var keyPressed = myKeyboard.getKeyPressed();
+
+                    if (true === keyPressed[e.keyCode]) {
+                        return;
+                    }
+
+                    keyPressed[e.keyCode] = true;
 
                     if (null === keyValue) {
                         return;
@@ -148,14 +181,14 @@ define(
              * @return {Snautsynth.Control.UI.DiscreteControl.KeyValue}
              */
             retrieveKeyValueByKeyCode: function(keyCode, keyState) {
-                if (!this._keyCodeNoteMapping.hasOwnProperty(keyCode)) {
+                if (!this.__keyCodeNoteMapping.hasOwnProperty(keyCode)) {
                     return null;
                 }
 
                 return new KeyValue(
-                    this._keyCodeNoteMapping[keyCode][1],
+                    this.__keyCodeNoteMapping[keyCode][1],
                     keyState,
-                    this._keyCodeNoteMapping[keyCode][0]
+                    this.__keyCodeNoteMapping[keyCode][0]
                 );
             },
 
@@ -166,7 +199,7 @@ define(
              * @param {string} noteName
              */
             updateNoteDisplay: function(noteName) {
-                this._noteDisplay.setText(noteName);
+                this.__noteDisplay.setText(noteName);
             },
 
             /**

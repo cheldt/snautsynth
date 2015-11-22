@@ -1,5 +1,5 @@
 /**
- * @namespace Snautsynth.Audio.Module.Generator.Wave
+ * @namespace Snautsynth.Audio.Module
  */
 define(
     [

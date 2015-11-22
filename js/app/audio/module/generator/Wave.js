@@ -520,10 +520,6 @@ define(
                     return;
                 }
 
-                if (typeof this.__runningOscillatorList[note] !== 'undefined') {
-                    return;
-                }
-
                 var frequency = AudioUtil.calcFreqByKey(note);
 
                 var oscillator             = this._audioContext.createOscillator();
@@ -531,7 +527,7 @@ define(
                 oscillator.detune.value    = this.__octaves * Wave.CENTS_OCTAVE + this.__halftones * Wave.CENTS_HALFTONE;
                 oscillator.frequency.value = frequency;
 
-                if (null == this.__envelopeValues) {
+                if (null === this.__envelopeValues) {
                     oscillator.connect(this.__gainNode);
                 }
 
@@ -539,7 +535,7 @@ define(
 
                 var envelopeGainNode;
 
-                if (null != this.__envelopeValues) {
+                if (null !== this.__envelopeValues) {
                     envelopeGainNode = new Gain(0, this._audioContext, 0, this.__envelopeValues, null, null);
 
                     this.__envelopeGainNodeList[note] = envelopeGainNode;
@@ -551,7 +547,7 @@ define(
 
                 oscillator.start(0);
 
-                if (null != this.__envelopeValues) {
+                if (null !== this.__envelopeValues) {
                     envelopeGainNode.startEnvelope(currentTime);
                 }
             },
@@ -568,11 +564,10 @@ define(
                     return;
                 }
 
-                var oscillatorList       = this.__runningOscillatorList;
-                var oscillator           = oscillatorList[note];
+                var oscillatorList = this.__runningOscillatorList;
+                var oscillator     = oscillatorList[note];
 
-                if (null != this.__envelopeValues) {
-
+                if (null !== this.__envelopeValues) {
                     var envelopeGainNodeList = this.__envelopeGainNodeList;
 
                     if (null === envelopeGainNodeList) {
@@ -582,18 +577,18 @@ define(
                     /** @type Gain */
                     var envelopeGainNode = envelopeGainNodeList[note];
 
-                    if (null === envelopeGainNode) {
+                    if (typeof envelopeGainNode === 'undefined') {
                         return;
                     }
 
                     envelopeGainNode.stopEnvelope(currentTime);
 
-                    //oscillator.stop(currentTime + this.__envelopeValues.getReleaseTime());
+                    oscillator.stop(currentTime + this.__envelopeValues.getReleaseTime());
 
                     oscillator.onended = function() {
                         oscillator.disconnect();
                         delete oscillatorList[note];
-                        delete envelopeGainNodeList[note]
+                        delete envelopeGainNodeList[note];
                     };
                 } else {
                     oscillator.stop();

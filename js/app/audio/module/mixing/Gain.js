@@ -49,7 +49,7 @@ define(
              */
             __gainNode: null,
 
-           $constants: {
+            $constants: {
                 /**
                  * @memberof Snautsynth.Audio.Mixing.Gain
                  * @constant
@@ -75,7 +75,61 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_STOP_ENVELOPE:  3
+                CTRL_TARGET_STOP_ENVELOPE:  3,
+
+                /**
+                 * @memberof Snautsynth.Audio.Mixing.Gain
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_ATTACK_GAIN: 4,
+
+                /**
+                 * @memberof Snautsynth.Audio.Mixing.Gain
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_ATTACK_TIME: 5,
+
+                /**
+                 * @memberof Snautsynth.Audio.Mixing.Gain
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_DECAY_GAIN: 6,
+
+                /**
+                 * @memberof Snautsynth.Audio.Mixing.Gain
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_DECAY_TIME: 7,
+
+                /**
+                 * @memberof Snautsynth.Audio.Mixing.Gain
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_SUSTAIN_TIME: 8,
+
+                /**
+                 * @memberof Snautsynth.Audio.Mixing.Gain
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_RELEASE_TIME: 9
             },
 
             /**
@@ -189,7 +243,22 @@ define(
              * @return {number}
              */
             getValueByCtrlTarget: function(ctrlTargetId) {
-                return this.__gainNode.gain.value;
+                switch (ctrlTargetId) {
+                    case Gain.CTRL_TARGET_VALUE_GAIN:
+                        return this.__gainNode.gain.value;
+                    case Gain.CTRL_TARGET_ENV_ATTACK_GAIN:
+                        return this.__envelopeValues.getAttackGain();
+                    case Gain.CTRL_TARGET_ENV_ATTACK_TIME:
+                        return this.__envelopeValues.getAttackTime();
+                    case Gain.CTRL_TARGET_ENV_DECAY_GAIN:
+                        return this.__envelopeValues.getDecayGain();
+                    case Gain.CTRL_TARGET_ENV_DECAY_TIME:
+                        return this.__envelopeValues.getDecayTime();
+                    case Gain.CTRL_TARGET_ENV_SUSTAIN_TIME:
+                        return this.__envelopeValues.getSustainTime();
+                    case Gain.CTRL_TARGET_ENV_RELEASE_TIME:
+                        return this.__envelopeValues.getReleaseTime();
+                }
             },
 
             /**
@@ -201,7 +270,7 @@ define(
              * @return {null|Snautsynth.DataType.ValueOptions}
              */
             getValueOptionsByCtrlTarget: function(ctrlTargetId) {
-                if (null == this._controlTargetOptions) {
+                if (null === this._controlTargetOptions) {
                     return null;
                 }
 

@@ -5,12 +5,14 @@ define(
     [
         'dejavu',
         'app/audio/module/IControlTargetOptionsAccessible',
-        'app/audio/module/mixing/Gain'
+        'app/audio/module/mixing/Gain',
+        'app/audio/module/EnvelopeTargetOptions'
     ],
     function (
         dejavu,
         IControlTargetOptionsAccessible,
-        Gain
+        Gain,
+        EnvelopeTargetOptions
     ) {
         'use strict';
 
@@ -26,11 +28,20 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
              * @instance
-             * @protected
+             * @private
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
-            _gainOptions: null,
+            __gainOptions: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
+             * @instance
+             * @private
+             *
+             * @type {Snautsynth.Audio.Module.EnvelopeTargetOptions}
+             */
+            __envelopeTargetOptions: null,
 
             /**
              * @memberof Snautsynth.Audio.Module.Mixing.Gain.ControlTargetOptions
@@ -44,7 +55,31 @@ define(
             getOptionsById: function(ctrlTargetId) {
                 switch(ctrlTargetId) {
                     case Gain.CTRL_TARGET_VALUE_GAIN:
-                        return this._gainOptions;
+                        return this.__gainOptions;
+                    case Gain.CTRL_TARGET_ENV_ATTACK_GAIN:
+                        return this.__envelopeTargetOptions.getOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_ATTACK_GAIN
+                        );
+                    case Gain.CTRL_TARGET_ENV_ATTACK_TIME:
+                        return this.__envelopeTargetOptions.getOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_ATTACK_TIME
+                        );
+                    case Gain.CTRL_TARGET_ENV_DECAY_GAIN:
+                        return this.__envelopeTargetOptions.getOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_DECAY_GAIN
+                        );
+                    case Gain.CTRL_TARGET_ENV_DECAY_TIME:
+                        return this.__envelopeTargetOptions.getOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_DECAY_TIME
+                        );
+                    case Gain.CTRL_TARGET_ENV_RELEASE_TIME:
+                        return this.__envelopeTargetOptions.getOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_SUSTAIN_TIME
+                        );
+                    case Gain.CTRL_TARGET_ENV_SUSTAIN_TIME:
+                        return this.__envelopeTargetOptions.getOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_RELEASE_TIME
+                        );
                     default:
                         return null;
                 }
@@ -61,7 +96,43 @@ define(
             setOptionsById: function(ctrlTargetId, valueOptions) {
                 switch(ctrlTargetId) {
                     case Gain.CTRL_TARGET_VALUE_GAIN:
-                        this._gainOptions = valueOptions;
+                        this.__gainOptions = valueOptions;
+                        break;
+                    case Gain.CTRL_TARGET_ENV_ATTACK_GAIN:
+                        this.__envelopeTargetOptions.setOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_ATTACK_GAIN,
+                            valueOptions
+                        );
+                        break;
+                    case Gain.CTRL_TARGET_ENV_ATTACK_TIME:
+                        this.__envelopeTargetOptions.setOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_ATTACK_TIME,
+                            valueOptions
+                        );
+                        break;
+                    case Gain.CTRL_TARGET_ENV_DECAY_GAIN:
+                        this.__envelopeTargetOptions.setOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_DECAY_GAIN,
+                            valueOptions
+                        );
+                        break;
+                    case Gain.CTRL_TARGET_ENV_DECAY_TIME:
+                        this.__envelopeTargetOptions.setOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_DECAY_TIME,
+                            valueOptions
+                        );
+                        break;
+                    case Gain.CTRL_TARGET_ENV_RELEASE_TIME:
+                        this.__envelopeTargetOptions.setOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_RELEASE_TIME,
+                            valueOptions
+                        );
+                        break;
+                    case Gain.CTRL_TARGET_ENV_SUSTAIN_TIME:
+                        this.__envelopeTargetOptions.setOptionsById(
+                            EnvelopeTargetOptions.CTRL_TARGET_ENV_SUSTAIN_TIME,
+                            valueOptions
+                        );
                         break;
                 }
             }

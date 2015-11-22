@@ -38,7 +38,7 @@ define(
                 var envelopeValuesFactory       = new EnvelopeValuesFactory();
                 var envelopeValues              = null;
 
-                if (null != options.envelopeValues) {
+                if (null !== options.envelopeValues) {
                     envelopeValues = envelopeValuesFactory.create(options.envelopeValues);
                 }
 
