@@ -26,7 +26,7 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
              * @instance
-             * @protected
+             * @private
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
@@ -35,7 +35,7 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
              * @instance
-             * @protected
+             * @private
              *
              * @type {Snautsynth.DataType.DiscreteValueOptions}
              */
@@ -44,7 +44,7 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
              * @instance
-             * @protected
+             * @private
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
@@ -53,7 +53,7 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
              * @instance
-             * @protected
+             * @private
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
@@ -62,7 +62,7 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
              * @instance
-             * @protected
+             * @private
              *
              * @type {Snautsynth.DataType.RangeValueOptions}
              */
@@ -71,12 +71,19 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
              * @instance
-             * @protected
+             * @private
              *
              * @type {Snautsynth.DataType.DiscreteValueOptions}
              */
             __wavetypeOptions: null,
 
+            /**
+             * @memberof Snautsynth.Audio.Module.Generator.Wave.ControlTargetOptions
+             * @instance
+             * @private
+             *
+             * @type {Snautsynth.Audio.Module.EnvelopeTargetOptions}
+             */
             __envelopeOptions: null,
 
             /**

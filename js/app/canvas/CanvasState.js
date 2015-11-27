@@ -177,7 +177,38 @@ define(
          *
          */
         getControls: function() {
+            console.log(this._controls);
+            console.log(this._controls);
+
             return this._controls;
+        },
+
+        getFlattenedControls: function() {
+            var controls = [];
+
+            var that = this;
+
+            this._controls.forEach(function(control) {
+                that.__flattenControls(controls, control);
+            });
+
+            return controls;
+        },
+
+        __flattenControls: function(controlList, control) {
+            controlList.push(control);
+
+            var subControls = control.getControls();
+
+            if (null === subControls) {
+                return;
+            }
+
+            var that = this;
+
+            subControls.forEach(function(currentControl) {
+                that.__flattenControls(controlList, currentControl);
+            });
         },
 
         /**

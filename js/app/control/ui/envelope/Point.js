@@ -156,7 +156,7 @@ define(
                     return pos;
                 });
 
-                this._kineticGroup.on('dragmove',function() {
+                this._kineticGroup.on('dragmove', function() {
                     myPoint.getGraph().connectPoints();
 
                     myPoint.setValueFromPosition();

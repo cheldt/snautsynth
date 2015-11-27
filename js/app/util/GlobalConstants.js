@@ -36,14 +36,11 @@ define(
                 CTRL_OSC2_TUNE_HALF:              13,
                 CTRL_OSC2_TUNE_OCT:               14,
                 CTRL_KEYBOARD:                    15,
-
-                /*
-                CTRL_ENVELOPE:                    14,
-                CTRL_ATTACK_POINT:                15,
-                CTRL_DECAYTIME_SUSTAINGAIN_POINT: 16,
-                CTRL_RELEASE_POINT:               17,
-                CTRL_KEYBOARD:                    18,
-                */
+                CTRL_ENVELOPE:                    16,
+                CTRL_ENV_ATTACK:                  17,
+                CTRL_ENV_DECAY:                   18,
+                CTRL_ENV_SUSTAIN:                 19,
+                CTRL_ENV_RELEASE:                 20,
 
                 AMOD_DESTINATION:   1,
                 AMOD_BIQUAD_FILTER: 2,

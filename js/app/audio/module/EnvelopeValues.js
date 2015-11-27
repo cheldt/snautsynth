@@ -3,10 +3,12 @@
  */
 define(
     [
-        'dejavu'
+        'dejavu',
+        'app/control/ui/envelope/PointValue'
     ],
     function (
-        dejavu
+        dejavu,
+        PointValue
     ) {
         'use strict';
 
@@ -73,6 +75,32 @@ define(
              * @instance
              * @public
              *
+             * @return {Snautsynth.Control.UI.Envelope.PointValue}
+             */
+            getAttack: function() {
+              return new PointValue(
+                  this.__attackGain,
+                  this.__attackTime
+              );
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             */
+            setAttack: function(pointValue) {
+                this.__attackGain = pointValue.getGain();
+                this.__attackTime = pointValue.getTime();
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
              * @return {number}
              */
             getAttackGain: function() {
@@ -110,6 +138,32 @@ define(
              */
             setAttackTime: function(attackTime) {
                 this.__attackTime = attackTime;
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @return {Snautsynth.Control.UI.Envelope.PointValue}
+             */
+            getDecay: function() {
+                return new PointValue(
+                    this.__decayGain,
+                    this.__decayTime
+                );
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             */
+            setDecay: function(pointValue) {
+                this.__decayGain = pointValue.getGain();
+                this.__decayTime = pointValue.getTime();
             },
 
             /**
@@ -161,6 +215,31 @@ define(
              * @instance
              * @public
              *
+             * @return {Snautsynth.Control.UI.Envelope.PointValue}
+             */
+            getSustain: function() {
+                return new PointValue(
+                    this.__decayGain,
+                    this.__sustainTime
+                );
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             */
+            setSustain: function(pointValue) {
+                this.__sustainTime = pointValue.getTime();
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
              * @return {number}
              */
             getSustainTime: function() {
@@ -176,6 +255,32 @@ define(
              */
             setSustainTime: function(sustainTime) {
                 this.__sustainTime = sustainTime;
+            },
+
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @return {Snautsynth.Control.UI.Envelope.PointValue}
+             */
+            getRelease: function() {
+                return new PointValue(
+                    this.__decayGain,
+                    this.__releaseTime
+                );
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.EnvelopeValues
+             * @instance
+             * @public
+             *
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             */
+            setRelease: function(pointValue) {
+                this.__sustainTime = pointValue.getTime();
             },
 
             /**

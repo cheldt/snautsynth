@@ -340,7 +340,7 @@ requirejs(
                         valueDisplayMultiplier: 1,
                         valueRange:             {min: 0, max: 1},
                         snapOptions:            {doubleClickSnapValue: 0, snapDistance: 0, snapStep: 0},
-                        numberFormat:           '#0'
+                        numberFormat:           '#0.0'
                     },
                     {
                         type:     ControlTargetOptionsFactory.CLASS_TYPE_DISCRETEVALUEOPTIONS,
@@ -435,9 +435,19 @@ requirejs(
                 valueTarget: BiquadFilter.CTRL_TARGET_TYPE
             },
             {
-                controlId:   GlobalConstants.CTRL_FILTER_RESONANCE,
+                controlId:   GlobalConstants.CTRL_FILTER_FREQUENCY,
                 moduleId:    GlobalConstants.AMOD_BIQUAD_FILTER,
                 valueTarget: BiquadFilter.CTRL_TARGET_FREQUENCY
+            },
+            {
+                controlId:   GlobalConstants.CTRL_FILTER_RESONANCE,
+                moduleId:    GlobalConstants.AMOD_BIQUAD_FILTER,
+                valueTarget: BiquadFilter.CTRL_TARGET_QUALITY_FACTOR
+            },
+            {
+                controlId:   GlobalConstants.CTRL_ENV_ATTACK,
+                moduleId:    GlobalConstants.AMOD_OSC1,
+                valueTarget: BiquadFilter.CTRL_TARGET_QUALITY_FACTOR
             }
         ];
 
@@ -694,21 +704,66 @@ requirejs(
                 type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
                 position: {x: 130, y: 390},
                 color:    '#000',
-                text:     'Filter-Resonance'
+                text:     'Filter-Cutoff'
             },
             {
-                id:          GlobalConstants.CTRL_FILTER_RESONANCE,
+                id:          GlobalConstants.CTRL_FILTER_FREQUENCY,
                 type:        ControlListFactory.CLASS_TYPE_CTRL_FADER,
                 position:    {x: 130, y: 420},
                 value:       0,
                 length:      130,
                 orientation: Fader.ORIENTATION_VERTICAL,
                 color:       '#b2aacc'
+            },
+            {
+                id:       -1,
+                type:     ControlListFactory.CLASS_TYPE_CTRL_LABEL,
+                position: {x: 260, y: 390},
+                color:    '#000',
+                text:     'Filter-Resonance'
+            },
+            {
+                id:          GlobalConstants.CTRL_FILTER_RESONANCE,
+                type:        ControlListFactory.CLASS_TYPE_CTRL_FADER,
+                position:    {x: 260, y: 420},
+                value:       0,
+                length:      130,
+                orientation: Fader.ORIENTATION_VERTICAL,
+                color:       '#b2aacc'
+            },
+            {
+                id:          GlobalConstants.CTRL_ENVELOPE,
+                type:        ControlListFactory.CLASS_TYPE_CTRL_GRAPH,
+                position:    {x: 320, y: 420},
+                maxTime:     5,
+                color:       '#000',
+                points:      [
+                    {
+                        id:     GlobalConstants.CTRL_ENV_ATTACK,
+                        type:   ControlListFactory.CLASS_TYPE_CTRL_POINT,
+                        color: '#b2aacc'
+                    },
+                    {
+                        id:     GlobalConstants.CTRL_ENV_DECAY,
+                        type:   ControlListFactory.CLASS_TYPE_CTRL_POINT,
+                        color: '#b2aacc'
+                    },
+                    {
+                        id:     GlobalConstants.CTRL_ENV_SUSTAIN,
+                        type:   ControlListFactory.CLASS_TYPE_CTRL_POINT,
+                        color: '#b2aacc'
+                    },
+                    {
+                        id:     GlobalConstants.CTRL_ENV_RELEASE,
+                        type:   ControlListFactory.CLASS_TYPE_CTRL_POINT,
+                        color: '#b2aacc'
+                    }
+                ]
             }
         ];
 
 
-        var synthesizer = new Synthesizer(
+        new Synthesizer(
             audioContext,
             audioModuleOptionsList,
             canvasState,

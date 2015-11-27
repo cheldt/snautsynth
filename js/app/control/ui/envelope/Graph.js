@@ -19,50 +19,60 @@ define(
 
             $extends: Control,
 
-            /**
-             * @memberof Snautsynth.Control.UI.Envelope.Graph
-             * @instance
-             * @protected
-             *
-             * @type {number}
-             */
-            _maxGain: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
              * @instance
-             * @protected
+             * @private
              *
              * @type {number}
              */
-            _maxTime: null,
+            __maxPixelGain: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
              * @instance
-             * @protected
+             * @private
              *
              * @type {number}
              */
-            _maxPixelGain: null,
+            __maxPixelTime: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
              * @instance
-             * @protected
+             * @private
              *
              * @type {number}
              */
-            _maxPixelTime: null,
+            __maxTime: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
              * @instance
-             * @protected
+             * @private
              *
              * @type {Konva.Line}
              */
-            _pointConnection: null,
+            __pointConnection: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             * @private
+             *
+             * @type {Konva.Line}
+             */
+            __xAxis: null,
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             * @private
+             *
+             * @type {Konva.Line}
+             */
+            __yAxis: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
@@ -71,7 +81,7 @@ define(
              * @returns {number}
              */
             getMaxPixelGain: function() {
-                return this._maxPixelGain;
+                return this.__maxPixelGain;
             },
 
             /**
@@ -81,7 +91,7 @@ define(
              * @returns {number}
              */
             getMaxPixelTime: function() {
-                return this._maxPixelTime;
+                return this.__maxPixelTime;
             },
 
             $constants: {
@@ -145,40 +155,35 @@ define(
             initialize: function(id, position, canvasState, color, maxTime) {
                 this.$super(id, position, canvasState);
 
-                this._controls     = [];
-                this._maxTime      = maxTime;
+                this._controls = [];
+                this.__maxTime = maxTime;
 
-                this._maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
-                this._maxPixelTime = maxTime * Graph.PIXEL_PER_TIME;
-
-                var xAxis = new Konva.Line({
-                    points:      [0, this._maxPixelGain , this._maxPixelTime, this._maxPixelGain ],
+                this.__xAxis = new Konva.Line({
                     strokeWidth: Graph.X_Y_AXIS_WIDTH,
                     stroke:      color,
                     lineCap:     'round',
                     lineJoin:    'round'
                 });
 
-                this._kineticGroup.add(xAxis);
+                this._kineticGroup.add(this.__xAxis);
 
-                var yAxis = new Konva.Line({
-                    points:      [0, 0, 0, this._maxPixelGain],
+                this.__yAxis = new Konva.Line({
                     strokeWidth: Graph.X_Y_AXIS_WIDTH,
                     stroke:      color,
                     lineCap:     'round',
                     lineJoin:    'round'
                 });
 
-                this._kineticGroup.add(yAxis);
+                this._kineticGroup.add(this.__yAxis);
 
-                this._pointConnection = new Konva.Line({
+                this.__pointConnection = new Konva.Line({
                     strokeWidth: Graph.POINTCONNECTOR_WIDTH,
                     stroke:      color,
                     lineCap:     'round',
                     lineJoin:    'round'
                 });
 
-                this._kineticGroup.add(this._pointConnection);
+                this._kineticGroup.add(this.__pointConnection);
             },
 
             /**
@@ -188,12 +193,6 @@ define(
              */
             addControl: function(point) {
                 this.$super(point);
-
-                var newPosition = point.calcPositionByValues();
-
-                point.updatePosition(newPosition);
-
-                this.connectPoints();
             },
 
             /**
@@ -213,9 +212,9 @@ define(
 
                 var lastPoint = this._controls[this._controls.length - 1];
 
-                pointConnectorCoordsList.push(this._maxPixelTime, lastPoint.getY())
+                pointConnectorCoordsList.push(this.__maxPixelTime, lastPoint.getY())
 
-                this._pointConnection.setPoints(pointConnectorCoordsList);
+                this.__pointConnection.setPoints(pointConnectorCoordsList);
             },
 
             /**
@@ -236,6 +235,34 @@ define(
                         return point;
                     }
                 }
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             */
+            setUp: function() {
+                var minTime = 0;
+
+
+                for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
+                    var point      = this._controls[pointIndex];
+                    var pointValue = point.getValue();
+                    minTime = minTime + pointValue.getTime();
+                    point.updatePosition(point.calcPositionByValues());
+                }
+
+                if (minTime > this.__maxTime) {
+                    this.__maxTime = minTime;
+                }
+
+                this.__maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
+                this.__maxPixelTime = this.__maxTime * Graph.PIXEL_PER_TIME;
+
+                this.__xAxis.points([0, this.__maxPixelGain , this.__maxPixelTime, this.__maxPixelGain ]);
+                this.__yAxis.points([0, 0, 0, this.__maxPixelGain]);
+
+                this.connectPoints();
             }
         });
 

@@ -256,6 +256,7 @@ define(
                  */
                 CTRL_TARGET_TRIGGER_NOTE:         8,
 
+
                 /**
                  * @memberof Snautsynth.Audio.Module.Generator.Wave
                  * @constant
@@ -263,7 +264,34 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_ATTACK:               9
+                CTRL_TARGET_ENV_ATTACK:            9,
+
+                /**
+                 * @memberof Snautsynth.Audio.Module.Generator.Wave
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_DECAY:             10,
+
+                /**
+                 * @memberof Snautsynth.Audio.Module.Generator.Wave
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_SUSTAIN:           11,
+
+                /**
+                 * @memberof Snautsynth.Audio.Module.Generator.Wave
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENV_RELEASE:           12
             },
 
             /**
@@ -483,9 +511,24 @@ define(
                                     module.bindCallback(module, 'changeGain')
                                 );
                                 break;
-                            case Wave.CTRL_TARGET_ATTACK:
+                            case Wave.CTRL_TARGET_ENV_ATTACK:
                                 controlConnection.setCallback(
                                     module.bindCallback(module, 'changeAttack')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_ENV_DECAY:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module, 'changeDecay')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_ENV_SUSTAIN:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module, 'changeSustain')
+                                );
+                                break;
+                            case Wave.CTRL_TARGET_ENV_RELEASE:
+                                controlConnection.setCallback(
+                                    module.bindCallback(module, 'changeRelease')
                                 );
                                 break;
                         }
@@ -493,9 +536,36 @@ define(
                 }
             },
 
+            /**
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             * @param {number}                                    currentTime
+             */
             changeAttack: function(pointValue, currentTime) {
-                this.__envelopeValues.setAttackGain(pointValue.getGain());
-                this.__envelopeValues.setAttackTime(pointValue.getTime());
+                this.__envelopeValues.setAttack(pointValue);
+            },
+
+            /**
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             * @param {number}                                    currentTime
+             */
+            changeDecay: function(pointValue, currentTime) {
+                this.__envelopeValues.setDecay(pointValue);
+            },
+
+            /**
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             * @param {number}                                    currentTime
+             */
+            changeSustain: function(pointValue, currentTime) {
+                this.__envelopeValues.setSustain(pointValue);
+            },
+
+            /**
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             * @param {number}                                    currentTime
+             */
+            changeRelease: function(pointValue, currentTime) {
+                this.__envelopeValues.setRelease(pointValue);
             },
 
             /**
@@ -629,6 +699,14 @@ define(
                         return this.__halftones;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
                         return this.__octaves;
+                    case Wave.CTRL_TARGET_ENV_ATTACK:
+                        return this.__envelopeValues.getAttack();
+                    case Wave.CTRL_TARGET_ENV_DECAY:
+                        return this.__envelopeValues.getDecay();
+                    case Wave.CTRL_TARGET_ENV_SUSTAIN:
+                        return this.__envelopeValues.getSustain();
+                    case Wave.CTRL_TARGET_ENV_RELEASE:
+                        return this.__envelopeValues.getRelease();
                     default:
                         return null;
                 }

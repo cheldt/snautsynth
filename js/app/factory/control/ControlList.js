@@ -9,7 +9,8 @@ define(
         'app/factory/control/ui/discretecontrol/Keyboard',
         'app/factory/control/ui/envelope/Graph',
         'app/factory/control/ui/rangecontrol/Fader',
-        'app/factory/control/ui/rangecontrol/Knob'
+        'app/factory/control/ui/rangecontrol/Knob',
+        'app/factory/control/ui/envelope/Point'
     ],
     function(
         dejavu,
@@ -18,7 +19,8 @@ define(
         KeyboardFactory,
         GraphFactory,
         FaderFactory,
-        KnobFactory
+        KnobFactory,
+        PointFactory
     ) {
         'use strict';
 
@@ -39,7 +41,8 @@ define(
                 CLASS_TYPE_CTRL_GRAPH:      2,
                 CLASS_TYPE_CTRL_FADER:      3,
                 CLASS_TYPE_CTRL_KEYBOARD:   4,
-                CLASS_TYPE_CTRL_KNOB:       5
+                CLASS_TYPE_CTRL_KNOB:       5,
+                CLASS_TYPE_CTRL_POINT:      6
 
             },
 
@@ -55,6 +58,7 @@ define(
                 this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_FADER]      = FaderFactory;
                 this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_KEYBOARD]   = KeyboardFactory;
                 this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_KNOB]       = KnobFactory;
+                this._factoryList[ControlListFactory.CLASS_TYPE_CTRL_POINT]      = PointFactory;
             },
 
             /**
