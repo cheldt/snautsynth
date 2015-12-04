@@ -109,6 +109,8 @@ define(
                         return this.__tuneOctavesOptions;
                     case Wave.CTRL_TARGET_TRIGGER_NOTE:
                         return this.__triggerNoteOptions;
+                    case Wave.CTRL_TARGET_ENVELOPE:
+                        return this.__envelopeOptions;
                     default:
                         return null;
                 }

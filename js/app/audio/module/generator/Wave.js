@@ -291,7 +291,16 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_ENV_RELEASE:           12
+                CTRL_TARGET_ENV_RELEASE:           12,
+
+                /**
+                 * @memberof Snautsynth.Audio.Module.Generator.Wave
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_TARGET_ENVELOPE:              13
             },
 
             /**

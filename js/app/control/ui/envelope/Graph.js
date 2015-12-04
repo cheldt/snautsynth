@@ -240,10 +240,12 @@ define(
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
              * @instance
+             *
+             *
+             * @param {Snautsynth.Audio.Module.EnvelopeTargetOptions} valueOptions
              */
-            setUp: function() {
+            setUp: function(valueOptions) {
                 var minTime = 0;
-
 
                 for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
                     var point      = this._controls[pointIndex];
