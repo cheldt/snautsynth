@@ -5,20 +5,32 @@ define(
     [
         'dejavu',
         'konva',
-        'app/control/Control'
+        'app/audio/module/EnvelopeTargetOptions',
+        'app/control/ui/envelope/Point',
+        'app/control/ui/UIControl'
     ],
     function (
         dejavu,
         Konva,
-        Control
+        EnvelopeTargetOptions,
+        Point,
+        UIControl
     ) {
         'use strict';
 
         var Graph = dejavu.Class.declare({
             $name: 'Graph',
 
-            $extends: Control,
+            $extends: UIControl,
 
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Graph
+             * @instance
+             * @private
+             *
+             * @type {Snautsynth.Control.UI.Envelope.GraphOptions}
+             */
+            __graphOptions: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
@@ -37,15 +49,6 @@ define(
              * @type {number}
              */
             __maxPixelTime: null,
-
-            /**
-             * @memberof Snautsynth.Control.UI.Envelope.Graph
-             * @instance
-             * @private
-             *
-             * @type {number}
-             */
-            __maxTime: null,
 
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
@@ -138,7 +141,43 @@ define(
                  *
                  * @type {number}
                  */
-                POINTCONNECTOR_WIDTH: 1.5
+                POINTCONNECTOR_WIDTH: 1.5,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_POINT_ATTACK:      1,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_POINT_DECAY:       2,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_POINT_SUSTAIN:     3,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Graph
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_POINT_RELEASE:     4
             },
 
             /**
@@ -146,17 +185,19 @@ define(
              * @class Snautsynth.Control.UI.Envelope.Graph
              * @extends Snautsynth.Control.UI.UIControl
              *
-             * @param {number}                        id
-             * @param {Snautsynth.Util.Position}      position
-             * @param {Snautsynth.Canvas.CanvasState} canvasState
-             * @param {string}                        color
-             * @param {number}                        maxTime
+             * @param {number}                                      id
+             * @param {*}                                           value
+             * @param {Snautsynth.Util.Position}                    position
+             * @param {Snautsynth.Canvas.CanvasState}               canvasState
+             * @param {Snautsynth.Control.UI.Envelope.GraphOptions} graphOptions
              */
-            initialize: function(id, position, canvasState, color, maxTime) {
-                this.$super(id, position, canvasState);
+            initialize: function(id, value, position, canvasState, graphOptions) {
+                this.$super(id, position, value, canvasState);
+
+                this.__graphOptions = graphOptions;
 
                 this._controls = [];
-                this.__maxTime = maxTime;
+                var color = graphOptions.getColor();
 
                 this.__xAxis = new Konva.Line({
                     strokeWidth: Graph.X_Y_AXIS_WIDTH,
@@ -212,7 +253,7 @@ define(
 
                 var lastPoint = this._controls[this._controls.length - 1];
 
-                pointConnectorCoordsList.push(this.__maxPixelTime, lastPoint.getY())
+                pointConnectorCoordsList.push(this.__maxPixelTime, lastPoint.getY());
 
                 this.__pointConnection.setPoints(pointConnectorCoordsList);
             },
@@ -241,30 +282,48 @@ define(
              * @memberof Snautsynth.Control.UI.Envelope.Graph
              * @instance
              *
-             *
              * @param {Snautsynth.Audio.Module.EnvelopeTargetOptions} valueOptions
              */
             setUp: function(valueOptions) {
-                var minTime = 0;
+                var minTime    = 0;
+                var value      = this._value;
+                var pointColor = this.__graphOptions.getPointColor();
+                var maxTime    = this.__graphOptions.getMaxTime();
+
+                this.__addPoint(Graph.CTRL_POINT_ATTACK, value.getAttack(), pointColor);
+                this.__addPoint(Graph.CTRL_POINT_DECAY, value.getDecay(), pointColor);
+                this.__addPoint(Graph.CTRL_POINT_SUSTAIN, value.getSustain(), pointColor);
+                this.__addPoint(Graph.CTRL_POINT_RELEASE, value.getRelease(), pointColor);
 
                 for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
-                    var point      = this._controls[pointIndex];
+                    var point = this._controls[pointIndex];
+
                     var pointValue = point.getValue();
                     minTime = minTime + pointValue.getTime();
                     point.updatePosition(point.calcPositionByValues());
                 }
 
-                if (minTime > this.__maxTime) {
-                    this.__maxTime = minTime;
+                if (minTime > maxTime) {
+                    maxTime = minTime;
                 }
 
                 this.__maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
-                this.__maxPixelTime = this.__maxTime * Graph.PIXEL_PER_TIME;
+                this.__maxPixelTime = maxTime * Graph.PIXEL_PER_TIME;
 
                 this.__xAxis.points([0, this.__maxPixelGain , this.__maxPixelTime, this.__maxPixelGain ]);
                 this.__yAxis.points([0, 0, 0, this.__maxPixelGain]);
 
                 this.connectPoints();
+            },
+
+            /**
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             * @param {string}                                    color
+             * @instance
+             * @private
+             */
+            __addPoint: function(id, pointValue, color) {
+                this.addControl(new Point(id, pointValue, this._canvasState, color, this));
             }
         });
 

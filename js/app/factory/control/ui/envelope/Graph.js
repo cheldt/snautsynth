@@ -31,23 +31,14 @@ define(
              */
             create: function(canvasState, options) {
                 var position = new Position(options.position.x, options.position.y);
-                var graph    = new Graph(
+                return new Graph(
                     options.id,
+                    null,
                     position,
                     canvasState,
                     options.color,
                     options.maxTime
                 );
-
-                options.points.forEach(
-                    function(pointOptions) {
-                        var factory = new PointFactory();
-                        var point   = factory.create(canvasState, graph, pointOptions);
-                        graph.addControl(point);
-                    }
-                );
-
-                return graph;
             }
         });
     }

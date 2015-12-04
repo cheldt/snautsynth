@@ -29,8 +29,6 @@ define(
              * @return {Snautsynth.Control.UI.Envelope.Point}
              */
             create: function(canvasState, envelopeControl, options) {
-                //var pointValue = new PointValue(options.value.gain, options.value.time);
-
                 return new Point(
                     options.id,
                     null,
