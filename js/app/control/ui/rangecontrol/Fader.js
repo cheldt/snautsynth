@@ -43,7 +43,7 @@ define(
              *
              * @type {string}
              */
-            _color: null,
+            __color: null,
 
             /**
              * @memberof Snautsynth.Control.UI.RangeControl.Fader
@@ -266,7 +266,7 @@ define(
                 );
 
                 this._length      = length;
-                this._color       = color;
+                this.__color       = color;
                 this._orientation = orientation;
 
                 //create border

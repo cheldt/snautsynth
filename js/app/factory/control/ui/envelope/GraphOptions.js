@@ -20,12 +20,11 @@ define(
              * @memberof Snautsynth.Factory.Control.UI.Envelope.GraphOptions
              * @instance
              *
-             * @param  {Snautsynth.Canvas.CanvasState} canvasState
-             * @param  {Object}                        options
+             * @param  {Object} options
              *
              * @return {Snautsynth.Control.UI.Envelope.GraphOptions}
              */
-            create: function(canvasState, options) {
+            create: function(options) {
                 return new GraphOptions(
                     options.color,
                     options.selectedColor,

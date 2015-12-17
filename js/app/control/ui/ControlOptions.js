@@ -7,19 +7,19 @@ define(['dejavu'], function(dejavu) {
 
         /**
          * @memberof Snautsynth.Control.UI.ControlOptions
-         * @protected
+         * @private
          *
          * @type {string}
          */
-        _color: null,
+        __color: null,
 
         /**
          * @memberof Snautsynth.Control.UI.ControlOptions
-         * @protected
+         * @private
          *
          * @type {string}
          */
-        _selectedColor: null,
+        __selectedColor: null,
 
         /**
          * @memberof Snautsynth.Control.UI.ControlOptions
@@ -28,7 +28,7 @@ define(['dejavu'], function(dejavu) {
          * @return {string}
          */
         getColor: function() {
-            return this._color;
+            return this.__color;
         },
 
         /**
@@ -38,7 +38,7 @@ define(['dejavu'], function(dejavu) {
          * @return {string}
          */
         getSelectedColor: function() {
-            return this._selectedColor;
+            return this.__selectedColor;
         },
 
         /**
@@ -49,8 +49,8 @@ define(['dejavu'], function(dejavu) {
          * @param {string} selectedColor
          */
         initialize: function(color, selectedColor) {
-            this._color         = color;
-            this._selectedColor = selectedColor;
+            this.__color         = color;
+            this.__selectedColor = selectedColor;
         }
     });
 });

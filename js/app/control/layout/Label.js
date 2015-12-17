@@ -15,7 +15,7 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
          *
          * @type {string}
          */
-        _color: null,
+        __color: null,
 
         /**
          * @memberof Snautsynth.Control.Layout.Label
@@ -33,7 +33,7 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
          * @return {string}
          */
         getColor: function() {
-            return this._color;
+            return this.__color;
         },
 
         /**
@@ -44,7 +44,7 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
          * @param {string} color
          */
         setColor: function(color) {
-            this._color = color;
+            this.__color = color;
         },
 
         /**
@@ -84,7 +84,7 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
         initialize: function(id, position, canvasState, color, text) {
             this.$super(id, position, canvasState);
 
-            this._color = color;
+            this.__color = color;
             this._text  = text;
 
             var textContainer = new Konva.Text({

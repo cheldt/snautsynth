@@ -75,7 +75,7 @@ define(
              *
              * @type {string}
              */
-            _color: null,
+            __color: null,
 
             /**
              * @memberof Snautsynth.Control.UI.DiscreteControl.RadioButton

@@ -4,13 +4,13 @@
 define(
     [
         'app/control/ui/envelope/Graph',
-        'app/factory/control/ui/envelope/Point',
+        'app/factory/control/ui/envelope/GraphOptions',
         'app/util/Position',
         'dejavu'
     ],
     function(
         Graph,
-        PointFactory,
+        GraphOptionsFactory,
         Position,
         dejavu
     ) {
@@ -31,13 +31,14 @@ define(
              */
             create: function(canvasState, options) {
                 var position = new Position(options.position.x, options.position.y);
+                var graphOptionsFactory = new GraphOptionsFactory();
+
                 return new Graph(
                     options.id,
                     null,
                     position,
                     canvasState,
-                    options.color,
-                    options.maxTime
+                    graphOptionsFactory.create(options.graphOptions)
                 );
             }
         });

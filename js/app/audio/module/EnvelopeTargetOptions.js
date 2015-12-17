@@ -129,7 +129,6 @@ define(
                  * @type {number}
                  */
                 CTRL_TARGET_ENV_RELEASE_TIME: 6
-
             },
 
             /**

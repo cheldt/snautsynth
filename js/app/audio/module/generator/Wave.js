@@ -264,43 +264,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_ENV_ATTACK:            9,
-
-                /**
-                 * @memberof Snautsynth.Audio.Module.Generator.Wave
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_TARGET_ENV_DECAY:             10,
-
-                /**
-                 * @memberof Snautsynth.Audio.Module.Generator.Wave
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_TARGET_ENV_SUSTAIN:           11,
-
-                /**
-                 * @memberof Snautsynth.Audio.Module.Generator.Wave
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_TARGET_ENV_RELEASE:           12,
-
-                /**
-                 * @memberof Snautsynth.Audio.Module.Generator.Wave
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_TARGET_ENVELOPE:              13
+                CTRL_TARGET_ENVELOPE:            9
             },
 
             /**

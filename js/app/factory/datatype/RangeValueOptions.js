@@ -31,7 +31,12 @@ define(
              * @return {Snautsynth.DataType.RangeValueOptions}
              */
             create: function(options) {
-                var valueRange  = new NumberRange(options.valueRange.min, options.valueRange.max);
+                var valueRange  = null;
+
+                if (null !== options.valueRange) {
+                    valueRange = new NumberRange(options.valueRange.min, options.valueRange.max);
+                }
+
                 var formatter   = new NumberFormatter(options.numberFormat);
                 var snapOptions = null;
 

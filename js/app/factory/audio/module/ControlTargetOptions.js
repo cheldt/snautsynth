@@ -5,11 +5,13 @@ define(
     [
         'app/factory/datatype/DiscreteValueOptions',
         'app/factory/datatype/RangeValueOptions',
+        'app/factory/audio/module/EnvelopeTargetOptions',
         'dejavu'
     ],
     function (
         DiscreteValueOptionsFactory,
         RangeValueOptionsFactory,
+        EnvelopeTargetOptionsFactory,
         dejavu
     ) {
         'use strict';
@@ -26,8 +28,9 @@ define(
             _factoryList: null,
 
             $constants: {
-                CLASS_TYPE_DISCRETEVALUEOPTIONS: 0,
-                CLASS_TYPE_RANGEVALUEOPTIONS:    1
+                CLASS_TYPE_DISCRETEVALUEOPTIONS:  0,
+                CLASS_TYPE_RANGEVALUEOPTIONS:     1,
+                CLASS_TYPE_ENVELOPETARGETOPTIONS: 2
             },
 
             /**
@@ -40,6 +43,8 @@ define(
                     = DiscreteValueOptionsFactory;
                 this._factoryList[ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS]
                     = RangeValueOptionsFactory;
+                this._factoryList[ControlTargetOptionsFactory.CLASS_TYPE_ENVELOPETARGETOPTIONS]
+                    = EnvelopeTargetOptionsFactory;
             },
 
             /**

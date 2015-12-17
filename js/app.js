@@ -27,6 +27,7 @@ require.config({
 requirejs(
     [
         'dejavu',
+        'app/audio/module/EnvelopeTargetOptions',
         'app/audio/module/filter/Biquad',
         'app/audio/module/generator/Wave',
         'app/audio/module/mixing/Gain',
@@ -40,6 +41,7 @@ requirejs(
     ],
     function (
         dejavu,
+        EnvelopeTargetOptions,
         BiquadFilter,
         Wave,
         Gain,
@@ -167,6 +169,60 @@ requirejs(
                     {
                         name: 'C-6',
                         value: GlobalConstants.NOTE_C_6
+                    }
+                ]
+            },
+            {
+                type:     ControlTargetOptionsFactory.CLASS_TYPE_ENVELOPETARGETOPTIONS,
+                targetId: Wave.CTRL_TARGET_ENVELOPE,
+                options: [
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               EnvelopeTargetOptions.CTRL_TARGET_ENV_ATTACK_GAIN,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             {min: 0, max: 1},
+                        snapOptions:            null,
+                        numberFormat:           '#0'
+                    },
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               EnvelopeTargetOptions.CTRL_TARGET_ENV_ATTACK_TIME,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             null,
+                        snapOptions:            null,
+                        numberFormat:           '#0'
+                    },
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               EnvelopeTargetOptions.CTRL_TARGET_ENV_DECAY_GAIN,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             {min: 0, max: 1},
+                        snapOptions:            null,
+                        numberFormat:           '#0'
+                    },
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               EnvelopeTargetOptions.CTRL_TARGET_ENV_DECAY_TIME,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             null,
+                        snapOptions:            null,
+                        numberFormat:           '#0'
+                    },
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               EnvelopeTargetOptions.CTRL_TARGET_ENV_SUSTAIN_TIME,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             null,
+                        snapOptions:            null,
+                        numberFormat:           '#0'
+                    },
+                    {
+                        type:                   ControlTargetOptionsFactory.CLASS_TYPE_RANGEVALUEOPTIONS,
+                        targetId:               EnvelopeTargetOptions.CTRL_TARGET_ENV_RELEASE_TIME,
+                        valueDisplayMultiplier: 1,
+                        valueRange:             null,
+                        snapOptions:            null,
+                        numberFormat:           '#0'
                     }
                 ]
             }
@@ -445,9 +501,9 @@ requirejs(
                 valueTarget: BiquadFilter.CTRL_TARGET_QUALITY_FACTOR
             },
             {
-                controlId:   GlobalConstants.CTRL_ENV_ATTACK,
+                controlId:   GlobalConstants.CTRL_ENVELOPE,
                 moduleId:    GlobalConstants.AMOD_OSC1,
-                valueTarget: BiquadFilter.CTRL_TARGET_QUALITY_FACTOR
+                valueTarget: Wave.CTRL_TARGET_ENVELOPE
             }
         ];
 
@@ -735,30 +791,12 @@ requirejs(
                 id:          GlobalConstants.CTRL_ENVELOPE,
                 type:        ControlListFactory.CLASS_TYPE_CTRL_GRAPH,
                 position:    {x: 320, y: 420},
-                maxTime:     5,
-                color:       '#000',
-                points:      [
-                    {
-                        id:     GlobalConstants.CTRL_ENV_ATTACK,
-                        type:   ControlListFactory.CLASS_TYPE_CTRL_POINT,
-                        color: '#b2aacc'
-                    },
-                    {
-                        id:     GlobalConstants.CTRL_ENV_DECAY,
-                        type:   ControlListFactory.CLASS_TYPE_CTRL_POINT,
-                        color: '#b2aacc'
-                    },
-                    {
-                        id:     GlobalConstants.CTRL_ENV_SUSTAIN,
-                        type:   ControlListFactory.CLASS_TYPE_CTRL_POINT,
-                        color: '#b2aacc'
-                    },
-                    {
-                        id:     GlobalConstants.CTRL_ENV_RELEASE,
-                        type:   ControlListFactory.CLASS_TYPE_CTRL_POINT,
-                        color: '#b2aacc'
-                    }
-                ]
+                graphOptions: {
+                    color:         '#000',
+                    pointColor:    '#b2aacc',
+                    maxTime:       8,
+                    selectedColor: '#000'
+                }
             }
         ];
 

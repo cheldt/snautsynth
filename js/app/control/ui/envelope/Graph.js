@@ -310,7 +310,7 @@ define(
                 this.__maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
                 this.__maxPixelTime = maxTime * Graph.PIXEL_PER_TIME;
 
-                this.__xAxis.points([0, this.__maxPixelGain , this.__maxPixelTime, this.__maxPixelGain ]);
+                this.__xAxis.points([0, this.__maxPixelGain , this.__maxPixelTime, this.__maxPixelGain]);
                 this.__yAxis.points([0, 0, 0, this.__maxPixelGain]);
 
                 this.connectPoints();

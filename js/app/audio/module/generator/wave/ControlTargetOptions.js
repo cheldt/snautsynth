@@ -144,6 +144,9 @@ define(
                     case Wave.CTRL_TARGET_TRIGGER_NOTE:
                         this.__triggerNoteOptions = valueOptions;
                         break;
+                    case Wave.CTRL_TARGET_ENVELOPE:
+                        this.__envelopeOptions = valueOptions;
+                        break;
                 }
             }
         });
