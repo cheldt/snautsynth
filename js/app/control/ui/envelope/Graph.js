@@ -77,6 +77,8 @@ define(
              */
             __yAxis: null,
 
+            __isSetUp: false,
+
             /**
              * @memberof Snautsynth.Control.UI.Envelope.Graph
              * @instance
@@ -98,32 +100,7 @@ define(
             },
 
             $constants: {
-                /**
-                 * @memberof Snautsynth.Control.UI.Envelope.Graph
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                PIXEL_PER_GAIN:       100,
 
-                /**
-                 * @memberof Snautsynth.Control.UI.Envelope.Graph
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                PIXEL_PER_TIME:       80,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.Envelope.Graph
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                MAX_GAIN:             1,
 
                 /**
                  * @memberof Snautsynth.Control.UI.Envelope.Graph
@@ -141,43 +118,7 @@ define(
                  *
                  * @type {number}
                  */
-                POINTCONNECTOR_WIDTH: 1.5,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.Envelope.Graph
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_POINT_ATTACK:      1,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.Envelope.Graph
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_POINT_DECAY:       2,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.Envelope.Graph
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_POINT_SUSTAIN:     3,
-
-                /**
-                 * @memberof Snautsynth.Control.UI.Envelope.Graph
-                 * @constant
-                 * @default
-                 *
-                 * @type {number}
-                 */
-                CTRL_POINT_RELEASE:     4
+                POINTCONNECTOR_WIDTH: 1.5
             },
 
             /**
@@ -243,7 +184,7 @@ define(
              * @instance
              */
             connectPoints: function() {
-                var pointConnectorCoordsList = [0, Graph.PIXEL_PER_GAIN];
+                var pointConnectorCoordsList = [0, Point.PIXEL_PER_GAIN];
 
                 for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
                     var point = this._controls[pointIndex];
@@ -285,21 +226,27 @@ define(
              * @param {Snautsynth.Audio.Module.EnvelopeTargetOptions} valueOptions
              */
             setUp: function(valueOptions) {
+                if (this.__isSetUp) {
+                    return;
+                }
+
+                this.__isSetUp = true;
+
                 var minTime    = 0;
                 var value      = this._value;
                 var pointColor = this.__graphOptions.getPointColor();
                 var maxTime    = this.__graphOptions.getMaxTime();
 
-                this.__addPoint(Graph.CTRL_POINT_ATTACK, value.getAttack(), pointColor);
-                this.__addPoint(Graph.CTRL_POINT_DECAY, value.getDecay(), pointColor);
-                this.__addPoint(Graph.CTRL_POINT_SUSTAIN, value.getSustain(), pointColor);
-                this.__addPoint(Graph.CTRL_POINT_RELEASE, value.getRelease(), pointColor);
+                this.__addPoint(Point.CTRL_POINT_ATTACK, value.getAttack(), pointColor);
+                this.__addPoint(Point.CTRL_POINT_DECAY, value.getDecay(), pointColor);
+                this.__addPoint(Point.CTRL_POINT_SUSTAIN, value.getSustain(), pointColor);
+                this.__addPoint(Point.CTRL_POINT_RELEASE, value.getRelease(), pointColor);
 
                 for (var pointIndex = 0; pointIndex < this._controls.length; pointIndex++) {
                     var point = this._controls[pointIndex];
 
                     var pointValue = point.getValue();
-                    minTime = minTime + pointValue.getTime();
+                    minTime = pointValue.getTime();
                     point.updatePosition(point.calcPositionByValues());
                 }
 
@@ -307,10 +254,10 @@ define(
                     maxTime = minTime;
                 }
 
-                this.__maxPixelGain = Graph.MAX_GAIN * Graph.PIXEL_PER_GAIN;
-                this.__maxPixelTime = maxTime * Graph.PIXEL_PER_TIME;
+                this.__maxPixelGain = Point.MAX_GAIN * Point.PIXEL_PER_GAIN;
+                this.__maxPixelTime = maxTime * Point.PIXEL_PER_TIME;
 
-                this.__xAxis.points([0, this.__maxPixelGain , this.__maxPixelTime, this.__maxPixelGain]);
+                this.__xAxis.points([0, this.__maxPixelGain, this.__maxPixelTime, this.__maxPixelGain]);
                 this.__yAxis.points([0, 0, 0, this.__maxPixelGain]);
 
                 this.connectPoints();

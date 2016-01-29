@@ -4,10 +4,12 @@
 define(
     [
         'dejavu',
+        'app/control/ui/envelope/Point',
         'app/control/ui/envelope/PointValue'
     ],
     function (
         dejavu,
+        Point,
         PointValue
     ) {
         'use strict';
@@ -79,6 +81,7 @@ define(
              */
             getAttack: function() {
               return new PointValue(
+                  Point.CTRL_POINT_ATTACK,
                   this.__attackGain,
                   this.__attackTime
               );
@@ -112,17 +115,6 @@ define(
              * @instance
              * @public
              *
-             * @param {number} attackGain
-             */
-            setAttackGain: function(attackGain) {
-                this.__attackGain = attackGain;
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.EnvelopeValues
-             * @instance
-             * @public
-             *
              * @return {number}
              */
             getAttackTime: function() {
@@ -134,21 +126,11 @@ define(
              * @instance
              * @public
              *
-             * @param {number} attackTime
-             */
-            setAttackTime: function(attackTime) {
-                this.__attackTime = attackTime;
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.EnvelopeValues
-             * @instance
-             * @public
-             *
              * @return {Snautsynth.Control.UI.Envelope.PointValue}
              */
             getDecay: function() {
                 return new PointValue(
+                    Point.CTRL_POINT_DECAY,
                     this.__decayGain,
                     this.__decayTime
                 );
@@ -182,17 +164,6 @@ define(
              * @instance
              * @public
              *
-             * @param {number} decayGain
-             */
-            setDecayGain: function(decayGain) {
-                this.__decayGain = decayGain;
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.EnvelopeValues
-             * @instance
-             * @public
-             *
              * @return {number}
              */
             getDecayTime: function() {
@@ -204,21 +175,11 @@ define(
              * @instance
              * @public
              *
-             * @param {number} decayTime
-             */
-            setDecayTime: function(decayTime) {
-                this.__decayTime = decayTime;
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.EnvelopeValues
-             * @instance
-             * @public
-             *
              * @return {Snautsynth.Control.UI.Envelope.PointValue}
              */
             getSustain: function() {
                 return new PointValue(
+                    Point.CTRL_POINT_SUSTAIN,
                     this.__decayGain,
                     this.__sustainTime
                 );
@@ -251,23 +212,12 @@ define(
              * @instance
              * @public
              *
-             * @param {number} sustainTime
-             */
-            setSustainTime: function(sustainTime) {
-                this.__sustainTime = sustainTime;
-            },
-
-
-            /**
-             * @memberof Snautsynth.Audio.Module.EnvelopeValues
-             * @instance
-             * @public
-             *
              * @return {Snautsynth.Control.UI.Envelope.PointValue}
              */
             getRelease: function() {
                 return new PointValue(
-                    this.__decayGain,
+                    Point.CTRL_POINT_RELEASE,
+                    0,
                     this.__releaseTime
                 );
             },
@@ -280,7 +230,7 @@ define(
              * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
              */
             setRelease: function(pointValue) {
-                this.__sustainTime = pointValue.getTime();
+                this.__releaseTime = pointValue.getTime();
             },
 
             /**
@@ -292,17 +242,6 @@ define(
              */
             getReleaseTime: function() {
                 return this.__releaseTime;
-            },
-
-            /**
-             * @memberof Snautsynth.Audio.Module.EnvelopeValues
-             * @instance
-             * @public
-             *
-             * @param {number} releaseTime
-             */
-            setReleaseTime: function(releaseTime) {
-                this.__releaseTime = releaseTime;
             },
 
             /**

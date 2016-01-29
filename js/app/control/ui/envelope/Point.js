@@ -6,17 +6,16 @@ define(
         'dejavu',
         'konva',
         'app/control/ui/UIControl',
-        'app/control/ui/envelope/Graph',
         'app/util/GlobalConstants',
         'app/event/Event',
         'app/util/Position',
         'app/control/ui/envelope/PointValue'
+
     ],
     function(
         dejavu,
         Konva,
         UIControl,
-        Graph,
         GlobalConstants,
         Event,
         Position,
@@ -75,7 +74,70 @@ define(
                  *
                  * @type {number}
                  */
-                RADIUS: 8
+                RADIUS:                 8,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Point
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                PIXEL_PER_GAIN:         100,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Point
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                PIXEL_PER_TIME:         60,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Point
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                MAX_GAIN:               1,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Point
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_POINT_ATTACK:      1,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Point
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_POINT_DECAY:       2,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Point
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_POINT_SUSTAIN:     3,
+
+                /**
+                 * @memberof Snautsynth.Control.UI.Envelope.Point
+                 * @constant
+                 * @default
+                 *
+                 * @type {number}
+                 */
+                CTRL_POINT_RELEASE:     4
             },
 
             /**
@@ -114,23 +176,31 @@ define(
                     var rightBound = 0;
 
                     switch(myPoint.getId()) {
-                        case GlobalConstants.CTRL_ATTACK_POINT:
-                            var decayPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
+                        case Point.CTRL_POINT_ATTACK:
+                            var decayPoint = graph.getPointById(Point.CTRL_POINT_DECAY);
 
                             leftBound  = graphX;
                             rightBound = graphX + decayPoint.getX() * scale.x;
                             break;
-                        case GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT:
-                            var attackPoint  = graph.getPointById(GlobalConstants.CTRL_ATTACK_POINT);
-                            var releasePoint = graph.getPointById(GlobalConstants.CTRL_RELEASE_POINT);
+                        case Point.CTRL_POINT_DECAY:
+                            var attackPoint  = graph.getPointById(Point.CTRL_POINT_ATTACK);
+                            var sustainPoint = graph.getPointById(Point.CTRL_POINT_SUSTAIN);
 
                             leftBound  = graphX + attackPoint.getX() * scale.x;
+                            rightBound = graphX + sustainPoint.getX() * scale.x;
+                            break;
+
+                        case Point.CTRL_POINT_SUSTAIN:
+                            var decayPoint   = graph.getPointById(Point.CTRL_POINT_DECAY);
+                            var releasePoint = graph.getPointById(Point.CTRL_POINT_RELEASE);
+
+                            leftBound  = graphX + decayPoint.getX() * scale.x;
                             rightBound = graphX + releasePoint.getX() * scale.x;
                             break;
-                        case GlobalConstants.CTRL_RELEASE_POINT:
-                            var decayPointPoint = graph.getPointById(GlobalConstants.CTRL_DECAYTIME_SUSTAINGAIN_POINT);
+                        case Point.CTRL_POINT_RELEASE:
+                            var sustainPoint = graph.getPointById(Point.CTRL_POINT_SUSTAIN);
 
-                            leftBound  = graphX + decayPointPoint.getX() * scale.x;
+                            leftBound  = graphX + sustainPoint.getX() * scale.x;
                             rightBound = graphX + graph.getMaxPixelTime() * scale.x;
                             break;
                         default:
@@ -145,6 +215,7 @@ define(
                         pos.y = graphY;
                     }
 
+
                     if (pos.x <= leftBound) {
                         pos.x = leftBound;
                     }
@@ -156,20 +227,42 @@ define(
                     return pos;
                 });
 
-                this._kineticGroup.on('dragmove', function() {
-                    myPoint.getGraph().connectPoints();
+                this._kineticGroup.add(this._point);
 
+                this.addEventListener();
+            },
+
+            /**
+             * @memberof Snautsynth.Control.UI.Envelope.Point
+             * @instance
+             */
+            addEventListener: function() {
+                var myPoint = this;
+
+                this._kineticGroup.on('dragmove', function() {
                     myPoint.setValueFromPosition();
 
                     var eventReturn = myPoint.getValue();
+                    var graph       = myPoint.getGraph();
+
+                    if (Point.CTRL_POINT_DECAY === myPoint.getId()) {
+                        var sustainPoint = graph.getPointById(Point.CTRL_POINT_SUSTAIN);
+                        myPoint.moveCorrespondentPoint(sustainPoint);
+
+                    }
+
+                    if (Point.CTRL_POINT_SUSTAIN === myPoint.getId()) {
+                        var decayPoint = graph.getPointById(Point.CTRL_POINT_DECAY);
+                        myPoint.moveCorrespondentPoint(decayPoint);
+                    }
+
+                    myPoint.getGraph().connectPoints();
 
                     myPoint.getCanvasState().getBaseLayer().setAttr(
                         'event',
-                        new Event(myPoint.getId(), eventReturn, Event.TYPE_VALUE_CHANGED)
+                        new Event(graph.getId(), eventReturn, Event.TYPE_VALUE_CHANGED)
                     );
                 });
-
-                this._kineticGroup.add(this._point);
             },
 
             /**
@@ -180,8 +273,8 @@ define(
              */
             calcPositionByValues: function() {
                 return new Position(
-                    this._value.getTime() * Graph.PIXEL_PER_TIME,
-                    Graph.PIXEL_PER_GAIN - this._value.getGain() * Graph.PIXEL_PER_GAIN
+                    this._value.getTime() * Point.PIXEL_PER_TIME,
+                    Point.PIXEL_PER_GAIN - (this._value.getGain() * Point.PIXEL_PER_GAIN)
                 );
             },
 
@@ -191,8 +284,9 @@ define(
              */
             setValueFromPosition: function() {
                 this._value = new PointValue(
-                    Graph.MAX_GAIN - (this.getY() / Graph.PIXEL_PER_GAIN),
-                    this.getX() / Graph.PIXEL_PER_TIME
+                    this.getId(),
+                    Point.MAX_GAIN - (this.getY() / Point.PIXEL_PER_GAIN),
+                    this.getX() / Point.PIXEL_PER_TIME
                 );
             },
 
@@ -205,6 +299,27 @@ define(
             updatePosition: function(newPosition) {
                 this._kineticGroup.setX(newPosition.getX());
                 this._kineticGroup.setY(newPosition.getY());
+            },
+
+            /**
+             * @param {Snautsynth.Control.UI.Envelope.Point} point
+             * @private
+             */
+            moveCorrespondentPoint: function(point) {
+                point.setValue(
+                    new PointValue(
+                        point.getId(),
+                        this.getValue().getGain(),
+                        point.getValue().getTime()
+                    )
+                );
+
+                point.updatePosition(point.calcPositionByValues());
+
+                this.getCanvasState().getBaseLayer().setAttr(
+                    'event',
+                    new Event(this.getGraph().getId(), point.getValue(), Event.TYPE_VALUE_CHANGED)
+                );
             }
         });
 

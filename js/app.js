@@ -235,12 +235,12 @@ requirejs(
                 tuning:   0,
                 gain:     0.5,
                 envelopeValues: {
-                    attackGain:  0,
-                    attackTime:  0.2,
+                    attackGain:  1.0,
+                    attackTime:  0.5,
                     decayGain:   0.5,
                     decayTime:   1.0,
-                    releaseTime: 4,
-                    sustainTime: 5
+                    sustainTime: 2,
+                    releaseTime: 3
                 },
                 waveType: Wave.WAVEFORM_SQUARE,
                 moduleConnectionList: [
@@ -303,12 +303,12 @@ requirejs(
                 gain:     0.5,
                 waveType: Wave.WAVEFORM_SQUARE,
                 envelopeValues: {
-                    attackGain:  0,
-                    attackTime:  0.2,
+                    attackGain:  1.0,
+                    attackTime:  0.5,
                     decayGain:   0.5,
                     decayTime:   1.0,
-                    releaseTime: 4,
-                    sustainTime: 5
+                    sustainTime: 2,
+                    releaseTime: 3
                 },
                 moduleConnectionList: [
                     {
@@ -503,6 +503,11 @@ requirejs(
             {
                 controlId:   GlobalConstants.CTRL_ENVELOPE,
                 moduleId:    GlobalConstants.AMOD_OSC1,
+                valueTarget: Wave.CTRL_TARGET_ENVELOPE
+            },
+            {
+                controlId:   GlobalConstants.CTRL_ENVELOPE,
+                moduleId:    GlobalConstants.AMOD_OSC2,
                 valueTarget: Wave.CTRL_TARGET_ENVELOPE
             }
         ];
@@ -794,7 +799,7 @@ requirejs(
                 graphOptions: {
                     color:         '#000',
                     pointColor:    '#b2aacc',
-                    maxTime:       8,
+                    maxTime:       4,
                     selectedColor: '#000'
                 }
             }

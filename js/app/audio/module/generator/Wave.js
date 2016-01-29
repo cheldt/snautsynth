@@ -13,7 +13,8 @@ define(
         'app/datatype/NumberRange',
         'app/datatype/RangeValueOptions',
         'app/control/ui/SnapOptions',
-        'app/control/ui/discretecontrol/KeyValue'
+        'app/control/ui/discretecontrol/KeyValue',
+        'app/control/ui/envelope/Point'
     ],
     function(
         dejavu,
@@ -26,7 +27,8 @@ define(
         NumberRange,
         RangeValueOptions,
         SnapOptions,
-        KeyValue
+        KeyValue,
+        Point
     ) {
         'use strict';
 
@@ -264,7 +266,7 @@ define(
                  *
                  * @type {number}
                  */
-                CTRL_TARGET_ENVELOPE:            9
+                CTRL_TARGET_ENVELOPE:            9,
             },
 
             /**
@@ -484,24 +486,9 @@ define(
                                     module.bindCallback(module, 'changeGain')
                                 );
                                 break;
-                            case Wave.CTRL_TARGET_ENV_ATTACK:
+                            case Wave.CTRL_TARGET_ENVELOPE:
                                 controlConnection.setCallback(
-                                    module.bindCallback(module, 'changeAttack')
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_ENV_DECAY:
-                                controlConnection.setCallback(
-                                    module.bindCallback(module, 'changeDecay')
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_ENV_SUSTAIN:
-                                controlConnection.setCallback(
-                                    module.bindCallback(module, 'changeSustain')
-                                );
-                                break;
-                            case Wave.CTRL_TARGET_ENV_RELEASE:
-                                controlConnection.setCallback(
-                                    module.bindCallback(module, 'changeRelease')
+                                    module.bindCallback(module, 'changeEnvelope')
                                 );
                                 break;
                         }
@@ -509,35 +496,57 @@ define(
                 }
             },
 
+
             /**
              * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
              * @param {number}                                    currentTime
              */
-            changeAttack: function(pointValue, currentTime) {
+            changeEnvelope: function(pointValue, currentTime) {
+                switch(pointValue.getPointId()) {
+                    case Point.CTRL_POINT_ATTACK:
+                        this.__changeAttack(pointValue);
+                        break;
+                    case Point.CTRL_POINT_DECAY:
+                        this.__changeDecay(pointValue);
+                        break;
+                    case Point.CTRL_POINT_SUSTAIN:
+                        this.__changeSustain(pointValue);
+                        break;
+                    case Point.CTRL_POINT_RELEASE:
+                        this.__changeRelease(pointValue);
+                        break
+                }
+            },
+
+            /**
+             * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
+             * @private
+             */
+            __changeAttack: function(pointValue) {
                 this.__envelopeValues.setAttack(pointValue);
             },
 
             /**
              * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
-             * @param {number}                                    currentTime
+             * @private
              */
-            changeDecay: function(pointValue, currentTime) {
+            __changeDecay: function(pointValue) {
                 this.__envelopeValues.setDecay(pointValue);
             },
 
             /**
              * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
-             * @param {number}                                    currentTime
+             * @private
              */
-            changeSustain: function(pointValue, currentTime) {
+            __changeSustain: function(pointValue) {
                 this.__envelopeValues.setSustain(pointValue);
             },
 
             /**
              * @param {Snautsynth.Control.UI.Envelope.PointValue} pointValue
-             * @param {number}                                    currentTime
+             * @private
              */
-            changeRelease: function(pointValue, currentTime) {
+            __changeRelease: function(pointValue) {
                 this.__envelopeValues.setRelease(pointValue);
             },
 
@@ -672,14 +681,8 @@ define(
                         return this.__halftones;
                     case Wave.CTRL_TARGET_VALUE_TUNE_OCTAVES:
                         return this.__octaves;
-                    case Wave.CTRL_TARGET_ENV_ATTACK:
-                        return this.__envelopeValues.getAttack();
-                    case Wave.CTRL_TARGET_ENV_DECAY:
-                        return this.__envelopeValues.getDecay();
-                    case Wave.CTRL_TARGET_ENV_SUSTAIN:
-                        return this.__envelopeValues.getSustain();
-                    case Wave.CTRL_TARGET_ENV_RELEASE:
-                        return this.__envelopeValues.getRelease();
+                    case Wave.CTRL_TARGET_ENVELOPE:
+                        return this.__envelopeValues;
                     default:
                         return null;
                 }

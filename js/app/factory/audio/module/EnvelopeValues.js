@@ -35,8 +35,8 @@ define(
                     options.attackTime,
                     options.decayGain,
                     options.decayTime,
-                    options.releaseTime,
-                    options.sustainTime
+                    options.sustainTime,
+                    options.releaseTime
                 );
             }
         });

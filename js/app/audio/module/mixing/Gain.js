@@ -331,7 +331,7 @@ define(
                 // ramp to release
                 gainNode.gain.linearRampToValueAtTime(
                     0,
-                    currentTime + this.__envelopeValues.getReleaseTime()
+                    currentTime + (this.__envelopeValues.getReleaseTime() - this.__envelopeValues.getSustainTime())
                 );
             }
         });
