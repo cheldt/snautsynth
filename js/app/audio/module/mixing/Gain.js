@@ -28,6 +28,7 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Mixing.Gain
              * @instance
+             * @private
              *
              * @type {Snautsynth.Audio.Module.Mixing.Gain.ControlTargetOptions}
              */
@@ -36,6 +37,7 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Mixing.Gain
              * @instance
+             * @private
              *
              * @type {Snautsynth.Audio.Module.EnvelopeValues}
              */
@@ -44,10 +46,20 @@ define(
             /**
              * @memberof Snautsynth.Audio.Module.Mixing.Gain
              * @instance
+             * @private
              *
              * @type {AudioGainNode}
              */
             __gainNode: null,
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             * @private
+             *
+             * @type {number}
+             */
+            __startEnvelopeTime: null,
 
             $constants: {
                 /**
@@ -286,8 +298,11 @@ define(
             startEnvelope: function(currentTime) {
                 var gainNode = this.__gainNode;
 
+                this.__startEnvelopeTime = currentTime;
+
                 // ADSR - envelope
                 // reset all schedulers
+                gainNode.gain.value = 0;
                 gainNode.gain.cancelScheduledValues(0.0);
                 gainNode.gain.setValueAtTime(0, currentTime);
 
@@ -323,16 +338,111 @@ define(
              * @param {number} currentTime
              */
             stopEnvelope: function(currentTime) {
-                var gainNode = this.__gainNode;
+                var gainNode = this.__gainNode,
+                    currentGain;
 
-                gainNode.gain.cancelScheduledValues(0.0);
-                gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
+                currentGain = this.__calcReleaseGain(currentTime);
+
+                gainNode.gain.cancelScheduledValues(0);
+                gainNode.gain.setValueAtTime(currentGain, currentTime);
 
                 // ramp to release
                 gainNode.gain.linearRampToValueAtTime(
                     0,
                     currentTime + (this.__envelopeValues.getReleaseTime() - this.__envelopeValues.getSustainTime())
                 );
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             * @private
+             *
+             * @param  {number} currentTime
+             *
+             * @return {{x0: number, y0: number, x1: number, y1: number}}
+             */
+            __fetchEnvelopePointsByTime: function(currentTime) {
+                var attackEnduranceTime = this.__startEnvelopeTime + this.__envelopeValues.getAttackTime(),
+                    decayEnduranceTime = this.__startEnvelopeTime + this.__envelopeValues.getDecayTime(),
+                    sustainEnduranceTime = this.__startEnvelopeTime + this.__envelopeValues.getSustainTime(),
+                    releaseEnduranceTime = this.__startEnvelopeTime + this.__envelopeValues.getReleaseTime();
+
+                if (currentTime >= this.__startEnvelopeTime && currentTime <= attackEnduranceTime) {
+                    return {
+                        x0: 0,
+                        y0: 0,
+                        x1: this.__envelopeValues.getAttackTime(),
+                        y1: this.__envelopeValues.getAttackGain()
+                    };
+                } else if (currentTime > attackEnduranceTime && currentTime <= decayEnduranceTime) {
+                    return {
+                        x0: this.__envelopeValues.getAttackTime(),
+                        y0: this.__envelopeValues.getAttackGain(),
+                        x1: this.__envelopeValues.getDecayTime(),
+                        y1: this.__envelopeValues.getDecayGain()
+                    };
+                } else if (currentTime > decayEnduranceTime && currentTime <= sustainEnduranceTime) {
+                    return {
+                        x0: this.__envelopeValues.getDecayTime(),
+                        y0: this.__envelopeValues.getDecayGain(),
+                        x1: this.__envelopeValues.getSustainTime(),
+                        y1: this.__envelopeValues.getDecayGain()
+                    };
+                } else if (currentTime > sustainEnduranceTime && currentTime <= releaseEnduranceTime) {
+                    return {
+                        x0: this.__envelopeValues.getSustainTime(),
+                        y0: this.__envelopeValues.getDecayGain(),
+                        x1: this.__envelopeValues.getReleaseTime(),
+                        y1: 0
+                    };
+                }
+
+                return {
+                    x0: 0,
+                    y0: 0,
+                    x1: 0,
+                    y1: 0
+                };
+            },
+
+            /**
+             * @memberof Snautsynth.Audio.Module.Mixing.Gain
+             * @instance
+             * @private
+             *
+             * @param  {number} currentTime
+             *
+             * @return {number}
+             */
+            __calcReleaseGain: function(currentTime) {
+                var currentStartEndPoints = this.__fetchEnvelopePointsByTime(currentTime),
+                    slope,
+                    yIntercept,
+                    deltaY,
+                    deltaX ,
+                    elapsedTime = currentTime - this.__startEnvelopeTime;
+
+                deltaY = currentStartEndPoints.y1 - currentStartEndPoints.y0;
+                deltaX = currentStartEndPoints.x1 - currentStartEndPoints.x0;
+
+                if (0 === deltaY) {
+                    return currentStartEndPoints.y0;
+                } else if (0 === deltaX) {
+                    return 0;
+                }
+
+                slope = deltaY / deltaX;
+
+                // y = mx + t
+                // t = y - mx
+                if (currentStartEndPoints.x0 === 0) {
+                    yIntercept = currentStartEndPoints.y0;
+                } else {
+                    yIntercept = currentStartEndPoints.y0 - (slope * currentStartEndPoints.x0)
+                }
+
+                return slope * elapsedTime + yIntercept;
             }
         });
 

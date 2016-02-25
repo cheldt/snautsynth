@@ -635,7 +635,9 @@ define(
 
                     envelopeGainNode.stopEnvelope(currentTime);
 
-                    oscillator.stop(currentTime + this.__envelopeValues.getReleaseTime());
+                    oscillator.stop(
+                        currentTime + (this.__envelopeValues.getReleaseTime() - this.__envelopeValues.getSustainTime())
+                    );
 
                     oscillator.onended = function() {
                         oscillator.disconnect();
