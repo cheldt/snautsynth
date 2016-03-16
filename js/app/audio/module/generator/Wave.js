@@ -641,14 +641,22 @@ define(
 
                     oscillator.onended = function() {
                         oscillator.disconnect();
-                        delete oscillatorList[note];
-                        delete envelopeGainNodeList[note];
+                        oscillator.frequency.value = 0;
+
+                        if (0 == oscillatorList[note].frequency.value) {
+                            delete oscillatorList[note];
+                            delete envelopeGainNodeList[note];
+                        }
                     };
                 } else {
                     oscillator.stop();
                     oscillator.onended = function() {
                         oscillator.disconnect();
-                        delete oscillatorList[note];
+                        oscillator.frequency.value = 0;
+
+                        if (0 == oscillatorList[note].frequency.value) {
+                            delete oscillatorList[note];
+                        }
                     };
                 }
             },
