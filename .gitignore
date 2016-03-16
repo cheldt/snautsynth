@@ -5,3 +5,4 @@
 .idea
 favicon.ico
 dist
+node_modules
