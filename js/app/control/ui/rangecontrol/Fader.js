@@ -333,7 +333,9 @@ define(
 
                 // add eventlistener for mousedown => lock mouse
                 this._faderKnob.on('mousedown', function(evt) {
+                    myFader.getCanvasState().getMouseMovement(evt);
                     myFader.getCanvasState().lockPointer();
+
                     myFader.getCanvasState().setLastValue(myFader.getValue());
                     myFader.setSelected(true);
                 });
@@ -475,6 +477,7 @@ define(
                 this._faderBorder.width(width);
 
                 this._trackLength = this._length * 0.9;
+
                 this._tmpPosition = this.calcPositionFromValue(this._value);
 
                 this._startTrackPosition = new Position(
