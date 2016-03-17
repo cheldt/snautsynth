@@ -1,11 +1,9 @@
 language: node_js
 node_js:
-    - '0.8'
     - '0.10'
 script: node_modules/karma/bin/karma start snautsynth.conf.js --single-run
 before_install:
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
 before_script:
-    - '[ "${TRAVIS_NODE_VERSION}" != "0.8" ] || npm install -g npm@1.4.28'
-    - npm install -g npm@latest
+    - npm install
