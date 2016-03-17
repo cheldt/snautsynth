@@ -1,3 +1,5 @@
+![alt tag](https://api.travis-ci.org/cheldt/snautsynth.svg?branch=master)
+
 Snautsynth
 ==========
 
