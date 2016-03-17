@@ -4,7 +4,7 @@ define(['app/canvas/CanvasState',
 		'src/Helper',
 		'quickcheck',
 		'app/datatype/NumberRange',
-		'app/util/Position',],
+		'app/util/Position'],
 	function(CanvasState, NumberFormatter, Knob, TestHelper, QuickCheck, NumberRange, Position) {
 	'use strict';
 
@@ -12,19 +12,21 @@ define(['app/canvas/CanvasState',
 		var knob;
 
 		beforeEach(function() {
+		spyOn(document, 'getElementById').and.callFake(
+			function() {
+					var div = document.createElement("div");
+					return div;
+				}
+		);
+
 			knob = new Knob(
 				1,
 				new Position(100, 100),
 				10,
 				new CanvasState(600, 550, 'syn'),
 				100,
-				new NumberRange(0, 100),
 				10,
-				'#FFF',
-				10,
-				2,
-				5,
-				new NumberFormatter('#0')
+				'#FFF'
 			);
 		});
 
@@ -37,27 +39,6 @@ define(['app/canvas/CanvasState',
 			}).forAll(QuickCheck.real);
 		});
 
-		it(
-			'Tests controller-value to radian and radian to controller-value convertion - calcRadFromValue() -> calcValueFromRad()',
-			function() {
-				expect(
-					function(randomRealValue) {
-						var calculatedRad  = Knob.calcRadFromValue(
-							randomRealValue,
-							knob.getPointerRadRange(),
-							knob.getValueRange()
-						);
 
-						var calculatedValue = Knob.calcValueFromRad(
-							calculatedRad,
-							knob.getPointerRadRange(),
-							knob.getValueRange()
-						);
-
-						return TestHelper.roundTwoDecPlaces(randomRealValue) == TestHelper.roundTwoDecPlaces(calculatedValue);
-					}
-				).forAll(QuickCheck.real);
-			}
-		);
-	});
+      });	
 });
