@@ -1,6 +1,4 @@
-![alt tag](https://api.travis-ci.org/cheldt/snautsynth.svg?branch=master)
-
-Snautsynth
+Snautsynth [![Build Status](https://travis-ci.org/cheldt/snautsynth.svg?branch=master)](https://travis-ci.org/cheldt/snautsynth)
 ==========
 
 - simple polyphonic synthesizer based on web audio api
