@@ -88,9 +88,11 @@ define(['dejavu', 'app/control/layout/LayoutControl'], function(dejavu, LayoutCo
             this._text  = text;
 
             var textContainer = new Konva.Text({
-                fill:     color,
-                fontSize: 16,
-                text:     text
+                fill:             color,
+                fontSize:         16,
+                text:             text,
+                listening:        false,
+                strokeHitEnabled: false
             });
 
             this._kineticGroup.add(textContainer);

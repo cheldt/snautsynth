@@ -271,55 +271,62 @@ define(
 
                 //create border
                 this._faderBorder = new Konva.Rect({
-                    cornerRadius: Fader.BORDER_RADIUS,
-                    strokeWidth:  Fader.FADER_TRACK_BORDER_WIDTH,
-                    fill:         color,
-                    stroke:       '#000',
-                    id:           id
+                    cornerRadius:     Fader.BORDER_RADIUS,
+                    strokeWidth:      Fader.FADER_TRACK_BORDER_WIDTH,
+                    fill:             color,
+                    stroke:           '#000',
+                    id:               id,
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._faderBorder);
 
                 // create track-line
                 this._faderTrack = new Konva.Line({
-                    strokeWidth: Fader.FADER_TRACK_BORDER_WIDTH,
-                    lineCap:     'round',
-                    lineJoin:    'round',
-                    stroke:      '#000'
+                    strokeWidth:      Fader.FADER_TRACK_BORDER_WIDTH,
+                    lineCap:          'round',
+                    lineJoin:         'round',
+                    stroke:           '#000',
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._faderTrack);
 
                 //create handle
                 this._faderKnob = new Konva.Rect({
-                    cornerRadius: Fader.BORDER_RADIUS,
-                    strokeWidth:  Fader.FADER_TRACK_BORDER_WIDTH,
-                    fill:         color,
-                    stroke:       '#000'
+                    cornerRadius:     Fader.BORDER_RADIUS,
+                    strokeWidth:      Fader.FADER_TRACK_BORDER_WIDTH,
+                    fill:             color,
+                    stroke:           '#000',
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._faderKnob);
 
                 //create value display
                 this._valueDisplayArea = new Konva.Rect({
-                    cornerRadius: Fader.BORDER_RADIUS,
-                    height:       Fader.VAL_DISPLAY_AREA_HEIGHT,
-                    width:        Fader.VAL_DISPLAY_AREA_WIDTH,
-                    strokeWidth:  Fader.FADER_TRACK_BORDER_WIDTH,
-                    fill:         color,
-                    stroke:       '#000'
+                    cornerRadius:     Fader.BORDER_RADIUS,
+                    height:           Fader.VAL_DISPLAY_AREA_HEIGHT,
+                    width:            Fader.VAL_DISPLAY_AREA_WIDTH,
+                    strokeWidth:      Fader.FADER_TRACK_BORDER_WIDTH,
+                    fill:             color,
+                    stroke:           '#000',
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._valueDisplayArea);
 
                 this._valueDisplayText = new Konva.Text({
-                    fill:     '#000',
-                    fontSize: Fader.VAL_DISPLAY_FONT_SIZE
+                    fill:             '#000',
+                    fontSize:         Fader.VAL_DISPLAY_FONT_SIZE,
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._valueDisplayText);
-
-
             },
 
             /**

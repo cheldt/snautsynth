@@ -158,6 +158,8 @@ define(
 
                 canvasState.getBaseLayer().setAttr('event', null);
 
+                canvasState.draw();
+
                 if ('undefined'  === typeof eventObject || null === eventObject) {
                     return;
                 }

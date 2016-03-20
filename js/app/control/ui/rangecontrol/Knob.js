@@ -313,29 +313,37 @@ define(
 
                 // create knob border
                 this._knobBorder = new Konva.Arc({
-                    fill:   '#000',
-                    stroke: '#000'
+                    fill:             '#000',
+                    stroke:           '#000',
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._knobBorder);
 
                 this._pointer = new Konva.Line({
-                    stroke:   '#000',
-                    lineJoin: 'round'
+                    stroke:           '#000',
+                    lineJoin:         'round',
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._pointer);
 
                 // create knob value-display
                 this._valueDisplayArea = new Konva.Rect({
-                   fill:   color,
-                   stroke: '#000'
+                   fill:             color,
+                   stroke:           '#000',
+                   listening:        false,
+                   strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._valueDisplayArea);
 
                 this._valueDisplayText = new Konva.Text({
-                   fill: '#000'
+                   fill:             '#000',
+                   listening:        false,
+                   strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._valueDisplayText);

@@ -157,9 +157,11 @@ define(
                 this._graph = graph;
 
                 this._point = new Konva.Circle({
-                    fill:   color,
-                    id:     id,
-                    radius: Point.RADIUS
+                    fill:             color,
+                    id:               id,
+                    radius:           Point.RADIUS,
+                    listening:        true,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.setDraggable(true);

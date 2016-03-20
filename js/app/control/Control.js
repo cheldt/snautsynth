@@ -165,6 +165,7 @@ define(['dejavu', 'konva', 'app/util/Position'], function(dejavu, Konva, Positio
             this._canvasState  = canvasState;
 
             this._kineticGroup = new Konva.Group();
+            this._kineticGroup.listening = false;
 
             this._kineticGroup.setX(position.getX());
             this._kineticGroup.setY(position.getY());

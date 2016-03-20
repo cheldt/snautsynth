@@ -813,5 +813,6 @@ requirejs(
             controlConnectionOptionsList,
             controlOptionsList
         );
+        canvasState.draw();
     }
 );

@@ -263,22 +263,19 @@ define(
 
             // add layer to stage
             this._stage.add(this._baseLayer);
-            
-            this._drawInterval = 30;
+
+            var period = 2000;
 
             var myState = this;
 
             var anim = new Konva.Animation(
                 function(frame) {
 
-                    var time = frame.time,
-                        timeDiff = frame.timeDiff,
-                        frameRate = frame.frameRate;
                 },
                 this._baseLayer
             );
 
-            anim.start();
+            //anim.start();
 
             window.onresize = function () {
                 myState.resize();
@@ -322,7 +319,7 @@ define(
          * @instance
          */
         clear: function() {
-            this._canvasContext.clearRect(0, 0, this._canvas.width, this._canvas.height);
+            //this._canvasContext.clearRect(0, 0, this._canvas.width, this._canvas.height);
         },
 
         /**

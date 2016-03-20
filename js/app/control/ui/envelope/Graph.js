@@ -141,28 +141,34 @@ define(
                 var color = graphOptions.getColor();
 
                 this.__xAxis = new Konva.Line({
-                    strokeWidth: Graph.X_Y_AXIS_WIDTH,
-                    stroke:      color,
-                    lineCap:     'round',
-                    lineJoin:    'round'
+                    strokeWidth:      Graph.X_Y_AXIS_WIDTH,
+                    stroke:           color,
+                    lineCap:          'round',
+                    lineJoin:         'round',
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this.__xAxis);
 
                 this.__yAxis = new Konva.Line({
-                    strokeWidth: Graph.X_Y_AXIS_WIDTH,
-                    stroke:      color,
-                    lineCap:     'round',
-                    lineJoin:    'round'
+                    strokeWidth:      Graph.X_Y_AXIS_WIDTH,
+                    stroke:           color,
+                    lineCap:          'round',
+                    lineJoin:         'round',
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this.__yAxis);
 
                 this.__pointConnection = new Konva.Line({
-                    strokeWidth: Graph.POINTCONNECTOR_WIDTH,
-                    stroke:      color,
-                    lineCap:     'round',
-                    lineJoin:    'round'
+                    strokeWidth:      Graph.POINTCONNECTOR_WIDTH,
+                    stroke:           color,
+                    lineCap:          'round',
+                    lineJoin:         'round',
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this.__pointConnection);

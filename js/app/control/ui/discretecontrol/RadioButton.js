@@ -254,26 +254,32 @@ define(
 
                 // create button
                 this._buttonCircle = new Konva.Circle({
-                    radius: radioButtonOptions.getRadius(),
-                    fill:   radioButtonOptions.getColor()
+                    radius:           radioButtonOptions.getRadius(),
+                    fill:             radioButtonOptions.getColor(),
+                    listening:        true,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._buttonCircle);
 
                 // create button border
                 this._buttonBorder = new Konva.Arc({
-                    angle:       360,
-                    fill:        radioButtonOptions.getColor(),
-                    stroke:      radioButtonOptions.getColor()
+                    angle:            360,
+                    fill:             radioButtonOptions.getColor(),
+                    stroke:           radioButtonOptions.getColor(),
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._buttonBorder);
 
                 // create label
                 this._label = new Konva.Text({
-                   fill:     '#000',
-                   fontSize: RadioButton.LABEL_DISPLAY_FONT_SIZE,
-                   text:     radioButtonOptions.getLabel()
+                   fill:             '#000',
+                   fontSize:         RadioButton.LABEL_DISPLAY_FONT_SIZE,
+                   text:             radioButtonOptions.getLabel(),
+                   listening:        true,
+                   strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this._label);

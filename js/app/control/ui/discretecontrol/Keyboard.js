@@ -113,8 +113,10 @@ define(
                 this.__keyCodeNoteMapping[GlobalConstants.KEY_CODE_K] = ['C-6', GlobalConstants.NOTE_C_6];
 
                 this.__noteDisplay = new Konva.Text({
-                    fill: '#000',
-                    fontSize: Keyboard.LABEL_DISPLAY_FONT_SIZE
+                    fill:             '#000',
+                    fontSize:         Keyboard.LABEL_DISPLAY_FONT_SIZE,
+                    listening:        false,
+                    strokeHitEnabled: false
                 });
 
                 this._kineticGroup.add(this.__noteDisplay);
